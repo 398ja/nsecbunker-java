@@ -224,7 +224,7 @@ nsecbunker-java/
 | 1.1.3 | Configure build plugins (compiler, javadoc, sources) | Enhanced compiler (release flag, -parameters, lint), JAR manifest, flatten plugin, failsafe for IT | S | 59f9675 | 1.1.2 | ✅ DONE |
 | 1.1.4 | Setup code quality tools (Checkstyle, SpotBugs, PMD) | Added checkstyle.xml, spotbugs-exclude.xml, pmd-ruleset.xml; quality profile ready | M | 565c570 | 1.1.2 | ✅ DONE |
 | 1.1.5 | Configure CI/CD (GitHub Actions) | CI, CodeQL, release, dependency review workflows; issue/PR templates | M | d1734b6 | 1.1.3, 1.1.4 | ✅ DONE |
-| 1.1.6 | Create README and basic documentation structure | README with badges, install, examples; CONTRIBUTING.md; SECURITY.md | S | | 1.1.1 | ✅ DONE |
+| 1.1.6 | Create README and basic documentation structure | README with badges, install, examples; CONTRIBUTING.md; SECURITY.md | S | cd153e7 | 1.1.1 | ✅ DONE |
 
 #### 1.2 Core Models (`nsecbunker-core/model`)
 
