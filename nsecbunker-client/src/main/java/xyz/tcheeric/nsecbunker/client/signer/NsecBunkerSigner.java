@@ -3,6 +3,8 @@ package xyz.tcheeric.nsecbunker.client.signer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import nostr.id.Identity;
+import xyz.tcheeric.nsecbunker.client.request.RequestExecutor;
+import xyz.tcheeric.nsecbunker.client.request.RequestQueue;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Encoder;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
@@ -36,6 +38,7 @@ public class NsecBunkerSigner implements RemoteSigner {
     private final Duration requestTimeout;
     private final AtomicBoolean connected;
     private final Function<Nip46Request, Nip46Response> requestHandler;
+    private final RequestExecutor requestExecutor;
 
     @Getter
     private final Identity ephemeralIdentity;
@@ -69,6 +72,11 @@ public class NsecBunkerSigner implements RemoteSigner {
         this.decoder = decoder != null ? decoder : new Nip46Decoder();
         this.connected = new AtomicBoolean(false);
         this.requestTimeout = config.getRequestTimeout();
+        this.requestExecutor = requestHandler == null ? null :
+                new RequestExecutor(
+                        new RequestQueue(),
+                        req -> CompletableFuture.supplyAsync(() -> requestHandler.apply(req)),
+                        RequestExecutor.Config.builder().timeout(requestTimeout).build());
 
         config.validate();
 
@@ -172,23 +180,15 @@ public class NsecBunkerSigner implements RemoteSigner {
     }
 
     private CompletableFuture<Nip46Response> sendRequest(Nip46Request request) {
-        if (requestHandler == null) {
+        if (requestExecutor == null) {
             return CompletableFuture.failedFuture(
                     new UnsupportedOperationException("No request handler configured for NsecBunkerSigner"));
         }
 
-        try {
-            Nip46Response response = requestHandler.apply(request);
-            if (response == null) {
-                return CompletableFuture.failedFuture(new SignerException("Null response from request handler"));
-            }
-            if (response.isError()) {
-                return CompletableFuture.failedFuture(new SignerException(response.getError().toString()));
-            }
-            return CompletableFuture.completedFuture(response);
-        } catch (Exception e) {
-            return CompletableFuture.failedFuture(e);
-        }
+        return requestExecutor.execute(request)
+                .exceptionally(ex -> {
+                    throw new SignerException("Request failed: " + ex.getMessage(), ex);
+                });
     }
 
     private Identity createIdentity(String privateKey) {
