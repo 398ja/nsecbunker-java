@@ -51,3 +51,4 @@ nbdist/
 # Java
 *.class
 hs_err_pid*
+/.claude/
