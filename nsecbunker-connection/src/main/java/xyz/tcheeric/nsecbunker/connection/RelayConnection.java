@@ -82,9 +82,14 @@ public class RelayConnection {
     private volatile WebSocket webSocket;
 
     /**
-     * Registered listeners.
+     * Registered relay listeners.
      */
     private final List<RelayListener> listeners;
+
+    /**
+     * Registered connection listeners.
+     */
+    private final List<ConnectionListener> connectionListeners;
 
     /**
      * Latch for synchronous connect.
@@ -134,6 +139,7 @@ public class RelayConnection {
         this.objectMapper = new ObjectMapper();
         this.state = new AtomicReference<>(ConnectionState.DISCONNECTED);
         this.listeners = new CopyOnWriteArrayList<>();
+        this.connectionListeners = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -172,6 +178,26 @@ public class RelayConnection {
      */
     public void removeListener(RelayListener listener) {
         listeners.remove(listener);
+    }
+
+    /**
+     * Adds a connection listener to receive connection lifecycle events.
+     *
+     * @param listener the listener to add
+     */
+    public void addConnectionListener(ConnectionListener listener) {
+        if (listener != null) {
+            connectionListeners.add(listener);
+        }
+    }
+
+    /**
+     * Removes a connection listener.
+     *
+     * @param listener the listener to remove
+     */
+    public void removeConnectionListener(ConnectionListener listener) {
+        connectionListeners.remove(listener);
     }
 
     /**
@@ -359,6 +385,14 @@ public class RelayConnection {
                     log.warn("Error in listener onStateChange: {}", e.getMessage());
                 }
             }
+            // Notify connection listeners
+            for (ConnectionListener listener : connectionListeners) {
+                try {
+                    listener.onStateChanged(url, oldState, newState);
+                } catch (Exception e) {
+                    log.warn("Error in ConnectionListener.onStateChanged: {}", e.getMessage());
+                }
+            }
         }
     }
 
@@ -371,6 +405,14 @@ public class RelayConnection {
                 listener.onError(this, t);
             } catch (Exception e) {
                 log.warn("Error in listener onError: {}", e.getMessage());
+            }
+        }
+        // Notify connection listeners
+        for (ConnectionListener listener : connectionListeners) {
+            try {
+                listener.onError(url, t);
+            } catch (Exception e) {
+                log.warn("Error in ConnectionListener.onError: {}", e.getMessage());
             }
         }
     }
@@ -540,6 +582,15 @@ public class RelayConnection {
                 }
             }
 
+            // Notify connection listeners
+            for (ConnectionListener listener : connectionListeners) {
+                try {
+                    listener.onConnected(url);
+                } catch (Exception e) {
+                    log.warn("Error in ConnectionListener.onConnected: {}", e.getMessage());
+                }
+            }
+
             CountDownLatch latch = connectLatch;
             if (latch != null) {
                 latch.countDown();
@@ -572,6 +623,15 @@ public class RelayConnection {
                     listener.onDisconnect(RelayConnection.this, code, reason);
                 } catch (Exception e) {
                     log.warn("Error in listener onDisconnect: {}", e.getMessage());
+                }
+            }
+
+            // Notify connection listeners
+            for (ConnectionListener listener : connectionListeners) {
+                try {
+                    listener.onDisconnected(url, code, reason);
+                } catch (Exception e) {
+                    log.warn("Error in ConnectionListener.onDisconnected: {}", e.getMessage());
                 }
             }
 
