@@ -221,7 +221,7 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 1.1.1 | Create multi-module Maven project structure | Root pom.xml with modules | M | d96ba2c | - | ✅ DONE |
 | 1.1.2 | Setup parent POM with dependency management | Added OkHttp, Micrometer, Testcontainers, Logback; fixed nostr-java groupId to xyz.tcheeric | S | d53a0a3 | 1.1.1 | ✅ DONE |
-| 1.1.3 | Configure build plugins (compiler, javadoc, sources) | Java 17+, generate artifacts | S | | 1.1.2 | ⬜ TODO |
+| 1.1.3 | Configure build plugins (compiler, javadoc, sources) | Enhanced compiler (release flag, -parameters, lint), JAR manifest, flatten plugin, failsafe for IT | S | 59f9675 | 1.1.2 | ✅ DONE |
 | 1.1.4 | Setup code quality tools (Checkstyle, SpotBugs, PMD) | Enforce code standards | M | | 1.1.2 | ⬜ TODO |
 | 1.1.5 | Configure CI/CD (GitHub Actions) | Build, test, quality checks | M | | 1.1.3, 1.1.4 | ⬜ TODO |
 | 1.1.6 | Create README and basic documentation structure | Getting started, contributing | S | | 1.1.1 | ⬜ TODO |
