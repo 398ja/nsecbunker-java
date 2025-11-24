@@ -267,8 +267,8 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 1.5.1 | Create mock relay server | For testing without real relays | L | 12fd202 | 1.3.2 | ✅ DONE |
 | 1.5.2 | Create mock bunker server | Simulate bunker responses | L | 585e5b1 | 1.4.1, 1.4.2 | ✅ DONE |
-| 1.5.3 | Create test fixtures and builders | Reusable test data | M | | 1.2.* | ⬜ TODO |
-| 1.5.4 | Create integration test base classes | Common setup for integration tests | M | | 1.5.1, 1.5.2 | ⬜ TODO |
+| 1.5.3 | Create test fixtures and builders | Reusable test data | M | 5eb044c | 1.2.* | ✅ DONE |
+| 1.5.4 | Create integration test base classes | Common setup for integration tests | M | 5eb044c | 1.5.1, 1.5.2 | ✅ DONE |
 
 ---
 
