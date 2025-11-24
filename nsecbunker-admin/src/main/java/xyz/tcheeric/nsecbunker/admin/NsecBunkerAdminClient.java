@@ -11,6 +11,8 @@ import xyz.tcheeric.nsecbunker.connection.RelayListener;
 import xyz.tcheeric.nsecbunker.connection.RelayPool;
 import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
 import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
+import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
+import xyz.tcheeric.nsecbunker.admin.policy.PolicyManager;
 import xyz.tcheeric.nsecbunker.core.exception.BunkerConnectionException;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
@@ -356,6 +358,15 @@ public class NsecBunkerAdminClient implements Closeable {
      */
     public KeyManager keyManager() {
         return new DefaultKeyManager(this);
+    }
+
+    /**
+     * Provides access to policy management operations backed by this client.
+     *
+     * @return a {@link PolicyManager} instance using this admin client
+     */
+    public PolicyManager policyManager() {
+        return new DefaultPolicyManager(this);
     }
 
     /**
