@@ -390,12 +390,12 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.3.1 | Implement `RequestQueue` | Queue pending requests | M | | 3.1.2 | ⬜ TODO |
-| 3.3.2 | Implement `RequestExecutor` | Execute requests async | M | | 3.3.1 | ⬜ TODO |
-| 3.3.3 | Add request timeout handling | CompletableFuture timeouts | S | | 3.3.2 | ⬜ TODO |
-| 3.3.4 | Add request cancellation | Cancel pending requests | S | | 3.3.2 | ⬜ TODO |
-| 3.3.5 | Implement request retry logic | Retry on transient failures | M | | 3.3.2 | ⬜ TODO |
-| 3.3.6 | Implement error recovery strategies | Fallback, circuit breaker | L | | 3.3.5 | ⬜ TODO |
+| 3.3.1 | Implement `RequestQueue` | Queue pending requests | M | aa2e180 | 3.1.2 | ✅ DONE |
+| 3.3.2 | Implement `RequestExecutor` | Execute requests async | M | aa2e180 | 3.3.1 | ✅ DONE |
+| 3.3.3 | Add request timeout handling | CompletableFuture timeouts | S | aa2e180 | 3.3.2 | ✅ DONE |
+| 3.3.4 | Add request cancellation | Cancel pending requests | S | aa2e180 | 3.3.2 | ✅ DONE |
+| 3.3.5 | Implement request retry logic | Retry on transient failures | M | aa2e180 | 3.3.2 | ✅ DONE |
+| 3.3.6 | Implement error recovery strategies | Fallback, circuit breaker | L | aa2e180 | 3.3.5 | ✅ DONE |
 
 #### 3.4 Batch Operations
 
