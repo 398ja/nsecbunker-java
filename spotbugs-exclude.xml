@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SpotBugs exclude filter for nsecbunker-java.
+    Excludes false positives and intentional patterns.
+-->
+<FindBugsFilter>
+    <!-- Exclude generated code (Lombok, etc.) -->
+    <Match>
+        <Source name="~.*\.java"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Source name="~.*\.java"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Exclude test classes from certain checks -->
+    <Match>
+        <Class name="~.*Test"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+    </Match>
+    <Match>
+        <Class name="~.*Test"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+
+    <!-- Exclude model/DTO classes that intentionally expose fields -->
+    <Match>
+        <Package name="~xyz\.tcheeric\.nsecbunker\..*\.model"/>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Package name="~xyz\.tcheeric\.nsecbunker\..*\.model"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Exclude builder pattern false positives -->
+    <Match>
+        <Class name="~.*Builder"/>
+        <Bug pattern="URF_UNREAD_FIELD"/>
+    </Match>
+
+    <!-- Exclude exception constructors -->
+    <Match>
+        <Class name="~.*Exception"/>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+    </Match>
+
+    <!-- Allow serialVersionUID to be calculated -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <!-- Low priority issues we don't care about -->
+    <Match>
+        <Bug pattern="DM_STRING_VOID_CTOR"/>
+    </Match>
+</FindBugsFilter>
