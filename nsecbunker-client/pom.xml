@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.cashutools</groupId>
+        <artifactId>nsecbunker-java</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>nsecbunker-client</artifactId>
+    <packaging>jar</packaging>
+
+    <name>nsecBunker Client</name>
+    <description>Remote signer client for nsecBunker</description>
+
+    <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>com.github.cashutools</groupId>
+            <artifactId>nsecbunker-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cashutools</groupId>
+            <artifactId>nsecbunker-connection</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cashutools</groupId>
+            <artifactId>nsecbunker-protocol</artifactId>
+        </dependency>
+
+        <!-- Nostr Java -->
+        <dependency>
+            <groupId>nostr-java</groupId>
+            <artifactId>nostr-java-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nostr-java</groupId>
+            <artifactId>nostr-java-crypto</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

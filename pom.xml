@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.cashutools</groupId>
+    <artifactId>nsecbunker-java</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>nsecBunker Java Library</name>
+    <description>Java client library for interacting with nsecBunker - NIP-46 remote key signing</description>
+    <url>https://github.com/cashutools/nsecbunker-java</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Eric</name>
+            <organization>CashuTools</organization>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/cashutools/nsecbunker-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:cashutools/nsecbunker-java.git</developerConnection>
+        <url>https://github.com/cashutools/nsecbunker-java/tree/main</url>
+    </scm>
+
+    <modules>
+        <module>nsecbunker-core</module>
+        <module>nsecbunker-connection</module>
+        <module>nsecbunker-protocol</module>
+        <module>nsecbunker-admin</module>
+        <module>nsecbunker-client</module>
+        <module>nsecbunker-monitoring</module>
+        <module>nsecbunker-account</module>
+        <module>nsecbunker-spring-boot-starter</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
+
+        <!-- Dependency versions -->
+        <nostr-java.version>0.7.0</nostr-java.version>
+        <jackson.version>2.17.0</jackson.version>
+        <slf4j.version>2.0.12</slf4j.version>
+        <junit.version>5.10.2</junit.version>
+        <mockito.version>5.11.0</mockito.version>
+        <assertj.version>3.25.3</assertj.version>
+        <awaitility.version>4.2.1</awaitility.version>
+        <lombok.version>1.18.32</lombok.version>
+        <spring-boot.version>3.2.4</spring-boot.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.2</maven-gpg-plugin.version>
+        <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
+        <checkstyle.version>10.14.2</checkstyle.version>
+        <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.3.1</spotbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-connection</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-admin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-monitoring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.cashutools</groupId>
+                <artifactId>nsecbunker-account</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Nostr -->
+            <dependency>
+                <groupId>nostr-java</groupId>
+                <artifactId>nostr-java-api</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nostr-java</groupId>
+                <artifactId>nostr-java-event</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>nostr-java</groupId>
+                <artifactId>nostr-java-crypto</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Compiler -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- Testing -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+
+                <!-- Code Coverage -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Checkstyle -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configLocation>checkstyle.xml</configLocation>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>false</failsOnError>
+                        <linkXRef>false</linkXRef>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>validate</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- SpotBugs -->
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <xmlOutput>true</xmlOutput>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- PMD -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <linkXRef>false</linkXRef>
+                        <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                        <minimumTokens>100</minimumTokens>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                                <goal>cpd-check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Source JAR -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Javadoc JAR -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <source>${java.version}</source>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- GPG Signing -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>quality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
