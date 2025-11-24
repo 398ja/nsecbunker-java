@@ -254,10 +254,10 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 1.4.1 | Implement `Nip46Request` model | Request format with id, method, params | S | | 1.1.1 | ⬜ TODO |
-| 1.4.2 | Implement `Nip46Response` model | Response format with id, result/error | S | | 1.1.1 | ⬜ TODO |
-| 1.4.3 | Implement `Nip46Encoder` | JSON encoding for requests | S | | 1.4.1 | ⬜ TODO |
-| 1.4.4 | Implement `Nip46Decoder` | JSON decoding for responses | S | | 1.4.2 | ⬜ TODO |
+| 1.4.1 | Implement `Nip46Request` model | Request format with id, method, params | S | PENDING | 1.1.1 | ✅ DONE |
+| 1.4.2 | Implement `Nip46Response` model | Response format with id, result/error | S | PENDING | 1.1.1 | ✅ DONE |
+| 1.4.3 | Implement `Nip46Encoder` | JSON encoding for requests | S | PENDING | 1.4.1 | ✅ DONE |
+| 1.4.4 | Implement `Nip46Decoder` | JSON decoding for responses | S | PENDING | 1.4.2 | ✅ DONE |
 | 1.4.5 | Implement `Nip04Crypto` | NIP-04 encryption/decryption | M | | 1.1.2 | ⬜ TODO |
 | 1.4.6 | Add request/response correlation | Match responses to requests by ID | M | | 1.4.1, 1.4.2 | ⬜ TODO |
 
