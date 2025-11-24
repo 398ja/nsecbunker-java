@@ -410,10 +410,10 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.5.1 | Implement `connect()` method | Initial connection request | M | | 3.1.4 | ⬜ TODO |
-| 3.5.2 | Add authorization URL handling | Handle auth_url responses | M | | 3.5.1 | ⬜ TODO |
-| 3.5.3 | Add token-based connection | Connect with bunker token | S | | 3.5.1 | ⬜ TODO |
-| 3.5.4 | Implement connection state management | Track connection state | M | | 3.5.1 | ⬜ TODO |
+| 3.5.1 | Implement `connect()` method | Initial connection request | M | f0a791b | 3.1.4 | ✅ DONE |
+| 3.5.2 | Add authorization URL handling | Handle auth_url responses | M | f0a791b | 3.5.1 | ✅ DONE |
+| 3.5.3 | Add token-based connection | Connect with bunker token | S | f0a791b | 3.5.1 | ✅ DONE |
+| 3.5.4 | Implement connection state management | Track connection state | M | f0a791b | 3.5.1 | ✅ DONE |
 
 #### 3.6 Integration with nostr-java
 
