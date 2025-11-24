@@ -247,7 +247,7 @@ nsecbunker-java/
 | 1.3.2 | Implement `RelayConnection` | OkHttp WebSocket, ConnectionState enum, RelayListener, 31 tests | L | 6da84ed | 1.1.2 | ✅ DONE |
 | 1.3.3 | Implement `RelayPool` | Multi-relay management, broadcasting, deduplication, RelayPoolListener, 35 tests | L | a1e9de9 | 1.3.2 | ✅ DONE |
 | 1.3.4 | Implement `ConnectionListener` interface | ConnectionListener with default methods, LoggingConnectionListener, CompositeConnectionListener, RelayConnection integration, 23 tests | S | e8454d1 | 1.3.2 | ✅ DONE |
-| 1.3.5 | Implement `ReconnectionStrategy` | Exponential backoff, max retries | M | | 1.3.2 | ⬜ TODO |
+| 1.3.5 | Implement `ReconnectionStrategy` | ReconnectionStrategy interface, ExponentialBackoffStrategy with jitter, FixedDelayStrategy, NoReconnectionStrategy, RelayConnection integration, 44 tests | M | 104c98c | 1.3.2 | ✅ DONE |
 | 1.3.6 | Add connection health monitoring | Ping, latency tracking | M | | 1.3.3 | ⬜ TODO |
 
 #### 1.4 Protocol Layer (`nsecbunker-client/protocol`)
