@@ -322,13 +322,13 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 2.4.1 | Create `PermissionManager` interface | Abstract permission operations | S | | 2.1.1 | ⬜ TODO |
-| 2.4.2 | Implement `DefaultPermissionManager` | Concrete implementation | M | | 2.4.1 | ⬜ TODO |
-| 2.4.3 | Implement `grantPermission(keyName, userPubkey, policy)` | Create KeyUser with policy | M | | 2.4.2 | ⬜ TODO |
-| 2.4.4 | Implement `revokePermission(keyName, userPubkey)` | Remove KeyUser access | S | | 2.4.2 | ⬜ TODO |
-| 2.4.5 | Implement `listKeyUsers(keyName)` | Get all users for key | S | | 2.4.2 | ⬜ TODO |
-| 2.4.6 | Implement `getPermissions(keyName, userPubkey)` | Get specific user permissions | S | | 2.4.2 | ⬜ TODO |
-| 2.4.7 | Implement `updateKeyUserDescription(keyName, userPubkey, desc)` | Update user metadata | S | | 2.4.2 | ⬜ TODO |
+| 2.4.1 | Create `PermissionManager` interface | Abstract permission operations | S | 24d9e9f | 2.1.1 | ✅ DONE |
+| 2.4.2 | Implement `DefaultPermissionManager` | Concrete implementation | M | 24d9e9f | 2.4.1 | ✅ DONE |
+| 2.4.3 | Implement `grantPermission(keyName, userPubkey, policy)` | Create KeyUser with policy | M | 24d9e9f | 2.4.2 | ✅ DONE |
+| 2.4.4 | Implement `revokePermission(keyName, userPubkey)` | Remove KeyUser access | S | 24d9e9f | 2.4.2 | ✅ DONE |
+| 2.4.5 | Implement `listKeyUsers(keyName)` | Get all users for key | S | 24d9e9f | 2.4.2 | ✅ DONE |
+| 2.4.6 | Implement `getPermissions(keyName, userPubkey)` | Get specific user permissions | S | 24d9e9f | 2.4.2 | ✅ DONE |
+| 2.4.7 | Implement `updateKeyUserDescription(keyName, userPubkey, desc)` | Update user metadata | S | 24d9e9f | 2.4.2 | ✅ DONE |
 
 #### 2.5 Token Management (`nsecbunker-admin/token`)
 
