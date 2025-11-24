@@ -295,15 +295,15 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 2.2.1 | Create `KeyManager` interface | Abstract key operations | S | | 2.1.1 | ⬜ TODO |
-| 2.2.2 | Implement `DefaultKeyManager` | Concrete implementation | M | | 2.2.1 | ⬜ TODO |
-| 2.2.3 | Implement `createKey(name, nsec, passphrase)` | Import existing key | S | | 2.2.2 | ⬜ TODO |
-| 2.2.4 | Implement `createKey(name, passphrase)` | Generate new key in bunker | S | | 2.2.2 | ⬜ TODO |
-| 2.2.5 | Implement `listKeys()` | Get all keys with metadata | S | | 2.2.2 | ⬜ TODO |
-| 2.2.6 | Implement `unlockKey(name, passphrase)` | Decrypt key in bunker | S | | 2.2.2 | ⬜ TODO |
-| 2.2.7 | Implement `deleteKey(name)` | Remove key from bunker | S | | 2.2.2 | ⬜ TODO |
-| 2.2.8 | Implement `getKeyDetails(name)` | Get single key metadata | S | | 2.2.2 | ⬜ TODO |
-| 2.2.9 | Implement `rotateKey(oldName, newName, passphrase)` | Create new + migrate permissions | L | | 2.2.3, 2.4.* | ⬜ TODO |
+| 2.2.1 | Create `KeyManager` interface | Abstract key operations | S | acdaf63 | 2.1.1 | ✅ DONE |
+| 2.2.2 | Implement `DefaultKeyManager` | Concrete implementation | M | acdaf63 | 2.2.1 | ✅ DONE |
+| 2.2.3 | Implement `createKey(name, nsec, passphrase)` | Import existing key | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.4 | Implement `createKey(name, passphrase)` | Generate new key in bunker | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.5 | Implement `listKeys()` | Get all keys with metadata | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.6 | Implement `unlockKey(name, passphrase)` | Decrypt key in bunker | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.7 | Implement `deleteKey(name)` | Remove key from bunker | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.8 | Implement `getKeyDetails(name)` | Get single key metadata | S | acdaf63 | 2.2.2 | ✅ DONE |
+| 2.2.9 | Implement `rotateKey(oldName, newName, passphrase)` | Create new + migrate permissions | L | acdaf63 | 2.2.3, 2.4.* | ✅ DONE |
 
 #### 2.3 Policy Management (`nsecbunker-admin/policy`)
 
