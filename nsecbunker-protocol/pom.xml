@@ -37,6 +37,10 @@
             <groupId>xyz.tcheeric</groupId>
             <artifactId>nostr-java-crypto</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xyz.tcheeric</groupId>
+            <artifactId>nostr-java-encryption</artifactId>
+        </dependency>
 
         <!-- Jackson -->
         <dependency>
