@@ -173,4 +173,28 @@ class NsecBunkerSignerTest {
         String pub = signer.getPublicKey().join();
         assertThat(pub).isEqualTo("result-get_public_key");
     }
+
+    /**
+     * Ensures auth_url responses set state appropriately.
+     */
+    @Test
+    void shouldHandleAuthUrlResponse() {
+        // Arrange
+        NsecBunkerSigner signer = new NsecBunkerSigner(
+                SignerConfig.builder()
+                        .bunkerPubkey(TEST_BUNKER_PUBKEY)
+                        .clientPrivateKey(TEST_CLIENT_PRIVKEY)
+                        .relays(List.of("wss://relay.example.com"))
+                        .build(),
+                request -> Nip46Response.success(request.getId(), "auth_url:https://auth"),
+                null,
+                null
+        );
+
+        // Act + Assert
+        assertThatThrownBy(() -> signer.connect().join())
+                .hasCauseInstanceOf(SignerException.class)
+                .hasMessageContaining("Authorization required");
+        assertThat(signer.getState()).isEqualTo(SignerState.AUTH_URL_REQUIRED);
+    }
 }

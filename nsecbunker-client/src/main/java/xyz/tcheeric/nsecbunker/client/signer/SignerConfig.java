@@ -29,6 +29,11 @@ public final class SignerConfig {
     @Builder.Default
     private final boolean useEphemeralKey = true;
 
+    /**
+     * Optional token-based connection string.
+     */
+    private final String bunkerToken;
+
     public void validate() {
         if (bunkerPubkey == null || bunkerPubkey.isBlank()) {
             throw new IllegalStateException("Bunker public key is required");

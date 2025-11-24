@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -37,6 +38,7 @@ public class NsecBunkerSigner implements RemoteSigner {
     private final Nip46Decoder decoder;
     private final Duration requestTimeout;
     private final AtomicBoolean connected;
+    private final AtomicReference<SignerState> state;
     private final Function<Nip46Request, Nip46Response> requestHandler;
     private final RequestExecutor requestExecutor;
 
@@ -71,6 +73,7 @@ public class NsecBunkerSigner implements RemoteSigner {
         this.encoder = encoder != null ? encoder : new Nip46Encoder();
         this.decoder = decoder != null ? decoder : new Nip46Decoder();
         this.connected = new AtomicBoolean(false);
+        this.state = new AtomicReference<>(SignerState.DISCONNECTED);
         this.requestTimeout = config.getRequestTimeout();
         this.requestExecutor = requestHandler == null ? null :
                 new RequestExecutor(
@@ -103,16 +106,22 @@ public class NsecBunkerSigner implements RemoteSigner {
 
         return sendRequest(connectRequest)
                 .thenAccept(response -> {
+                    if (isAuthUrl(response.getResult())) {
+                        state.set(SignerState.AUTH_URL_REQUIRED);
+                        throw new SignerException("Authorization required: " + response.getResult());
+                    }
                     if (!"ack".equalsIgnoreCase(response.getResult())) {
                         throw new SignerException("Connect failed: " + response.getResult());
                     }
                     connected.set(true);
+                    state.set(SignerState.CONNECTED);
                 });
     }
 
     @Override
     public CompletableFuture<Void> disconnect() {
         connected.set(false);
+        state.set(SignerState.DISCONNECTED);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -124,6 +133,10 @@ public class NsecBunkerSigner implements RemoteSigner {
     @Override
     public boolean isConnected() {
         return connected.get();
+    }
+
+    public SignerState getState() {
+        return state.get();
     }
 
     @Override
@@ -177,6 +190,10 @@ public class NsecBunkerSigner implements RemoteSigner {
     public CompletableFuture<String> ping() {
         Nip46Request request = Nip46Request.ping();
         return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    private boolean isAuthUrl(String result) {
+        return result != null && result.startsWith("auth_url:");
     }
 
     private CompletableFuture<Nip46Response> sendRequest(Nip46Request request) {
