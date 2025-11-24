@@ -334,13 +334,13 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 2.5.1 | Create `TokenManager` interface | Abstract token operations | S | | 2.1.1 | ⬜ TODO |
-| 2.5.2 | Implement `DefaultTokenManager` | Concrete implementation | M | | 2.5.1 | ⬜ TODO |
-| 2.5.3 | Implement `createToken(keyName, clientName, policyId, duration)` | Create access token | M | | 2.5.2 | ⬜ TODO |
-| 2.5.4 | Implement `listTokens(keyName)` | Get all tokens for key | S | | 2.5.2 | ⬜ TODO |
-| 2.5.5 | Implement `getToken(tokenId)` | Get single token details | S | | 2.5.2 | ⬜ TODO |
-| 2.5.6 | Implement `revokeToken(tokenId)` | Invalidate token | S | | 2.5.2 | ⬜ TODO |
-| 2.5.7 | Implement `validateToken(token)` | Check token validity | S | | 2.5.2 | ⬜ TODO |
+| 2.5.1 | Create `TokenManager` interface | Abstract token operations | S | a247a9e | 2.1.1 | ✅ DONE |
+| 2.5.2 | Implement `DefaultTokenManager` | Concrete implementation | M | a247a9e | 2.5.1 | ✅ DONE |
+| 2.5.3 | Implement `createToken(keyName, clientName, policyId, duration)` | Create access token | M | a247a9e | 2.5.2 | ✅ DONE |
+| 2.5.4 | Implement `listTokens(keyName)` | Get all tokens for key | S | a247a9e | 2.5.2 | ✅ DONE |
+| 2.5.5 | Implement `getToken(tokenId)` | Get single token details | S | a247a9e | 2.5.2 | ✅ DONE |
+| 2.5.6 | Implement `revokeToken(tokenId)` | Invalidate token | S | a247a9e | 2.5.2 | ✅ DONE |
+| 2.5.7 | Implement `validateToken(token)` | Check token validity | S | a247a9e | 2.5.2 | ✅ DONE |
 
 #### 2.6 Integration Tests
 
