@@ -237,6 +237,67 @@ public class RelayPool implements AutoCloseable {
     }
 
     /**
+     * Returns health information for all relays.
+     *
+     * @return map of relay URL to connection health
+     */
+    public Map<String, ConnectionHealth> getHealthMap() {
+        return relays.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().getHealth()
+                ));
+    }
+
+    /**
+     * Returns only healthy relay connections.
+     *
+     * @return list of healthy relay connections
+     */
+    public List<RelayConnection> getHealthyRelays() {
+        return relays.values().stream()
+                .filter(r -> r.getHealth().isHealthy())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the number of healthy relays.
+     *
+     * @return healthy relay count
+     */
+    public int getHealthyCount() {
+        return (int) relays.values().stream()
+                .filter(r -> r.getHealth().isHealthy())
+                .count();
+    }
+
+    /**
+     * Starts health monitoring on all relays.
+     *
+     * <p>This creates and starts a health monitor for each relay in the pool.
+     */
+    public void startHealthMonitoring() {
+        for (RelayConnection relay : relays.values()) {
+            RelayHealthMonitor monitor = relay.getHealthMonitor();
+            if (!monitor.isRunning()) {
+                monitor.start();
+            }
+        }
+    }
+
+    /**
+     * Stops health monitoring on all relays.
+     */
+    public void stopHealthMonitoring() {
+        for (RelayConnection relay : relays.values()) {
+            RelayHealthMonitor monitor = relay.getHealthMonitor();
+            if (monitor.isRunning()) {
+                monitor.stop();
+            }
+        }
+    }
+
+    /**
      * Checks if minimum required relays are connected.
      *
      * @return true if enough relays are connected

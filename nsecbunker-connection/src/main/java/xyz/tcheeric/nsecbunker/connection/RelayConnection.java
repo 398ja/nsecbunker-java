@@ -138,6 +138,11 @@ public class RelayConnection {
     private volatile boolean closedByUser;
 
     /**
+     * Health monitor for this connection.
+     */
+    private volatile RelayHealthMonitor healthMonitor;
+
+    /**
      * Creates a new RelayConnection with default settings.
      *
      * @param url the relay WebSocket URL
@@ -307,6 +312,40 @@ public class RelayConnection {
     }
 
     /**
+     * Returns the health monitor for this connection.
+     *
+     * <p>The health monitor is lazily created on first access. Once created,
+     * it must be explicitly started with {@link HealthMonitor#start()}.
+     *
+     * @return the health monitor
+     */
+    public synchronized RelayHealthMonitor getHealthMonitor() {
+        if (healthMonitor == null) {
+            healthMonitor = new RelayHealthMonitor(this);
+        }
+        return healthMonitor;
+    }
+
+    /**
+     * Returns the current health status of this connection.
+     *
+     * <p>If a health monitor has not been created, this returns a basic
+     * health snapshot based on the current connection state.
+     *
+     * @return the connection health
+     */
+    public ConnectionHealth getHealth() {
+        RelayHealthMonitor monitor = healthMonitor;
+        if (monitor != null) {
+            return monitor.getHealth();
+        }
+        // Return basic health without monitor
+        return isConnected()
+                ? ConnectionHealth.connected(url)
+                : ConnectionHealth.disconnected(url);
+    }
+
+    /**
      * Connects to the relay synchronously.
      *
      * @throws BunkerConnectionException if connection fails
@@ -396,7 +435,11 @@ public class RelayConnection {
         }
 
         log.debug("Sending to {}: {}", url, message);
-        return ws.send(message);
+        boolean sent = ws.send(message);
+        if (sent && healthMonitor != null) {
+            healthMonitor.recordMessageSent();
+        }
+        return sent;
     }
 
     /**
@@ -462,6 +505,12 @@ public class RelayConnection {
 
         closedByUser = true;
         cancelReconnect();
+
+        // Stop health monitor if running
+        RelayHealthMonitor monitor = healthMonitor;
+        if (monitor != null && monitor.isRunning()) {
+            monitor.stop();
+        }
 
         state.set(ConnectionState.DISCONNECTING);
         WebSocket ws = webSocket;
@@ -653,6 +702,11 @@ public class RelayConnection {
      * Parses and dispatches incoming messages.
      */
     private void handleMessage(String text) {
+        // Track received message
+        if (healthMonitor != null) {
+            healthMonitor.recordMessageReceived();
+        }
+
         // Notify raw message listeners
         for (RelayListener listener : listeners) {
             try {
