@@ -5,7 +5,7 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.cashutools</groupId>
+    <groupId>xyz.tcheeric</groupId>
     <artifactId>nsecbunker-java</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -53,14 +53,18 @@
         <java.version>17</java.version>
 
         <!-- Dependency versions -->
-        <nostr-java.version>0.7.0</nostr-java.version>
+        <nostr-java.version>1.1.0</nostr-java.version>
         <jackson.version>2.17.0</jackson.version>
+        <okhttp.version>4.12.0</okhttp.version>
         <slf4j.version>2.0.12</slf4j.version>
+        <logback.version>1.5.3</logback.version>
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
         <assertj.version>3.25.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
+        <testcontainers.version>1.19.7</testcontainers.version>
         <lombok.version>1.18.32</lombok.version>
+        <micrometer.version>1.12.4</micrometer.version>
         <spring-boot.version>3.2.4</spring-boot.version>
 
         <!-- Plugin versions -->
@@ -80,59 +84,88 @@
         <dependencies>
             <!-- Internal modules -->
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-connection</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-protocol</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-admin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-monitoring</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.cashutools</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nsecbunker-account</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Nostr -->
+            <!-- Nostr Java (xyz.tcheeric) -->
             <dependency>
-                <groupId>nostr-java</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nostr-java-api</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
             <dependency>
-                <groupId>nostr-java</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nostr-java-event</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
             <dependency>
-                <groupId>nostr-java</groupId>
+                <groupId>xyz.tcheeric</groupId>
                 <artifactId>nostr-java-crypto</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
+            <dependency>
+                <groupId>xyz.tcheeric</groupId>
+                <artifactId>nostr-java-id</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xyz.tcheeric</groupId>
+                <artifactId>nostr-java-encryption</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xyz.tcheeric</groupId>
+                <artifactId>nostr-java-client</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xyz.tcheeric</groupId>
+                <artifactId>nostr-java-base</artifactId>
+                <version>${nostr-java.version}</version>
+            </dependency>
 
-            <!-- Jackson -->
+            <!-- Jackson BOM -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Jackson (versions managed by BOM) -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -144,9 +177,34 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- OkHttp (WebSocket client) -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-bom</artifactId>
+                <version>${okhttp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>mockwebserver</artifactId>
+                <version>${okhttp.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Logging -->
@@ -155,6 +213,16 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
 
             <!-- Lombok -->
             <dependency>
@@ -162,6 +230,25 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <!-- Micrometer (Metrics) -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-bom</artifactId>
+                <version>${micrometer.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
             </dependency>
 
             <!-- Spring Boot -->
@@ -173,10 +260,35 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Testing -->
+            <!-- Testing - JUnit BOM -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -202,6 +314,27 @@
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
                 <version>${awaitility.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Testcontainers (Integration Testing) -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

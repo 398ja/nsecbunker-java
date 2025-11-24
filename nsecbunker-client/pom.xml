@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.github.cashutools</groupId>
+        <groupId>xyz.tcheeric</groupId>
         <artifactId>nsecbunker-java</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
@@ -20,25 +20,25 @@
     <dependencies>
         <!-- Internal -->
         <dependency>
-            <groupId>com.github.cashutools</groupId>
+            <groupId>xyz.tcheeric</groupId>
             <artifactId>nsecbunker-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.cashutools</groupId>
+            <groupId>xyz.tcheeric</groupId>
             <artifactId>nsecbunker-connection</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.cashutools</groupId>
+            <groupId>xyz.tcheeric</groupId>
             <artifactId>nsecbunker-protocol</artifactId>
         </dependency>
 
         <!-- Nostr Java -->
         <dependency>
-            <groupId>nostr-java</groupId>
+            <groupId>xyz.tcheeric</groupId>
             <artifactId>nostr-java-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>nostr-java</groupId>
+            <groupId>xyz.tcheeric</groupId>
             <artifactId>nostr-java-crypto</artifactId>
         </dependency>
 
