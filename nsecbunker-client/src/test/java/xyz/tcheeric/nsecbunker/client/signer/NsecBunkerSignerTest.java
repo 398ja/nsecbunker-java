@@ -121,4 +121,56 @@ class NsecBunkerSignerTest {
         assertThat(signer.getEphemeralIdentity()).isNotNull();
         assertThat(signer.getCommunicationIdentity()).isEqualTo(signer.getEphemeralIdentity());
     }
+
+    /**
+     * Ensures signing and crypto methods issue correct requests and parse results.
+     */
+    @Test
+    void shouldPerformSigningAndCryptoOperations() {
+        // Arrange
+        AtomicReference<Nip46Request> captured = new AtomicReference<>();
+        NsecBunkerSigner signer = new NsecBunkerSigner(
+                SignerConfig.builder()
+                        .bunkerPubkey(TEST_BUNKER_PUBKEY)
+                        .clientPrivateKey(TEST_CLIENT_PRIVKEY)
+                        .relays(List.of("wss://relay.example.com"))
+                        .build(),
+                request -> {
+                    captured.set(request);
+                    return Nip46Response.success(request.getId(), "result-" + request.getMethod());
+                },
+                null,
+                null
+        );
+
+        // Act / Assert: sign_event
+        String sig = signer.signEvent("{\"id\":1}").join();
+        assertThat(sig).isEqualTo("result-sign_event");
+        assertThat(captured.get().getMethod()).isEqualTo("sign_event");
+
+        // nip04_encrypt
+        String enc04 = signer.nip04Encrypt(TEST_BUNKER_PUBKEY, "hi").join();
+        assertThat(enc04).isEqualTo("result-nip04_encrypt");
+        assertThat(captured.get().getParams()).contains(TEST_BUNKER_PUBKEY, "hi");
+
+        // nip04_decrypt
+        String dec04 = signer.nip04Decrypt(TEST_BUNKER_PUBKEY, "cipher").join();
+        assertThat(dec04).isEqualTo("result-nip04_decrypt");
+
+        // nip44_encrypt
+        String enc44 = signer.nip44Encrypt(TEST_BUNKER_PUBKEY, "hi").join();
+        assertThat(enc44).isEqualTo("result-nip44_encrypt");
+
+        // nip44_decrypt
+        String dec44 = signer.nip44Decrypt(TEST_BUNKER_PUBKEY, "cipher").join();
+        assertThat(dec44).isEqualTo("result-nip44_decrypt");
+
+        // ping
+        String pong = signer.ping().join();
+        assertThat(pong).isEqualTo("result-ping");
+
+        // get_public_key
+        String pub = signer.getPublicKey().join();
+        assertThat(pub).isEqualTo("result-get_public_key");
+    }
 }

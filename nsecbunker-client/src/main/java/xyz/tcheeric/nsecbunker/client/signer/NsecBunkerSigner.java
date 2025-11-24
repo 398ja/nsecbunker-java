@@ -128,6 +128,49 @@ public class NsecBunkerSigner implements RemoteSigner {
         return sendRequest(request).thenApply(Nip46Response::getResult);
     }
 
+    @Override
+    public CompletableFuture<String> signEvent(String eventJson) {
+        Objects.requireNonNull(eventJson, "eventJson must not be null");
+        Nip46Request request = Nip46Request.signEvent(eventJson);
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> getPublicKey() {
+        Nip46Request request = Nip46Request.getPublicKey();
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> nip04Encrypt(String pubkeyHex, String plaintext) {
+        Nip46Request request = Nip46Request.nip04Encrypt(pubkeyHex, plaintext);
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> nip04Decrypt(String pubkeyHex, String ciphertext) {
+        Nip46Request request = Nip46Request.nip04Decrypt(pubkeyHex, ciphertext);
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> nip44Encrypt(String pubkeyHex, String plaintext) {
+        Nip46Request request = Nip46Request.nip44Encrypt(pubkeyHex, plaintext);
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> nip44Decrypt(String pubkeyHex, String ciphertext) {
+        Nip46Request request = Nip46Request.nip44Decrypt(pubkeyHex, ciphertext);
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
+    @Override
+    public CompletableFuture<String> ping() {
+        Nip46Request request = Nip46Request.ping();
+        return sendRequest(request).thenApply(Nip46Response::getResult);
+    }
+
     private CompletableFuture<Nip46Response> sendRequest(Nip46Request request) {
         if (requestHandler == null) {
             return CompletableFuture.failedFuture(

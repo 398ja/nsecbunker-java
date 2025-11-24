@@ -30,6 +30,64 @@ public interface RemoteSigner extends AutoCloseable {
     boolean isConnected();
 
     /**
+     * Signs an event JSON remotely.
+     *
+     * @param eventJson unsigned event json
+     * @return a future with signature or signed event (implementation-defined)
+     */
+    CompletableFuture<String> signEvent(String eventJson);
+
+    /**
+     * Gets the remote public key.
+     *
+     * @return a future with the public key (hex)
+     */
+    CompletableFuture<String> getPublicKey();
+
+    /**
+     * Encrypts plaintext using NIP-04 with the given recipient pubkey.
+     *
+     * @param pubkeyHex recipient pubkey hex
+     * @param plaintext text to encrypt
+     * @return a future with ciphertext
+     */
+    CompletableFuture<String> nip04Encrypt(String pubkeyHex, String plaintext);
+
+    /**
+     * Decrypts NIP-04 ciphertext from a sender.
+     *
+     * @param pubkeyHex sender pubkey hex
+     * @param ciphertext ciphertext to decrypt
+     * @return a future with plaintext
+     */
+    CompletableFuture<String> nip04Decrypt(String pubkeyHex, String ciphertext);
+
+    /**
+     * Encrypts plaintext using NIP-44 with the given recipient pubkey.
+     *
+     * @param pubkeyHex recipient pubkey hex
+     * @param plaintext text to encrypt
+     * @return a future with ciphertext
+     */
+    CompletableFuture<String> nip44Encrypt(String pubkeyHex, String plaintext);
+
+    /**
+     * Decrypts NIP-44 ciphertext from a sender.
+     *
+     * @param pubkeyHex sender pubkey hex
+     * @param ciphertext ciphertext to decrypt
+     * @return a future with plaintext
+     */
+    CompletableFuture<String> nip44Decrypt(String pubkeyHex, String ciphertext);
+
+    /**
+     * Pings the bunker for health check.
+     *
+     * @return a future with pong text
+     */
+    CompletableFuture<String> ping();
+
+    /**
      * Requests signing permissions for the provided methods.
      *
      * @param methods methods to request (e.g., sign_event, nip04_encrypt)
