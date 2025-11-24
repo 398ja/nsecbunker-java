@@ -9,6 +9,8 @@ import xyz.tcheeric.nsecbunker.connection.ExponentialBackoffStrategy;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
 import xyz.tcheeric.nsecbunker.connection.RelayListener;
 import xyz.tcheeric.nsecbunker.connection.RelayPool;
+import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
+import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
 import xyz.tcheeric.nsecbunker.core.exception.BunkerConnectionException;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
@@ -345,6 +347,15 @@ public class NsecBunkerAdminClient implements Closeable {
      */
     public boolean isConnected() {
         return connectionState.get() == ConnectionState.CONNECTED;
+    }
+
+    /**
+     * Provides access to key management operations backed by this client.
+     *
+     * @return a {@link KeyManager} instance using this admin client
+     */
+    public KeyManager keyManager() {
+        return new DefaultKeyManager(this);
     }
 
     /**

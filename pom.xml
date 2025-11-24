@@ -66,6 +66,7 @@
         <lombok.version>1.18.32</lombok.version>
         <micrometer.version>1.12.4</micrometer.version>
         <spring-boot.version>3.2.4</spring-boot.version>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
@@ -598,6 +599,7 @@
                     <configuration>
                         <doclint>none</doclint>
                         <source>${java.version}</source>
+                        <skip>${maven.javadoc.skip}</skip>
                     </configuration>
                     <executions>
                         <execution>
