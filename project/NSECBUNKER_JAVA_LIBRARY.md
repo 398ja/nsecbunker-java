@@ -368,11 +368,11 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.1.1 | Create `RemoteSigner` interface | Extends nostr-java signer interface | S | | Phase 1 | ⬜ TODO |
-| 3.1.2 | Implement `NsecBunkerSigner` class | Concrete remote signer | L | | 3.1.1 | ⬜ TODO |
-| 3.1.3 | Add ephemeral keypair generation | For client-side NIP-46 auth | S | | 3.1.2 | ⬜ TODO |
-| 3.1.4 | Implement connection establishment flow | Initial connect handshake | M | | 3.1.2 | ⬜ TODO |
-| 3.1.5 | Implement permission request flow | Request signing permission | M | | 3.1.4 | ⬜ TODO |
+| 3.1.1 | Create `RemoteSigner` interface | Extends nostr-java signer interface | S | 5e5e44b | Phase 1 | ✅ DONE |
+| 3.1.2 | Implement `NsecBunkerSigner` class | Concrete remote signer | L | 5e5e44b | 3.1.1 | ✅ DONE |
+| 3.1.3 | Add ephemeral keypair generation | For client-side NIP-46 auth | S | 5e5e44b | 3.1.2 | ✅ DONE |
+| 3.1.4 | Implement connection establishment flow | Initial connect handshake | M | 5e5e44b | 3.1.2 | ✅ DONE |
+| 3.1.5 | Implement permission request flow | Request signing permission | M | 5e5e44b | 3.1.4 | ✅ DONE |
 
 #### 3.2 Signing Operations (`nsecbunker-client/signer`)
 
