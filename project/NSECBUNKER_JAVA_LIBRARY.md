@@ -401,10 +401,10 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.4.1 | Implement `BatchSigner` class | Batch multiple operations | M | | 3.2.* | ⬜ TODO |
-| 3.4.2 | Implement `signEvents(events)` | Sign multiple events | S | | 3.4.1 | ⬜ TODO |
-| 3.4.3 | Add batch result aggregation | Collect all results | S | | 3.4.2 | ⬜ TODO |
-| 3.4.4 | Add partial failure handling | Some succeed, some fail | M | | 3.4.3 | ⬜ TODO |
+| 3.4.1 | Implement `BatchSigner` class | Batch multiple operations | M | f886d37 | 3.2.* | ✅ DONE |
+| 3.4.2 | Implement `signEvents(events)` | Sign multiple events | S | f886d37 | 3.4.1 | ✅ DONE |
+| 3.4.3 | Add batch result aggregation | Collect all results | S | f886d37 | 3.4.2 | ✅ DONE |
+| 3.4.4 | Add partial failure handling | Some succeed, some fail | M | f886d37 | 3.4.3 | ✅ DONE |
 
 #### 3.5 Connection Authorization
 
