@@ -243,7 +243,7 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 1.3.1 | Implement `BunkerConnectionString` parser | Parse bunker:// URIs | M | | 1.2.1 | ⬜ TODO |
+| 1.3.1 | Implement `BunkerConnectionString` parser | parse/tryParse/build, hex/npub validation, URL encoding, 31 tests | M | 6cd6fc3 | 1.2.1 | ✅ DONE |
 | 1.3.2 | Implement `RelayConnection` | WebSocket connection to single relay | L | | 1.1.2 | ⬜ TODO |
 | 1.3.3 | Implement `RelayPool` | Manage multiple relay connections | L | | 1.3.2 | ⬜ TODO |
 | 1.3.4 | Implement `ConnectionListener` interface | Event callbacks (connect, disconnect, error) | S | | 1.3.2 | ⬜ TODO |
