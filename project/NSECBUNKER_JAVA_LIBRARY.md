@@ -309,14 +309,14 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 2.3.1 | Create `PolicyManager` interface | Abstract policy operations | S | | 2.1.1 | ⬜ TODO |
-| 2.3.2 | Implement `DefaultPolicyManager` | Concrete implementation | M | | 2.3.1 | ⬜ TODO |
-| 2.3.3 | Implement `PolicyBuilder` | Fluent API for policies | M | | 1.2.3, 1.2.4 | ⬜ TODO |
-| 2.3.4 | Implement `createPolicy(policy)` | Create policy with rules | S | | 2.3.2 | ⬜ TODO |
-| 2.3.5 | Implement `listPolicies()` | Get all policies | S | | 2.3.2 | ⬜ TODO |
-| 2.3.6 | Implement `getPolicy(id)` | Get single policy | S | | 2.3.2 | ⬜ TODO |
-| 2.3.7 | Implement `deletePolicy(id)` | Remove policy | S | | 2.3.2 | ⬜ TODO |
-| 2.3.8 | Create pre-defined policy templates | Read-only, full-access, etc. | M | | 2.3.3 | ⬜ TODO |
+| 2.3.1 | Create `PolicyManager` interface | Abstract policy operations | S | cce2ca7 | 2.1.1 | ✅ DONE |
+| 2.3.2 | Implement `DefaultPolicyManager` | Concrete implementation | M | cce2ca7 | 2.3.1 | ✅ DONE |
+| 2.3.3 | Implement `PolicyBuilder` | Fluent API for policies | M | cce2ca7 | 1.2.3, 1.2.4 | ✅ DONE |
+| 2.3.4 | Implement `createPolicy(policy)` | Create policy with rules | S | cce2ca7 | 2.3.2 | ✅ DONE |
+| 2.3.5 | Implement `listPolicies()` | Get all policies | S | cce2ca7 | 2.3.2 | ✅ DONE |
+| 2.3.6 | Implement `getPolicy(id)` | Get single policy | S | cce2ca7 | 2.3.2 | ✅ DONE |
+| 2.3.7 | Implement `deletePolicy(id)` | Remove policy | S | cce2ca7 | 2.3.2 | ✅ DONE |
+| 2.3.8 | Create pre-defined policy templates | Read-only, full-access, etc. | M | cce2ca7 | 2.3.3 | ✅ DONE |
 
 #### 2.4 Permission Management (`nsecbunker-admin/permission`)
 
