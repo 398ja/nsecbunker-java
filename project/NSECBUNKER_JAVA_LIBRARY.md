@@ -230,14 +230,14 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 1.2.1 | Implement `BunkerConnection` model | Connection string representation | S | | 1.1.1 | ⬜ TODO |
-| 1.2.2 | Implement `BunkerKey` model | Key metadata (name, npub, counts) | S | | 1.1.1 | ⬜ TODO |
-| 1.2.3 | Implement `BunkerPolicy` model | Policy with rules list | S | | 1.1.1 | ⬜ TODO |
-| 1.2.4 | Implement `PolicyRule` model | Method, kind, usage limits | S | | 1.2.3 | ⬜ TODO |
-| 1.2.5 | Implement `KeyUser` model | User pubkey, permissions, metadata | S | | 1.1.1 | ⬜ TODO |
-| 1.2.6 | Implement `SigningCondition` model | ACL rules per key user | S | | 1.2.5 | ⬜ TODO |
-| 1.2.7 | Implement `AccessToken` model | Token with policy, expiration | S | | 1.2.3 | ⬜ TODO |
-| 1.2.8 | Create `BunkerException` hierarchy | Typed exceptions for errors | S | | 1.1.1 | ⬜ TODO |
+| 1.2.1 | Implement `BunkerConnection` model | Connection string representation with builder, toConnectionString() | S | | 1.1.1 | ✅ DONE |
+| 1.2.2 | Implement `BunkerKey` model | Key metadata with name, npub, pubkeyHex, counts, timestamps | S | | 1.1.1 | ✅ DONE |
+| 1.2.3 | Implement `BunkerPolicy` model | Policy with rules list, expiration, validation methods | S | | 1.1.1 | ✅ DONE |
+| 1.2.4 | Implement `PolicyRule` model | ALLOW/DENY rules for methods, event kinds, usage limits | S | | 1.2.3 | ✅ DONE |
+| 1.2.5 | Implement `KeyUser` model | User pubkey, policy, signing conditions, activity tracking | S | | 1.1.1 | ✅ DONE |
+| 1.2.6 | Implement `SigningCondition` model | ACL conditions: event kind, method, time window, rate limit | S | | 1.2.5 | ✅ DONE |
+| 1.2.7 | Implement `AccessToken` model | Token with policy, expiration, usage tracking, connection string | S | | 1.2.3 | ✅ DONE |
+| 1.2.8 | Create `BunkerException` hierarchy | 6 exception types: Connection, Auth, AuthZ, Protocol, Timeout, Key | S | | 1.1.1 | ✅ DONE |
 
 #### 1.3 Connection Management (`nsecbunker-core/connection`)
 
