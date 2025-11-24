@@ -378,13 +378,13 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.2.1 | Implement `signEvent(event)` | Sign Nostr event remotely | M | | 3.1.2 | ⬜ TODO |
-| 3.2.2 | Implement `getPublicKey()` | Get remote key's pubkey | S | | 3.1.2 | ⬜ TODO |
-| 3.2.3 | Implement `encrypt(pubkey, message)` | NIP-04 encryption | S | | 3.1.2 | ⬜ TODO |
-| 3.2.4 | Implement `decrypt(pubkey, ciphertext)` | NIP-04 decryption | S | | 3.1.2 | ⬜ TODO |
-| 3.2.5 | Implement `encryptNip44(pubkey, message)` | NIP-44 encryption | S | | 3.1.2 | ⬜ TODO |
-| 3.2.6 | Implement `decryptNip44(pubkey, ciphertext)` | NIP-44 decryption | S | | 3.1.2 | ⬜ TODO |
-| 3.2.7 | Implement `ping()` | Health check / keepalive | S | | 3.1.2 | ⬜ TODO |
+| 3.2.1 | Implement `signEvent(event)` | Sign Nostr event remotely | M | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.2 | Implement `getPublicKey()` | Get remote key's pubkey | S | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.3 | Implement `encrypt(pubkey, message)` | NIP-04 encryption | S | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.4 | Implement `decrypt(pubkey, ciphertext)` | NIP-04 decryption | S | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.5 | Implement `encryptNip44(pubkey, message)` | NIP-44 encryption | S | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.6 | Implement `decryptNip44(pubkey, ciphertext)` | NIP-44 decryption | S | 5abfc61 | 3.1.2 | ✅ DONE |
+| 3.2.7 | Implement `ping()` | Health check / keepalive | S | 5abfc61 | 3.1.2 | ✅ DONE |
 
 #### 3.3 Request Management (`nsecbunker-client`)
 
