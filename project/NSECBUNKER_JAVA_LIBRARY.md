@@ -245,7 +245,7 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 1.3.1 | Implement `BunkerConnectionString` parser | parse/tryParse/build, hex/npub validation, URL encoding, 31 tests | M | 6cd6fc3 | 1.2.1 | ✅ DONE |
 | 1.3.2 | Implement `RelayConnection` | OkHttp WebSocket, ConnectionState enum, RelayListener, 31 tests | L | 6da84ed | 1.1.2 | ✅ DONE |
-| 1.3.3 | Implement `RelayPool` | Manage multiple relay connections | L | | 1.3.2 | ⬜ TODO |
+| 1.3.3 | Implement `RelayPool` | Multi-relay management, broadcasting, deduplication, RelayPoolListener, 35 tests | L | a1e9de9 | 1.3.2 | ✅ DONE |
 | 1.3.4 | Implement `ConnectionListener` interface | Event callbacks (connect, disconnect, error) | S | | 1.3.2 | ⬜ TODO |
 | 1.3.5 | Implement `ReconnectionStrategy` | Exponential backoff, max retries | M | | 1.3.2 | ⬜ TODO |
 | 1.3.6 | Add connection health monitoring | Ping, latency tracking | M | | 1.3.3 | ⬜ TODO |
