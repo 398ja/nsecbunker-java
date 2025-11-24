@@ -15,6 +15,8 @@ import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
 import xyz.tcheeric.nsecbunker.admin.policy.PolicyManager;
 import xyz.tcheeric.nsecbunker.admin.permission.DefaultPermissionManager;
 import xyz.tcheeric.nsecbunker.admin.permission.PermissionManager;
+import xyz.tcheeric.nsecbunker.admin.token.DefaultTokenManager;
+import xyz.tcheeric.nsecbunker.admin.token.TokenManager;
 import xyz.tcheeric.nsecbunker.core.exception.BunkerConnectionException;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
@@ -378,6 +380,15 @@ public class NsecBunkerAdminClient implements Closeable {
      */
     public PermissionManager permissionManager() {
         return new DefaultPermissionManager(this);
+    }
+
+    /**
+     * Provides access to token management operations backed by this client.
+     *
+     * @return a {@link TokenManager} instance using this admin client
+     */
+    public TokenManager tokenManager() {
+        return new DefaultTokenManager(this);
     }
 
     /**
