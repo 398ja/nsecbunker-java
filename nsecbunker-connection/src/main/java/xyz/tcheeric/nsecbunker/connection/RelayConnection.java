@@ -19,9 +19,15 @@ import xyz.tcheeric.nsecbunker.core.exception.BunkerConnectionException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -102,6 +108,36 @@ public class RelayConnection {
     private volatile Throwable connectError;
 
     /**
+     * Reconnection strategy.
+     */
+    private volatile ReconnectionStrategy reconnectionStrategy;
+
+    /**
+     * Current reconnection attempt counter.
+     */
+    private final AtomicInteger reconnectionAttempt;
+
+    /**
+     * Whether auto-reconnection is enabled.
+     */
+    private final AtomicBoolean autoReconnectEnabled;
+
+    /**
+     * Scheduled executor for reconnection attempts.
+     */
+    private volatile ScheduledExecutorService reconnectExecutor;
+
+    /**
+     * Current scheduled reconnection task.
+     */
+    private volatile ScheduledFuture<?> reconnectFuture;
+
+    /**
+     * Flag indicating if connection was closed by user (no reconnect).
+     */
+    private volatile boolean closedByUser;
+
+    /**
      * Creates a new RelayConnection with default settings.
      *
      * @param url the relay WebSocket URL
@@ -140,6 +176,10 @@ public class RelayConnection {
         this.state = new AtomicReference<>(ConnectionState.DISCONNECTED);
         this.listeners = new CopyOnWriteArrayList<>();
         this.connectionListeners = new CopyOnWriteArrayList<>();
+        this.reconnectionStrategy = ReconnectionStrategy.none();
+        this.reconnectionAttempt = new AtomicInteger(0);
+        this.autoReconnectEnabled = new AtomicBoolean(false);
+        this.closedByUser = false;
     }
 
     /**
@@ -198,6 +238,72 @@ public class RelayConnection {
      */
     public void removeConnectionListener(ConnectionListener listener) {
         connectionListeners.remove(listener);
+    }
+
+    /**
+     * Sets the reconnection strategy.
+     *
+     * <p>Setting a strategy automatically enables auto-reconnect if the strategy
+     * allows reconnection. Use {@link ReconnectionStrategy#none()} to disable
+     * auto-reconnection.
+     *
+     * @param strategy the reconnection strategy (null for no reconnection)
+     * @return this connection for chaining
+     */
+    public RelayConnection setReconnectionStrategy(ReconnectionStrategy strategy) {
+        this.reconnectionStrategy = strategy != null ? strategy : ReconnectionStrategy.none();
+        this.autoReconnectEnabled.set(strategy != null && strategy.getMaxAttempts() != 0);
+        return this;
+    }
+
+    /**
+     * Returns the current reconnection strategy.
+     *
+     * @return the reconnection strategy
+     */
+    public ReconnectionStrategy getReconnectionStrategy() {
+        return reconnectionStrategy;
+    }
+
+    /**
+     * Enables auto-reconnection with the current strategy.
+     *
+     * @return this connection for chaining
+     */
+    public RelayConnection enableAutoReconnect() {
+        this.autoReconnectEnabled.set(true);
+        return this;
+    }
+
+    /**
+     * Disables auto-reconnection.
+     *
+     * <p>Any pending reconnection attempt will be cancelled.
+     *
+     * @return this connection for chaining
+     */
+    public RelayConnection disableAutoReconnect() {
+        this.autoReconnectEnabled.set(false);
+        cancelReconnect();
+        return this;
+    }
+
+    /**
+     * Returns whether auto-reconnection is enabled.
+     *
+     * @return true if auto-reconnection is enabled
+     */
+    public boolean isAutoReconnectEnabled() {
+        return autoReconnectEnabled.get();
+    }
+
+    /**
+     * Returns the current reconnection attempt number.
+     *
+     * @return the attempt number (0 if not reconnecting)
+     */
+    public int getReconnectionAttempt() {
+        return reconnectionAttempt.get();
     }
 
     /**
@@ -331,6 +437,9 @@ public class RelayConnection {
 
     /**
      * Closes the connection gracefully.
+     *
+     * <p>This disables auto-reconnection. Call {@link #enableAutoReconnect()}
+     * before reconnecting if you want to re-enable it.
      */
     public void close() {
         close(NORMAL_CLOSURE, "Client closing");
@@ -338,6 +447,9 @@ public class RelayConnection {
 
     /**
      * Closes the connection with a specific code and reason.
+     *
+     * <p>This disables auto-reconnection. Call {@link #enableAutoReconnect()}
+     * before reconnecting if you want to re-enable it.
      *
      * @param code   the close code
      * @param reason the close reason
@@ -347,6 +459,9 @@ public class RelayConnection {
         if (currentState.isTerminal()) {
             return;
         }
+
+        closedByUser = true;
+        cancelReconnect();
 
         state.set(ConnectionState.DISCONNECTING);
         WebSocket ws = webSocket;
@@ -358,6 +473,7 @@ public class RelayConnection {
             }
         }
         state.set(ConnectionState.CLOSED);
+        shutdownReconnectExecutor();
     }
 
     /**
@@ -414,6 +530,122 @@ public class RelayConnection {
             } catch (Exception e) {
                 log.warn("Error in ConnectionListener.onError: {}", e.getMessage());
             }
+        }
+    }
+
+    /**
+     * Notifies listeners of a reconnection attempt.
+     */
+    private void notifyReconnecting(int attempt) {
+        for (ConnectionListener listener : connectionListeners) {
+            try {
+                listener.onReconnecting(url, attempt);
+            } catch (Exception e) {
+                log.warn("Error in ConnectionListener.onReconnecting: {}", e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Schedules a reconnection attempt based on the current strategy.
+     */
+    private void scheduleReconnect(Throwable cause) {
+        if (!autoReconnectEnabled.get() || closedByUser) {
+            return;
+        }
+
+        ReconnectionStrategy strategy = this.reconnectionStrategy;
+        int attempt = reconnectionAttempt.incrementAndGet();
+
+        if (!strategy.shouldReconnect(attempt)) {
+            log.info("Max reconnection attempts ({}) reached for {}", attempt - 1, url);
+            reconnectionAttempt.set(0);
+            return;
+        }
+
+        Optional<Duration> delayOpt = strategy.getDelay(attempt);
+        if (delayOpt.isEmpty()) {
+            return;
+        }
+
+        Duration delay = delayOpt.get();
+        log.info("Scheduling reconnection attempt {} for {} in {}ms", attempt, url, delay.toMillis());
+
+        // Notify strategy of the failure
+        strategy.onAttemptFailed(attempt, cause);
+
+        // Notify listeners
+        notifyReconnecting(attempt);
+
+        // Get or create executor
+        ScheduledExecutorService executor = getOrCreateReconnectExecutor();
+
+        // Schedule reconnection
+        reconnectFuture = executor.schedule(() -> {
+            try {
+                if (!autoReconnectEnabled.get() || closedByUser) {
+                    return;
+                }
+
+                ConnectionState currentState = state.get();
+                if (currentState == ConnectionState.CONNECTED) {
+                    // Already connected, reset counter
+                    reconnectionAttempt.set(0);
+                    return;
+                }
+
+                if (currentState.isTerminal()) {
+                    // Reset to disconnected to allow reconnection
+                    state.set(ConnectionState.DISCONNECTED);
+                }
+
+                setState(ConnectionState.RECONNECTING);
+                log.info("Attempting reconnection {} to {}", attempt, url);
+
+                // Attempt connection asynchronously
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+
+                webSocket = client.newWebSocket(request, new RelayWebSocketListener());
+            } catch (Exception e) {
+                log.error("Error during reconnection attempt {}: {}", attempt, e.getMessage());
+                scheduleReconnect(e);
+            }
+        }, delay.toMillis(), TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Gets or creates the reconnection executor.
+     */
+    private synchronized ScheduledExecutorService getOrCreateReconnectExecutor() {
+        if (reconnectExecutor == null || reconnectExecutor.isShutdown()) {
+            ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+            executor.setRemoveOnCancelPolicy(true);
+            reconnectExecutor = executor;
+        }
+        return reconnectExecutor;
+    }
+
+    /**
+     * Cancels any pending reconnection.
+     */
+    private void cancelReconnect() {
+        ScheduledFuture<?> future = reconnectFuture;
+        if (future != null) {
+            future.cancel(false);
+            reconnectFuture = null;
+        }
+    }
+
+    /**
+     * Shuts down the reconnection executor.
+     */
+    private void shutdownReconnectExecutor() {
+        ScheduledExecutorService executor = reconnectExecutor;
+        if (executor != null) {
+            executor.shutdownNow();
+            reconnectExecutor = null;
         }
     }
 
@@ -572,6 +804,14 @@ public class RelayConnection {
         @Override
         public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
             log.info("Connected to relay: {}", url);
+
+            // Reset reconnection state on successful connection
+            reconnectionAttempt.set(0);
+            closedByUser = false;
+            if (reconnectionStrategy != null) {
+                reconnectionStrategy.reset();
+            }
+
             setState(ConnectionState.CONNECTED);
 
             for (RelayListener listener : listeners) {
@@ -639,6 +879,11 @@ public class RelayConnection {
             if (latch != null) {
                 latch.countDown();
             }
+
+            // Schedule reconnection if not closed by user and code indicates abnormal closure
+            if (!closedByUser && code != NORMAL_CLOSURE && code != GOING_AWAY) {
+                scheduleReconnect(new RuntimeException("Connection closed: " + code + " " + reason));
+            }
         }
 
         @Override
@@ -653,6 +898,9 @@ public class RelayConnection {
             if (latch != null) {
                 latch.countDown();
             }
+
+            // Schedule reconnection
+            scheduleReconnect(t);
         }
     }
 
