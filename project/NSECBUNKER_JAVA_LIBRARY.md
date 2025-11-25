@@ -468,17 +468,17 @@ nsecbunker-java/
 | 4.2.4 | Implement `getTokenStatistics(tokenId)` | Token usage stats | S | 11564df | 4.2.2 | ✅ DONE |
 | 4.2.5 | Implement `getUserStatistics(userPubkey)` | User activity metrics | S | 11564df | 4.2.2 | ✅ DONE |
 | 4.2.6 | Implement `getPolicyStatistics(policyId)` | Policy enforcement stats | S | 11564df | 4.2.2 | ✅ DONE |
-| 4.2.7 | Add time-series data aggregation | Aggregate over time periods | M | | 4.2.3-4.2.6 | ⬜ TODO |
+| 4.2.7 | Add time-series data aggregation | Aggregate over time periods | M | ca0c82d | 4.2.3-4.2.6 | ✅ DONE |
 
 #### 4.3 Health Monitoring (`nsecbunker-monitoring/health`)
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 4.3.1 | Create `HealthChecker` interface | Abstract health checks | S | | Phase 3 | ⬜ TODO |
-| 4.3.2 | Implement `BunkerHealthChecker` | Concrete implementation | M | | 4.3.1 | ⬜ TODO |
-| 4.3.3 | Add bunker availability checks | Is bunker responding? | S | | 4.3.2 | ⬜ TODO |
+| 4.3.1 | Create `HealthChecker` interface | Abstract health checks | S | ca0c82d | Phase 3 | ✅ DONE |
+| 4.3.2 | Implement `BunkerHealthChecker` | Concrete implementation | M | ca0c82d | 4.3.1 | ✅ DONE |
+| 4.3.3 | Add bunker availability checks | Is bunker responding? | S | ca0c82d | 4.3.2 | ✅ DONE |
 | 4.3.4 | Add relay connection health | Are relays connected? | S | | 4.3.2 | ⬜ TODO |
-| 4.3.5 | Add response time tracking | Track signing latency | S | | 4.3.2 | ⬜ TODO |
+| 4.3.5 | Add response time tracking | Track signing latency | S | ca0c82d | 4.3.2 | ✅ DONE |
 | 4.3.6 | Add error rate monitoring | Track failure rates | S | | 4.3.2 | ⬜ TODO |
 | 4.3.7 | Implement circuit breaker pattern | Stop requests if unhealthy | M | | 4.3.3-4.3.6 | ⬜ TODO |
 
@@ -486,8 +486,8 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 4.4.1 | Implement `AlertManager` class | Configure alerts | M | | 4.3.* | ⬜ TODO |
-| 4.4.2 | Add threshold-based alerts | Trigger on error rate, latency | M | | 4.4.1 | ⬜ TODO |
+| 4.4.1 | Implement `AlertManager` class | Configure alerts | M | ca0c82d | 4.3.* | ✅ DONE |
+| 4.4.2 | Add threshold-based alerts | Trigger on error rate, latency | M | ca0c82d | 4.4.1 | ✅ DONE |
 | 4.4.3 | Add alert delivery | Callback, webhook | S | | 4.4.2 | ⬜ TODO |
 
 #### 4.5 Integration Tests
