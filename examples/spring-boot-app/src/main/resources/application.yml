@@ -1,0 +1,71 @@
+# nsecBunker Spring Boot Demo Application Configuration
+# =====================================================
+#
+# This configuration demonstrates all available nsecBunker properties.
+# In production, use environment variables or external configuration
+# to keep secrets secure.
+
+spring:
+  application:
+    name: nsecbunker-demo
+
+# Server configuration
+server:
+  port: 8080
+
+# nsecBunker configuration
+nsecbunker:
+  # Signer configuration (for remote signing)
+  signer:
+    # The bunker's public key (hex or npub format)
+    bunker-pubkey: ${BUNKER_PUBKEY:}
+    # Your client's private key (hex or nsec format)
+    client-private-key: ${CLIENT_PRIVKEY:}
+    # Relay URLs to connect through
+    relays:
+      - ${RELAY_URL:wss://relay.example.com}
+    # Optional secret for bunker connection
+    secret: ${BUNKER_SECRET:}
+    # Use ephemeral key for privacy (recommended)
+    use-ephemeral-key: true
+    # Connection timeout
+    connect-timeout: 30s
+    # Request timeout
+    request-timeout: 60s
+
+  # Admin configuration (optional, for key management)
+  admin:
+    bunker-pubkey: ${BUNKER_PUBKEY:}
+    admin-private-key: ${ADMIN_PRIVKEY:}
+    relays:
+      - ${RELAY_URL:wss://relay.example.com}
+    secret: ${BUNKER_SECRET:}
+    use-ephemeral-key: true
+    connect-timeout: 30s
+    request-timeout: 60s
+
+  # Metrics configuration
+  metrics:
+    enabled: true
+    prefix: nsecbunker
+    percentiles: true
+    per-method-metrics: true
+
+# Spring Boot Actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+# Logging configuration
+logging:
+  level:
+    xyz.tcheeric.nsecbunker: DEBUG
+    root: INFO

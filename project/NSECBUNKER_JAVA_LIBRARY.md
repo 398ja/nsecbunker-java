@@ -614,8 +614,8 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 7.3.1 | Create simple signer example | Basic signing app | M | cc72f8a | Phase 3 | ✅ DONE |
 | 7.3.2 | Create admin CLI example | Command-line admin tool | M | cc72f8a | Phase 2 | ✅ DONE |
-| 7.3.3 | Create cashu-client integration example | Integration demo | L | | Phase 3 | ⬜ TODO |
-| 7.3.4 | Create Spring Boot application example | Full Spring Boot app | L | | Phase 6 | ⬜ TODO |
+| 7.3.3 | Create cashu-client integration example | Integration demo | L | a319ed9 | Phase 3 | ✅ DONE |
+| 7.3.4 | Create Spring Boot application example | Full Spring Boot app | L | a319ed9 | Phase 6 | ✅ DONE |
 | 7.3.5 | Create multi-tenant application example | Multi-user scenario | XL | | Phase 2, Phase 3 | ⬜ TODO |
 
 #### 7.4 Migration Guides
