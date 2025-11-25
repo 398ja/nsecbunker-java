@@ -451,12 +451,12 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 4.1.1 | Create `LogReader` interface | Abstract log operations | S | | Phase 2 | ⬜ TODO |
-| 4.1.2 | Implement `DefaultLogReader` | Concrete implementation | M | | 4.1.1 | ⬜ TODO |
-| 4.1.3 | Implement `getLogs(keyName, filter)` | Get signing logs | S | | 4.1.2 | ⬜ TODO |
-| 4.1.4 | Implement `LogFilter` class | Filter by date, method, user | M | | 4.1.3 | ⬜ TODO |
-| 4.1.5 | Implement `exportLogs(format)` | Export to CSV/JSON | M | | 4.1.3 | ⬜ TODO |
-| 4.1.6 | Add log streaming | Real-time log updates | L | | 4.1.3 | ⬜ TODO |
+| 4.1.1 | Create `LogReader` interface | Abstract log operations | S | dce2fee | Phase 2 | ✅ DONE |
+| 4.1.2 | Implement `DefaultLogReader` | Concrete implementation | M | dce2fee | 4.1.1 | ✅ DONE |
+| 4.1.3 | Implement `getLogs(keyName, filter)` | Get signing logs | S | dce2fee | 4.1.2 | ✅ DONE |
+| 4.1.4 | Implement `LogFilter` class | Filter by date, method, user | M | dce2fee | 4.1.3 | ✅ DONE |
+| 4.1.5 | Implement `exportLogs(format)` | Export to CSV/JSON | M | dce2fee | 4.1.3 | ✅ DONE |
+| 4.1.6 | Add log streaming | Real-time log updates | L | dce2fee | 4.1.3 | ✅ DONE |
 
 #### 4.2 Statistics (`nsecbunker-monitoring/metrics`)
 
