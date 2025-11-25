@@ -554,26 +554,26 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 6.1.1 | Create `NsecBunkerAutoConfiguration` class | Auto-config beans | M | | Phase 2, Phase 3 | ⬜ TODO |
-| 6.1.2 | Create `NsecBunkerProperties` class | Configuration properties | S | | 6.1.1 | ⬜ TODO |
-| 6.1.3 | Add bean definitions for clients | Admin, signer, monitor beans | M | | 6.1.1 | ⬜ TODO |
-| 6.1.4 | Add conditional configuration | Enable/disable features | S | | 6.1.1 | ⬜ TODO |
+| 6.1.1 | Create `NsecBunkerAutoConfiguration` class | Auto-config beans | M | cc72f8a | Phase 2, Phase 3 | ✅ DONE |
+| 6.1.2 | Create `NsecBunkerProperties` class | Configuration properties | S | cc72f8a | 6.1.1 | ✅ DONE |
+| 6.1.3 | Add bean definitions for clients | Admin, signer, monitor beans | M | cc72f8a | 6.1.1 | ✅ DONE |
+| 6.1.4 | Add conditional configuration | Enable/disable features | S | cc72f8a | 6.1.1 | ✅ DONE |
 
 #### 6.2 Actuator Integration
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 6.2.1 | Create health indicator for bunker connection | Spring Boot health check | S | | 6.1.1, Phase 4 | ⬜ TODO |
+| 6.2.1 | Create health indicator for bunker connection | Spring Boot health check | S | cc72f8a | 6.1.1, Phase 4 | ✅ DONE |
 | 6.2.2 | Add metrics for signing operations | Micrometer integration | M | | 6.1.1, Phase 4 | ⬜ TODO |
-| 6.2.3 | Add info endpoint with bunker details | Show connection info | S | | 6.1.1 | ⬜ TODO |
+| 6.2.3 | Add info endpoint with bunker details | Show connection info | S | cc72f8a | 6.1.1 | ✅ DONE |
 
 #### 6.3 Spring Integration
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 6.3.1 | Create `@EnableNsecBunker` annotation | Enable auto-configuration | S | | 6.1.1 | ⬜ TODO |
-| 6.3.2 | Add dependency injection support | @Autowired support | S | | 6.1.3 | ⬜ TODO |
-| 6.3.3 | Add profile-based configuration | Dev, prod profiles | S | | 6.1.2 | ⬜ TODO |
+| 6.3.1 | Create `@EnableNsecBunker` annotation | Enable auto-configuration | S | cc72f8a | 6.1.1 | ✅ DONE |
+| 6.3.2 | Add dependency injection support | @Autowired support | S | cc72f8a | 6.1.3 | ✅ DONE |
+| 6.3.3 | Add profile-based configuration | Dev, prod profiles | S | cc72f8a | 6.1.2 | ✅ DONE |
 
 ---
 
@@ -599,12 +599,12 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 7.2.1 | Write Getting Started guide | Quick start tutorial | M | | All phases | ⬜ TODO |
-| 7.2.2 | Write Admin operations guide | Key, policy, permission mgmt | M | | Phase 2 | ⬜ TODO |
-| 7.2.3 | Write Remote signing guide | Using remote signer | M | | Phase 3 | ⬜ TODO |
-| 7.2.4 | Write Monitoring guide | Logs, metrics, health | M | | Phase 4 | ⬜ TODO |
-| 7.2.5 | Write Spring Boot integration guide | Using with Spring Boot | M | | Phase 6 | ⬜ TODO |
-| 7.2.6 | Write Security best practices | Security guidelines | L | | All phases | ⬜ TODO |
+| 7.2.1 | Write Getting Started guide | Quick start tutorial | M | b3d02c3 | All phases | ✅ DONE |
+| 7.2.2 | Write Admin operations guide | Key, policy, permission mgmt | M | b3d02c3 | Phase 2 | ✅ DONE |
+| 7.2.3 | Write Remote signing guide | Using remote signer | M | b3d02c3 | Phase 3 | ✅ DONE |
+| 7.2.4 | Write Monitoring guide | Logs, metrics, health | M | b3d02c3 | Phase 4 | ✅ DONE |
+| 7.2.5 | Write Spring Boot integration guide | Using with Spring Boot | M | b3d02c3 | Phase 6 | ✅ DONE |
+| 7.2.6 | Write Security best practices | Security guidelines | L | b3d02c3 | All phases | ✅ DONE |
 
 #### 7.3 Example Applications
 
