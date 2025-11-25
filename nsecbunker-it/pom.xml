@@ -17,7 +17,8 @@
     <description>Integration test suite for nsecbunker-java</description>
 
     <properties>
-        <it.groups>!integration</it.groups>
+        <!-- Exclude @Tag("integration") by default; enable via -Pintegration -->
+        <it.groups>integration</it.groups>
     </properties>
 
     <dependencies>
@@ -84,4 +85,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>integration</id>
+            <properties>
+                <!-- Run all tests (including @Tag("integration")) -->
+                <it.groups></it.groups>
+            </properties>
+        </profile>
+    </profiles>
 </project>
