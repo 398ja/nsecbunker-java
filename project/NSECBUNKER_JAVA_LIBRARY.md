@@ -643,7 +643,7 @@ nsecbunker-java/
 | 8.1.1 | Increase unit test coverage to >90% | Add missing tests | XL | 8593a94 | All phases | ✅ DONE |
 | 8.1.2 | Create integration test suite | End-to-end integration | L | 8243cc6 | All phases | ✅ DONE |
 | 8.1.3 | Create end-to-end test suite | Full user scenarios (see test list below) | L | | All phases | ⬜ TODO |
-| 8.1.4 | Create performance test suite | Load, stress tests | L | | Phase 3 | ⬜ TODO |
+| 8.1.4 | Create performance test suite | Load, stress tests; see planned scenarios below | L | | Phase 3 | ⬜ TODO |
 | 8.1.5 | Create security test suite | Security scanning | M | | All phases | ⬜ TODO |
 | 8.1.6 | Add chaos testing | Network failures, etc. | M | | All phases | ⬜ TODO |
 
@@ -662,6 +662,13 @@ nsecbunker-java/
 - Signer request executor: retries/timeouts against a stub transport that drops/returns late.
 - Spring Boot starter context load: auto-config beans present, health indicator reports DOWN when ping fails (using mocked signer).
 - Monitoring components: log reader/metrics collector parsing with synthetic JSON payloads; alert manager thresholds; health checker ping response classification.
+
+**Planned Performance Tests (8.1.4)**
+- JMH microbenchmarks for signing/verification and NIP-04/46 crypto (per-op latency and throughput).
+- RelayPool send/receive throughput with concurrent subscriptions and deduplication on/off.
+- Nip46/JSON event encode/decode serialization benchmarks.
+- Admin/signer round-trip latency against a Testcontainers relay under load (with/without packet loss).
+- Resource profiling under sustained load (CPU, heap, GC) on Java 21 to catch regressions.
 
 #### 8.2 Performance Optimization
 
