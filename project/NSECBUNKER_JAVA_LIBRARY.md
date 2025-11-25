@@ -564,7 +564,7 @@ nsecbunker-java/
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
 | 6.2.1 | Create health indicator for bunker connection | Spring Boot health check | S | cc72f8a | 6.1.1, Phase 4 | ✅ DONE |
-| 6.2.2 | Add metrics for signing operations | Micrometer integration | M | | 6.1.1, Phase 4 | ⬜ TODO |
+| 6.2.2 | Add metrics for signing operations | Micrometer integration | M | 1b99c0d | 6.1.1, Phase 4 | ✅ DONE |
 | 6.2.3 | Add info endpoint with bunker details | Show connection info | S | cc72f8a | 6.1.1 | ✅ DONE |
 
 #### 6.3 Spring Integration
