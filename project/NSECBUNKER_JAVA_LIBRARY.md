@@ -642,10 +642,19 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 8.1.1 | Increase unit test coverage to >90% | Add missing tests | XL | | All phases | ⬜ TODO |
 | 8.1.2 | Create integration test suite | End-to-end integration | L | 74e635c | All phases | ✅ DONE |
-| 8.1.3 | Create end-to-end test suite | Full user scenarios | L | | All phases | ⬜ TODO |
+| 8.1.3 | Create end-to-end test suite | Full user scenarios (see test list below) | L | | All phases | ⬜ TODO |
 | 8.1.4 | Create performance test suite | Load, stress tests | L | | Phase 3 | ⬜ TODO |
 | 8.1.5 | Create security test suite | Security scanning | M | | All phases | ⬜ TODO |
 | 8.1.6 | Add chaos testing | Network failures, etc. | M | | All phases | ⬜ TODO |
+
+**Planned E2E Tests (using pablof7z/nsecbunkerd in Testcontainers)**
+- Admin connection lifecycle: start container, connect via admin client, subscribe for responses, disconnect/close.
+- Key CRUD flow: create/import key, list, unlock with passphrase, get details, delete; verify bunker responds with npub.
+- Policy flow: create policy, list, get, delete; ensure rules are persisted in responses.
+- Permission flow: grant permission to user, list key users, get permissions, update description, revoke; verify access flags.
+- Token flow: create token for key/client/policy, list tokens, get token, validate token, revoke token.
+- Signing flow: connect signer, request permissions, sign event, encrypt/decrypt NIP-04 and NIP-44, ping.
+- Batch signing: sign multiple events and validate distinct signatures returned.
 
 #### 8.2 Performance Optimization
 
