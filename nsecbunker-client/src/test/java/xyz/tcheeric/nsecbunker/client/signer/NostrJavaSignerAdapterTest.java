@@ -13,17 +13,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class NostrJavaSignerAdapterTest {
 
+    // Valid 64-char hex public key (secp256k1 generator point x-coordinate)
+    private static final String TEST_PUBKEY = "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798";
+    // Valid 128-char hex signature (64 bytes)
+    private static final String TEST_SIGNATURE = "00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002";
+
     /**
      * Ensures adapter fetches public key via remote signer.
      */
     @Test
     void shouldGetPublicKeyFromSigner() {
-        RemoteSigner signer = new StubSigner("sig", "pubkeyhex");
+        RemoteSigner signer = new StubSigner(TEST_SIGNATURE, TEST_PUBKEY);
         NostrJavaSignerAdapter adapter = new NostrJavaSignerAdapter(signer);
 
         PublicKey pk = adapter.getPublicKey();
 
-        assertThat(pk.toString()).isEqualTo("pubkeyhex");
+        assertThat(pk.toString()).isEqualTo(TEST_PUBKEY);
     }
 
     /**
@@ -31,14 +36,14 @@ class NostrJavaSignerAdapterTest {
      */
     @Test
     void shouldSignSignable() {
-        RemoteSigner signer = new StubSigner("deadbeef", "pubkeyhex");
+        RemoteSigner signer = new StubSigner(TEST_SIGNATURE, TEST_PUBKEY);
         NostrJavaSignerAdapter adapter = new NostrJavaSignerAdapter(signer);
         DummySignable signable = new DummySignable("payload");
 
         Signature signature = adapter.sign(signable);
 
-        assertThat(signature.toString()).isEqualTo("deadbeef");
-        assertThat(signable.getSignature().toString()).isEqualTo("deadbeef");
+        assertThat(signature.toString()).isEqualTo(TEST_SIGNATURE);
+        assertThat(signable.getSignature().toString()).isEqualTo(TEST_SIGNATURE);
     }
 
     private static final class StubSigner implements RemoteSigner {

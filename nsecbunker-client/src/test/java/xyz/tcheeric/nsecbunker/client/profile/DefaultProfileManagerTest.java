@@ -12,6 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultProfileManagerTest {
 
+    // Valid 64-char hex public key (secp256k1 generator point x-coordinate)
+    private static final String TEST_PUBKEY = "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798";
+    // Valid 128-char hex signature (64 bytes)
+    private static final String TEST_SIGNATURE = "00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002";
+
     /**
      * Ensures updateProfile builds a kind-0 event and applies the returned signature.
      */
@@ -19,7 +24,7 @@ class DefaultProfileManagerTest {
     void shouldBuildAndSignProfileEvent() {
         // Arrange
         AtomicReference<String> signedPayload = new AtomicReference<>();
-        RemoteSigner signer = new StubSigner("deadbeef", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", signedPayload);
+        RemoteSigner signer = new StubSigner(TEST_SIGNATURE, TEST_PUBKEY, signedPayload);
         DefaultProfileManager manager = new DefaultProfileManager(signer);
         ProfileMetadata metadata = ProfileMetadata.builder()
                 .name("alice")
@@ -32,7 +37,7 @@ class DefaultProfileManagerTest {
         // Assert
         assertThat(event.getKind()).isEqualTo(0);
         assertThat(event.getContent()).contains("alice");
-        assertThat(event.getSignature().toString()).isEqualTo("deadbeef");
+        assertThat(event.getSignature().toString()).isEqualTo(TEST_SIGNATURE);
         assertThat(signedPayload.get()).contains("\"kind\":0");
     }
 
