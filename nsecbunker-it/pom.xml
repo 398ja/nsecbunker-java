@@ -17,8 +17,8 @@
     <description>Integration test suite for nsecbunker-java</description>
 
     <properties>
-        <!-- Exclude @Tag("integration") by default; enable via -Pintegration -->
-        <it.groups>integration</it.groups>
+        <!-- Run all integration tests in this module by default -->
+        <it.groups></it.groups>
     </properties>
 
     <dependencies>
@@ -81,6 +81,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <excludedGroups>${it.groups}</excludedGroups>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*IntegrationTest.java</include>
+                        <include>**/*Test.java</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
