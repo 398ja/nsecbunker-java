@@ -422,7 +422,7 @@ nsecbunker-java/
 | 3.6.1 | Create adapter for `IIdentity` interface | nostr-java compatibility | M | ad13001 | 3.1.1 | ✅ DONE |
 | 3.6.2 | Implement compatibility layer | Bridge differences | M | ad13001 | 3.6.1 | ✅ DONE |
 | 3.6.3 | Add event signing integration | Work with nostr-java events | S | ad13001 | 3.6.2, 3.2.1 | ✅ DONE |
-| 3.6.4 | Add profile management | Fetch/update profiles | M | | 3.6.2 | ⬜ TODO |
+| 3.6.4 | Add profile management | Fetch/update profiles | M | cb42276 | 3.6.2 | ✅ DONE |
 
 #### 3.7 Integration Tests
 
