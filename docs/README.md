@@ -9,5 +9,7 @@ This repository follows the Diátaxis structure. Use the sections below to find 
   - [Remote Signing](how-to/remote-signing.md)
   - [Monitoring](how-to/monitoring.md)
   - [Spring Boot Integration](how-to/spring-boot.md)
+  - [Migrate From Local Keys](how-to/migrate-from-local-keys.md)
+  - [Migrate From Other Signers](how-to/migrate-from-other-signers.md)
 - Explanations
   - [Security Best Practices](explanations/security-best-practices.md)

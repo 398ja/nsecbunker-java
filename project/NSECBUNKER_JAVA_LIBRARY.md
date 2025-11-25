@@ -605,6 +605,8 @@ nsecbunker-java/
 | 7.2.4 | Write Monitoring guide | Logs, metrics, health | M | b3d02c3 | Phase 4 | ✅ DONE |
 | 7.2.5 | Write Spring Boot integration guide | Using with Spring Boot | M | b3d02c3 | Phase 6 | ✅ DONE |
 | 7.2.6 | Write Security best practices | Security guidelines | L | b3d02c3 | All phases | ✅ DONE |
+| 7.2.7 | Write migration from local keys guide | Move to bunker | M | b3d02c3 | Phase 2, Phase 3 | ✅ DONE |
+| 7.2.8 | Write migration from other signers guide | Switch to nsecbunker-java | M | b3d02c3 | Phase 3 | ✅ DONE |
 
 #### 7.3 Example Applications
 
@@ -620,8 +622,8 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 7.4.1 | Write migration from local keys guide | Move to bunker | M | | Phase 2, Phase 3 | ⬜ TODO |
-| 7.4.2 | Write migration from other signers guide | Switch to nsecbunker-java | M | | Phase 3 | ⬜ TODO |
+| 7.4.1 | Write migration from local keys guide | Move to bunker | M | b6e2194 | Phase 2, Phase 3 | ✅ DONE |
+| 7.4.2 | Write migration from other signers guide | Switch to nsecbunker-java | M | b6e2194 | Phase 3 | ✅ DONE |
 
 ---
 
