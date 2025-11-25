@@ -31,7 +31,7 @@ class RelayContainerIntegrationTest {
 
     @Container
     private final GenericContainer<?> relay = new GenericContainer<>("scsibug/nostr-rs-relay:latest")
-            .withExposedPorts(8080)
+            .withExposedPorts(7000)
             .waitingFor(Wait.forListeningPort());
 
     /**
@@ -44,7 +44,7 @@ class RelayContainerIntegrationTest {
         assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available");
         relay.start();
 
-        int mappedPort = relay.getFirstMappedPort();
+        int mappedPort = relay.getMappedPort(7000);
         String relayUrl = "ws://" + relay.getHost() + ":" + mappedPort;
         RelayConnection connection = new RelayConnection(relayUrl, null, Duration.ofSeconds(15));
         CountDownLatch connected = new CountDownLatch(1);
