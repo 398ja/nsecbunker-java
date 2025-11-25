@@ -148,6 +148,149 @@ class RelayConnectionTest {
         assertThat(result).contains("DISCONNECTED");
     }
 
+    @Test
+    void setReconnectionStrategy_shouldSetStrategy() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+        ReconnectionStrategy strategy = ExponentialBackoffStrategy.builder().build();
+
+        relay.setReconnectionStrategy(strategy);
+
+        assertThat(relay.getReconnectionStrategy()).isEqualTo(strategy);
+        assertThat(relay.isAutoReconnectEnabled()).isTrue();
+    }
+
+    @Test
+    void setReconnectionStrategy_shouldHandleNullByUsingNone() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+        relay.setReconnectionStrategy(ExponentialBackoffStrategy.builder().build());
+
+        relay.setReconnectionStrategy(null);
+
+        assertThat(relay.getReconnectionStrategy()).isNotNull();
+        assertThat(relay.isAutoReconnectEnabled()).isFalse();
+    }
+
+    @Test
+    void enableAutoReconnect_shouldEnableReconnection() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        relay.enableAutoReconnect();
+
+        assertThat(relay.isAutoReconnectEnabled()).isTrue();
+    }
+
+    @Test
+    void disableAutoReconnect_shouldDisableReconnection() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+        relay.enableAutoReconnect();
+
+        relay.disableAutoReconnect();
+
+        assertThat(relay.isAutoReconnectEnabled()).isFalse();
+    }
+
+    @Test
+    void getReconnectionAttempt_shouldReturnZeroInitially() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        assertThat(relay.getReconnectionAttempt()).isEqualTo(0);
+    }
+
+    @Test
+    void getHealthMonitor_shouldReturnHealthMonitor() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        RelayHealthMonitor monitor = relay.getHealthMonitor();
+
+        assertThat(monitor).isNotNull();
+        // Should return the same instance
+        assertThat(relay.getHealthMonitor()).isSameAs(monitor);
+    }
+
+    @Test
+    void getHealth_shouldReturnDisconnectedHealthWhenDisconnected() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        ConnectionHealth health = relay.getHealth();
+
+        assertThat(health).isNotNull();
+        assertThat(health.isHealthy()).isFalse();
+        assertThat(health.getUrl()).isEqualTo(VALID_WSS_URL);
+    }
+
+    @Test
+    void addConnectionListener_shouldAcceptListener() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+        TestConnectionListener listener = new TestConnectionListener();
+
+        relay.addConnectionListener(listener);
+        // Listener is added successfully
+    }
+
+    @Test
+    void addConnectionListener_shouldIgnoreNull() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        relay.addConnectionListener(null);
+        // Should not throw
+    }
+
+    @Test
+    void removeConnectionListener_shouldRemoveListener() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+        TestConnectionListener listener = new TestConnectionListener();
+
+        relay.addConnectionListener(listener);
+        relay.removeConnectionListener(listener);
+        // Listener is removed successfully
+    }
+
+    @Test
+    void constructorWithClient_shouldUseProvidedClient() {
+        okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder().build();
+
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL, client);
+
+        assertThat(relay.getUrl()).isEqualTo(VALID_WSS_URL);
+    }
+
+    @Test
+    void setReconnectionStrategy_shouldReturnThisForChaining() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        RelayConnection result = relay.setReconnectionStrategy(ReconnectionStrategy.none());
+
+        assertThat(result).isSameAs(relay);
+    }
+
+    @Test
+    void enableAutoReconnect_shouldReturnThisForChaining() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        RelayConnection result = relay.enableAutoReconnect();
+
+        assertThat(result).isSameAs(relay);
+    }
+
+    @Test
+    void disableAutoReconnect_shouldReturnThisForChaining() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        RelayConnection result = relay.disableAutoReconnect();
+
+        assertThat(result).isSameAs(relay);
+    }
+
+    @Test
+    void getReconnectionStrategy_shouldReturnDefaultNoReconnectStrategy() {
+        RelayConnection relay = new RelayConnection(VALID_WSS_URL);
+
+        ReconnectionStrategy strategy = relay.getReconnectionStrategy();
+
+        assertThat(strategy).isNotNull();
+        assertThat(strategy.getMaxAttempts()).isEqualTo(0);
+    }
+
     /**
      * Test listener implementation for capturing events.
      */
@@ -169,6 +312,23 @@ class RelayConnectionTest {
         @Override
         public void onError(RelayConnection relay, Throwable throwable) {
             error = throwable;
+        }
+    }
+
+    /**
+     * Test connection listener implementation for capturing connection events.
+     */
+    private static class TestConnectionListener implements ConnectionListener {
+        @Override
+        public void onConnected(String relayUrl) {
+        }
+
+        @Override
+        public void onDisconnected(String relayUrl, int code, String reason) {
+        }
+
+        @Override
+        public void onError(String relayUrl, Throwable error) {
         }
     }
 }

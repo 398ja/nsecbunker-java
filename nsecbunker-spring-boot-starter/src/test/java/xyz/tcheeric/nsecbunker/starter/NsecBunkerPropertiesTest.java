@@ -3,6 +3,7 @@ package xyz.tcheeric.nsecbunker.starter;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +17,38 @@ class NsecBunkerPropertiesTest {
         assertThat(properties.getAdmin()).isNotNull();
         assertThat(properties.getSigner()).isNotNull();
         assertThat(properties.getMetrics()).isNotNull();
+    }
+
+    @Test
+    void shouldHaveWorkingEqualsAndHashCode() {
+        NsecBunkerProperties props1 = new NsecBunkerProperties();
+        NsecBunkerProperties props2 = new NsecBunkerProperties();
+
+        assertThat(props1).isEqualTo(props2);
+        assertThat(props1.hashCode()).isEqualTo(props2.hashCode());
+        assertThat(props1).isEqualTo(props1);
+        assertThat(props1).isNotEqualTo(null);
+        assertThat(props1).isNotEqualTo("string");
+    }
+
+    @Test
+    void shouldHaveWorkingToString() {
+        NsecBunkerProperties properties = new NsecBunkerProperties();
+        String toString = properties.toString();
+
+        assertThat(toString).contains("NsecBunkerProperties");
+        assertThat(toString).contains("admin");
+        assertThat(toString).contains("signer");
+        assertThat(toString).contains("metrics");
+    }
+
+    @Test
+    void canEqualShouldWorkCorrectly() {
+        NsecBunkerProperties props1 = new NsecBunkerProperties();
+        NsecBunkerProperties props2 = new NsecBunkerProperties();
+
+        assertThat(props1.canEqual(props2)).isTrue();
+        assertThat(props1.canEqual("string")).isFalse();
     }
 
     @Test
@@ -118,5 +151,163 @@ class NsecBunkerPropertiesTest {
         assertThat(properties.getAdmin().getBunkerPubkey()).isEqualTo("admin-pubkey");
         assertThat(properties.getSigner().getBunkerPubkey()).isEqualTo("signer-pubkey");
         assertThat(properties.getMetrics().isEnabled()).isFalse();
+    }
+
+    // Admin class tests for Lombok-generated methods
+    @Test
+    void adminShouldHaveWorkingEqualsAndHashCode() {
+        NsecBunkerProperties.Admin admin1 = new NsecBunkerProperties.Admin();
+        NsecBunkerProperties.Admin admin2 = new NsecBunkerProperties.Admin();
+
+        assertThat(admin1).isEqualTo(admin2);
+        assertThat(admin1.hashCode()).isEqualTo(admin2.hashCode());
+        assertThat(admin1).isEqualTo(admin1);
+        assertThat(admin1).isNotEqualTo(null);
+        assertThat(admin1).isNotEqualTo("string");
+
+        // Test inequality
+        admin2.setBunkerPubkey("different");
+        assertThat(admin1).isNotEqualTo(admin2);
+    }
+
+    @Test
+    void adminShouldHaveWorkingToString() {
+        NsecBunkerProperties.Admin admin = new NsecBunkerProperties.Admin();
+        admin.setBunkerPubkey("npub1test");
+
+        String toString = admin.toString();
+        assertThat(toString).contains("Admin");
+        assertThat(toString).contains("npub1test");
+    }
+
+    @Test
+    void adminCanEqualShouldWorkCorrectly() {
+        NsecBunkerProperties.Admin admin1 = new NsecBunkerProperties.Admin();
+        NsecBunkerProperties.Admin admin2 = new NsecBunkerProperties.Admin();
+
+        assertThat(admin1.canEqual(admin2)).isTrue();
+        assertThat(admin1.canEqual("string")).isFalse();
+    }
+
+    @Test
+    void adminShouldHandleRelaysList() {
+        NsecBunkerProperties.Admin admin = new NsecBunkerProperties.Admin();
+        List<String> relays = new ArrayList<>();
+        relays.add("wss://relay1.example.com");
+        relays.add("wss://relay2.example.com");
+        admin.setRelays(relays);
+
+        assertThat(admin.getRelays()).hasSize(2);
+        assertThat(admin.getRelays()).containsExactly("wss://relay1.example.com", "wss://relay2.example.com");
+    }
+
+    // Signer class tests for Lombok-generated methods
+    @Test
+    void signerShouldHaveWorkingEqualsAndHashCode() {
+        NsecBunkerProperties.Signer signer1 = new NsecBunkerProperties.Signer();
+        NsecBunkerProperties.Signer signer2 = new NsecBunkerProperties.Signer();
+
+        assertThat(signer1).isEqualTo(signer2);
+        assertThat(signer1.hashCode()).isEqualTo(signer2.hashCode());
+        assertThat(signer1).isEqualTo(signer1);
+        assertThat(signer1).isNotEqualTo(null);
+        assertThat(signer1).isNotEqualTo("string");
+
+        // Test inequality
+        signer2.setBunkerPubkey("different");
+        assertThat(signer1).isNotEqualTo(signer2);
+    }
+
+    @Test
+    void signerShouldHaveWorkingToString() {
+        NsecBunkerProperties.Signer signer = new NsecBunkerProperties.Signer();
+        signer.setBunkerPubkey("npub1signer");
+
+        String toString = signer.toString();
+        assertThat(toString).contains("Signer");
+        assertThat(toString).contains("npub1signer");
+    }
+
+    @Test
+    void signerCanEqualShouldWorkCorrectly() {
+        NsecBunkerProperties.Signer signer1 = new NsecBunkerProperties.Signer();
+        NsecBunkerProperties.Signer signer2 = new NsecBunkerProperties.Signer();
+
+        assertThat(signer1.canEqual(signer2)).isTrue();
+        assertThat(signer1.canEqual("string")).isFalse();
+    }
+
+    @Test
+    void signerShouldHandleRelaysList() {
+        NsecBunkerProperties.Signer signer = new NsecBunkerProperties.Signer();
+        List<String> relays = new ArrayList<>();
+        relays.add("wss://relay.example.com");
+        signer.setRelays(relays);
+
+        assertThat(signer.getRelays()).hasSize(1);
+    }
+
+    // Metrics class tests for Lombok-generated methods
+    @Test
+    void metricsShouldHaveWorkingEqualsAndHashCode() {
+        NsecBunkerProperties.Metrics metrics1 = new NsecBunkerProperties.Metrics();
+        NsecBunkerProperties.Metrics metrics2 = new NsecBunkerProperties.Metrics();
+
+        assertThat(metrics1).isEqualTo(metrics2);
+        assertThat(metrics1.hashCode()).isEqualTo(metrics2.hashCode());
+        assertThat(metrics1).isEqualTo(metrics1);
+        assertThat(metrics1).isNotEqualTo(null);
+        assertThat(metrics1).isNotEqualTo("string");
+
+        // Test inequality
+        metrics2.setEnabled(false);
+        assertThat(metrics1).isNotEqualTo(metrics2);
+    }
+
+    @Test
+    void metricsShouldHaveWorkingToString() {
+        NsecBunkerProperties.Metrics metrics = new NsecBunkerProperties.Metrics();
+        metrics.setPrefix("custom.prefix");
+
+        String toString = metrics.toString();
+        assertThat(toString).contains("Metrics");
+        assertThat(toString).contains("custom.prefix");
+    }
+
+    @Test
+    void metricsCanEqualShouldWorkCorrectly() {
+        NsecBunkerProperties.Metrics metrics1 = new NsecBunkerProperties.Metrics();
+        NsecBunkerProperties.Metrics metrics2 = new NsecBunkerProperties.Metrics();
+
+        assertThat(metrics1.canEqual(metrics2)).isTrue();
+        assertThat(metrics1.canEqual("string")).isFalse();
+    }
+
+    // Additional edge case tests
+    @Test
+    void propertiesShouldNotBeEqualWhenAdminDiffers() {
+        NsecBunkerProperties props1 = new NsecBunkerProperties();
+        NsecBunkerProperties props2 = new NsecBunkerProperties();
+        props2.getAdmin().setBunkerPubkey("different");
+
+        assertThat(props1).isNotEqualTo(props2);
+    }
+
+    @Test
+    void propertiesShouldNotBeEqualWhenSignerDiffers() {
+        NsecBunkerProperties props1 = new NsecBunkerProperties();
+        NsecBunkerProperties props2 = new NsecBunkerProperties();
+        props2.getSigner().setBunkerPubkey("different");
+
+        assertThat(props1).isNotEqualTo(props2);
+    }
+
+    @Test
+    void propertiesShouldNotBeEqualWhenMetricsDiffers() {
+        NsecBunkerProperties props1 = new NsecBunkerProperties();
+        NsecBunkerProperties props2 = new NsecBunkerProperties();
+        props2.getMetrics().setEnabled(false);
+
+        assertThat(props1).isNotEqualTo(props2);
     }
 }
