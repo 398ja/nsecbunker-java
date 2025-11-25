@@ -1,0 +1,19 @@
+digraph signing_sequence {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+
+  app [label="App"];
+  signer [label="NsecBunkerSigner"];
+  requestExec [label="RequestExecutor"];
+  relay [label="Relays", shape=ellipse];
+  bunker [label="nsecBunker"];
+
+  app -> signer [label="1. signEvent(event)"];
+  signer -> requestExec [label="2. enqueue + timeout/retry"];
+  requestExec -> relay [label="3. send nip46 sign_event"];
+  relay -> bunker [label="4. forward"];
+  bunker -> relay [label="5. signature"];
+  relay -> requestExec [label="6. response"];
+  requestExec -> signer [label="7. complete future"];
+  signer -> app [label="8. return signature"];
+}

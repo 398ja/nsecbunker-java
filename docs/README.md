@@ -14,5 +14,6 @@ This repository follows the Diátaxis structure. Use the sections below to find 
 - Explanations
   - [Security Best Practices](explanations/security-best-practices.md)
   - [Architecture Overview](explanations/architecture.md)
+  - [Sequence Flows](explanations/sequence-flows.md)
 - Reference
   - [API Reference](reference/api-reference.md)

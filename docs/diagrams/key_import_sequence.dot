@@ -1,0 +1,16 @@
+digraph key_import {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+
+  user [label="Admin User"];
+  adminClient [label="Admin Client"];
+  relay [label="Relays", shape=ellipse];
+  bunker [label="nsecBunker"];
+
+  user -> adminClient [label="1. Call createKey(name, nsec, passphrase)"];
+  adminClient -> relay [label="2. NIP-46 create_new_key"];
+  relay -> bunker [label="3. Forward request"];
+  bunker -> relay [label="4. ack/npub"];
+  relay -> adminClient [label="5. Response"];
+  adminClient -> user [label="6. Return key metadata"];
+}
