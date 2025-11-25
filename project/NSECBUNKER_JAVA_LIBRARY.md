@@ -428,12 +428,12 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 3.7.1 | Create end-to-end signing tests | Full flow: connect → sign → verify | M | | 3.2.* | ⬜ TODO |
-| 3.7.2 | Create multi-event signing tests | Batch operations | M | | 3.4.* | ⬜ TODO |
-| 3.7.3 | Create encryption/decryption tests | NIP-04 and NIP-44 | M | | 3.2.3-3.2.6 | ⬜ TODO |
-| 3.7.4 | Create connection lifecycle tests | Connect, disconnect, reconnect | M | | 3.5.* | ⬜ TODO |
-| 3.7.5 | Create error scenario tests | Timeouts, failures, retries | M | | 3.3.* | ⬜ TODO |
-| 3.7.6 | Create performance tests | Latency, throughput benchmarks | L | | 3.7.1-3.7.5 | ⬜ TODO |
+| 3.7.1 | Create end-to-end signing tests | Full flow: connect → sign → verify | M | 57acacd | 3.2.* | ✅ DONE |
+| 3.7.2 | Create multi-event signing tests | Batch operations | M | 57acacd | 3.4.* | ✅ DONE |
+| 3.7.3 | Create encryption/decryption tests | NIP-04 and NIP-44 | M | 57acacd | 3.2.3-3.2.6 | ✅ DONE |
+| 3.7.4 | Create connection lifecycle tests | Connect, disconnect, reconnect | M | 57acacd | 3.5.* | ✅ DONE |
+| 3.7.5 | Create error scenario tests | Timeouts, failures, retries | M | 57acacd | 3.3.* | ✅ DONE |
+| 3.7.6 | Create performance tests | Latency, throughput benchmarks | L | 57acacd | 3.7.1-3.7.5 | ✅ DONE |
 
 ---
 
