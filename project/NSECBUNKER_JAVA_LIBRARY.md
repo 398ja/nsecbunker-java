@@ -477,10 +477,10 @@ nsecbunker-java/
 | 4.3.1 | Create `HealthChecker` interface | Abstract health checks | S | ca0c82d | Phase 3 | ✅ DONE |
 | 4.3.2 | Implement `BunkerHealthChecker` | Concrete implementation | M | ca0c82d | 4.3.1 | ✅ DONE |
 | 4.3.3 | Add bunker availability checks | Is bunker responding? | S | ca0c82d | 4.3.2 | ✅ DONE |
-| 4.3.4 | Add relay connection health | Are relays connected? | S | | 4.3.2 | ⬜ TODO |
+| 4.3.4 | Add relay connection health | Are relays connected? | S | 6c68af2 | 4.3.2 | ✅ DONE |
 | 4.3.5 | Add response time tracking | Track signing latency | S | ca0c82d | 4.3.2 | ✅ DONE |
-| 4.3.6 | Add error rate monitoring | Track failure rates | S | | 4.3.2 | ⬜ TODO |
-| 4.3.7 | Implement circuit breaker pattern | Stop requests if unhealthy | M | | 4.3.3-4.3.6 | ⬜ TODO |
+| 4.3.6 | Add error rate monitoring | Track failure rates | S | 6c68af2 | 4.3.2 | ✅ DONE |
+| 4.3.7 | Implement circuit breaker pattern | Stop requests if unhealthy | M | 6c68af2 | 4.3.3-4.3.6 | ✅ DONE |
 
 #### 4.4 Alerting
 
@@ -488,15 +488,15 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 4.4.1 | Implement `AlertManager` class | Configure alerts | M | ca0c82d | 4.3.* | ✅ DONE |
 | 4.4.2 | Add threshold-based alerts | Trigger on error rate, latency | M | ca0c82d | 4.4.1 | ✅ DONE |
-| 4.4.3 | Add alert delivery | Callback, webhook | S | | 4.4.2 | ⬜ TODO |
+| 4.4.3 | Add alert delivery | Callback, webhook | S | 6c68af2 | 4.4.2 | ✅ DONE |
 
 #### 4.5 Integration Tests
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 4.5.1 | Create log retrieval tests | Get, filter, export logs | M | | 4.1.* | ⬜ TODO |
-| 4.5.2 | Create metrics collection tests | Collect and aggregate metrics | M | | 4.2.* | ⬜ TODO |
-| 4.5.3 | Create health check tests | Check health, trigger alerts | M | | 4.3.*, 4.4.* | ⬜ TODO |
+| 4.5.1 | Create log retrieval tests | Get, filter, export logs | M | 6c68af2 | 4.1.* | ✅ DONE |
+| 4.5.2 | Create metrics collection tests | Collect and aggregate metrics | M | 6c68af2 | 4.2.* | ✅ DONE |
+| 4.5.3 | Create health check tests | Check health, trigger alerts | M | 6c68af2 | 4.3.*, 4.4.* | ✅ DONE |
 
 ---
 

@@ -1,5 +1,7 @@
 package xyz.tcheeric.nsecbunker.monitoring.metrics;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 
@@ -10,6 +12,7 @@ import java.time.Instant;
  */
 @Value
 @Builder(toBuilder = true)
+@JsonDeserialize(builder = MetricsRecord.MetricsRecordBuilder.class)
 public class MetricsRecord {
     String id;
     String keyName;
@@ -18,4 +21,8 @@ public class MetricsRecord {
     long count;
     long failures;
     Instant lastUpdated;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class MetricsRecordBuilder {
+    }
 }
