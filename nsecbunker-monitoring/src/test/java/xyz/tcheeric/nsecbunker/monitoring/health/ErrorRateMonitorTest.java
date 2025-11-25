@@ -216,4 +216,121 @@ class ErrorRateMonitorTest {
         assertThat(monitor.getErrorThreshold()).isEqualTo(0.5);
         assertThat(monitor.getMinSamples()).isEqualTo(10);
     }
+
+    // Tests for ErrorRateSnapshot nested class
+    @Test
+    @DisplayName("ErrorRateSnapshot has working equals and hashCode")
+    void errorRateSnapshotHasWorkingEqualsAndHashCode() {
+        // Create snapshots with same timestamp to test equality
+        java.time.Instant fixedTime = java.time.Instant.now();
+        ErrorRateMonitor.ErrorRateSnapshot snapshot1 = ErrorRateMonitor.ErrorRateSnapshot.builder()
+                .windowDuration(Duration.ofMinutes(5))
+                .errorThreshold(0.5)
+                .windowEventCount(2)
+                .windowSuccesses(1)
+                .windowFailures(1)
+                .totalSuccesses(1)
+                .totalFailures(1)
+                .windowErrorRate(0.5)
+                .allTimeErrorRate(0.5)
+                .thresholdExceeded(false)
+                .timestamp(fixedTime)
+                .build();
+        ErrorRateMonitor.ErrorRateSnapshot snapshot2 = ErrorRateMonitor.ErrorRateSnapshot.builder()
+                .windowDuration(Duration.ofMinutes(5))
+                .errorThreshold(0.5)
+                .windowEventCount(2)
+                .windowSuccesses(1)
+                .windowFailures(1)
+                .totalSuccesses(1)
+                .totalFailures(1)
+                .windowErrorRate(0.5)
+                .allTimeErrorRate(0.5)
+                .thresholdExceeded(false)
+                .timestamp(fixedTime)
+                .build();
+
+        assertThat(snapshot1).isEqualTo(snapshot2);
+        assertThat(snapshot1.hashCode()).isEqualTo(snapshot2.hashCode());
+        assertThat(snapshot1).isEqualTo(snapshot1);
+        assertThat(snapshot1).isNotEqualTo(null);
+        assertThat(snapshot1).isNotEqualTo("string");
+    }
+
+    @Test
+    @DisplayName("ErrorRateSnapshot has working toString")
+    void errorRateSnapshotHasWorkingToString() {
+        ErrorRateMonitor monitor = ErrorRateMonitor.builder()
+                .windowDuration(Duration.ofMinutes(10))
+                .build();
+        monitor.recordSuccess();
+
+        ErrorRateMonitor.ErrorRateSnapshot snapshot = monitor.getSnapshot();
+        String toString = snapshot.toString();
+
+        assertThat(toString).contains("ErrorRateSnapshot");
+    }
+
+    @Test
+    @DisplayName("ErrorRateSnapshot builder works correctly")
+    void errorRateSnapshotBuilderWorksCorrectly() {
+        ErrorRateMonitor.ErrorRateSnapshot snapshot = ErrorRateMonitor.ErrorRateSnapshot.builder()
+                .windowDuration(Duration.ofMinutes(15))
+                .errorThreshold(0.75)
+                .windowEventCount(100)
+                .windowSuccesses(70)
+                .windowFailures(30)
+                .totalSuccesses(1000)
+                .totalFailures(500)
+                .windowErrorRate(0.30)
+                .allTimeErrorRate(0.33)
+                .thresholdExceeded(false)
+                .build();
+
+        assertThat(snapshot.getWindowDuration()).isEqualTo(Duration.ofMinutes(15));
+        assertThat(snapshot.getErrorThreshold()).isEqualTo(0.75);
+        assertThat(snapshot.getWindowEventCount()).isEqualTo(100);
+        assertThat(snapshot.getWindowSuccesses()).isEqualTo(70);
+        assertThat(snapshot.getWindowFailures()).isEqualTo(30);
+        assertThat(snapshot.getTotalSuccesses()).isEqualTo(1000);
+        assertThat(snapshot.getTotalFailures()).isEqualTo(500);
+        assertThat(snapshot.getWindowErrorRate()).isEqualTo(0.30);
+        assertThat(snapshot.getAllTimeErrorRate()).isEqualTo(0.33);
+        assertThat(snapshot.isThresholdExceeded()).isFalse();
+    }
+
+    @Test
+    @DisplayName("ErrorRateSnapshot inequality works")
+    void errorRateSnapshotInequalityWorks() {
+        ErrorRateMonitor.ErrorRateSnapshot snapshot1 = ErrorRateMonitor.ErrorRateSnapshot.builder()
+                .windowEventCount(10)
+                .windowSuccesses(8)
+                .windowFailures(2)
+                .build();
+        ErrorRateMonitor.ErrorRateSnapshot snapshot2 = ErrorRateMonitor.ErrorRateSnapshot.builder()
+                .windowEventCount(20)
+                .windowSuccesses(15)
+                .windowFailures(5)
+                .build();
+
+        assertThat(snapshot1).isNotEqualTo(snapshot2);
+    }
+
+    @Test
+    @DisplayName("Snapshot reflects threshold exceeded state correctly")
+    void snapshotReflectsThresholdExceededStateCorrectly() {
+        ErrorRateMonitor monitor = ErrorRateMonitor.builder()
+                .errorThreshold(0.3)
+                .minSamples(5)
+                .build();
+
+        // Record enough samples to exceed threshold
+        for (int i = 0; i < 4; i++) {
+            monitor.recordFailure();
+        }
+        monitor.recordSuccess();
+
+        ErrorRateMonitor.ErrorRateSnapshot snapshot = monitor.getSnapshot();
+        assertThat(snapshot.isThresholdExceeded()).isTrue();
+    }
 }

@@ -302,4 +302,86 @@ class CircuitBreakerTest {
         assertThat(timeUntilReset.toSeconds()).isLessThanOrEqualTo(30);
         assertThat(timeUntilReset.toSeconds()).isGreaterThan(25);
     }
+
+    // Tests for CircuitBreakerStatus nested class
+    @Test
+    @DisplayName("CircuitBreakerStatus has working equals and hashCode")
+    void circuitBreakerStatusHasWorkingEqualsAndHashCode() {
+        // Create statuses with same timestamp to test equality
+        java.time.Instant fixedTime = java.time.Instant.now();
+        CircuitBreaker.CircuitBreakerStatus status1 = CircuitBreaker.CircuitBreakerStatus.builder()
+                .name("test")
+                .state(CircuitBreaker.State.CLOSED)
+                .failureCount(0)
+                .failureThreshold(5)
+                .successThreshold(3)
+                .resetTimeout(Duration.ofSeconds(30))
+                .timestamp(fixedTime)
+                .build();
+        CircuitBreaker.CircuitBreakerStatus status2 = CircuitBreaker.CircuitBreakerStatus.builder()
+                .name("test")
+                .state(CircuitBreaker.State.CLOSED)
+                .failureCount(0)
+                .failureThreshold(5)
+                .successThreshold(3)
+                .resetTimeout(Duration.ofSeconds(30))
+                .timestamp(fixedTime)
+                .build();
+
+        assertThat(status1).isEqualTo(status2);
+        assertThat(status1.hashCode()).isEqualTo(status2.hashCode());
+        assertThat(status1).isEqualTo(status1);
+        assertThat(status1).isNotEqualTo(null);
+        assertThat(status1).isNotEqualTo("string");
+    }
+
+    @Test
+    @DisplayName("CircuitBreakerStatus has working toString")
+    void circuitBreakerStatusHasWorkingToString() {
+        CircuitBreaker breaker = CircuitBreaker.builder()
+                .name("test-breaker")
+                .build();
+
+        CircuitBreaker.CircuitBreakerStatus status = breaker.getStatus();
+        String toString = status.toString();
+
+        assertThat(toString).contains("CircuitBreakerStatus");
+        assertThat(toString).contains("test-breaker");
+        assertThat(toString).contains("CLOSED");
+    }
+
+    @Test
+    @DisplayName("CircuitBreakerStatus builder works correctly")
+    void circuitBreakerStatusBuilderWorksCorrectly() {
+        CircuitBreaker.CircuitBreakerStatus status = CircuitBreaker.CircuitBreakerStatus.builder()
+                .name("custom")
+                .state(CircuitBreaker.State.OPEN)
+                .failureCount(3)
+                .failureThreshold(5)
+                .successThreshold(3)
+                .resetTimeout(Duration.ofMinutes(1))
+                .build();
+
+        assertThat(status.getName()).isEqualTo("custom");
+        assertThat(status.getState()).isEqualTo(CircuitBreaker.State.OPEN);
+        assertThat(status.getFailureCount()).isEqualTo(3);
+        assertThat(status.getFailureThreshold()).isEqualTo(5);
+        assertThat(status.getSuccessThreshold()).isEqualTo(3);
+        assertThat(status.getResetTimeout()).isEqualTo(Duration.ofMinutes(1));
+    }
+
+    @Test
+    @DisplayName("CircuitBreakerStatus inequality works")
+    void circuitBreakerStatusInequalityWorks() {
+        CircuitBreaker.CircuitBreakerStatus status1 = CircuitBreaker.CircuitBreakerStatus.builder()
+                .name("test1")
+                .state(CircuitBreaker.State.CLOSED)
+                .build();
+        CircuitBreaker.CircuitBreakerStatus status2 = CircuitBreaker.CircuitBreakerStatus.builder()
+                .name("test2")
+                .state(CircuitBreaker.State.OPEN)
+                .build();
+
+        assertThat(status1).isNotEqualTo(status2);
+    }
 }
