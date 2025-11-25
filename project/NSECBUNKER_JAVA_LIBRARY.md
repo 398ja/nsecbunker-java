@@ -462,12 +462,12 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 4.2.1 | Create `MetricsCollector` interface | Abstract metrics operations | S | | Phase 2 | ⬜ TODO |
-| 4.2.2 | Implement `DefaultMetricsCollector` | Concrete implementation | M | | 4.2.1 | ⬜ TODO |
-| 4.2.3 | Implement `getKeyStatistics(keyName)` | Key usage stats | S | | 4.2.2 | ⬜ TODO |
-| 4.2.4 | Implement `getTokenStatistics(tokenId)` | Token usage stats | S | | 4.2.2 | ⬜ TODO |
-| 4.2.5 | Implement `getUserStatistics(userPubkey)` | User activity metrics | S | | 4.2.2 | ⬜ TODO |
-| 4.2.6 | Implement `getPolicyStatistics(policyId)` | Policy enforcement stats | S | | 4.2.2 | ⬜ TODO |
+| 4.2.1 | Create `MetricsCollector` interface | Abstract metrics operations | S | 11564df | Phase 2 | ✅ DONE |
+| 4.2.2 | Implement `DefaultMetricsCollector` | Concrete implementation | M | 11564df | 4.2.1 | ✅ DONE |
+| 4.2.3 | Implement `getKeyStatistics(keyName)` | Key usage stats | S | 11564df | 4.2.2 | ✅ DONE |
+| 4.2.4 | Implement `getTokenStatistics(tokenId)` | Token usage stats | S | 11564df | 4.2.2 | ✅ DONE |
+| 4.2.5 | Implement `getUserStatistics(userPubkey)` | User activity metrics | S | 11564df | 4.2.2 | ✅ DONE |
+| 4.2.6 | Implement `getPolicyStatistics(policyId)` | Policy enforcement stats | S | 11564df | 4.2.2 | ✅ DONE |
 | 4.2.7 | Add time-series data aggregation | Aggregate over time periods | M | | 4.2.3-4.2.6 | ⬜ TODO |
 
 #### 4.3 Health Monitoring (`nsecbunker-monitoring/health`)
