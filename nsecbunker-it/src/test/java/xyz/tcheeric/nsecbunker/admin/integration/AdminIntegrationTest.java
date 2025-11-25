@@ -1,6 +1,7 @@
 package xyz.tcheeric.nsecbunker.admin.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
 import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
@@ -33,6 +36,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AdminIntegrationTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminIntegrationTest.class);
+
     @Mock
     private NsecBunkerAdminClient adminClient;
 
@@ -41,6 +46,11 @@ class AdminIntegrationTest {
     private DefaultPolicyManager policyManager;
     private DefaultPermissionManager permissionManager;
     private DefaultTokenManager tokenManager;
+
+    @BeforeAll
+    static void noteExpectedConnectionErrors() {
+        LOGGER.info("Admin integration tests stub the admin client; any relay connection errors seen during IT runs are expected.");
+    }
 
     @BeforeEach
     void setUp() {

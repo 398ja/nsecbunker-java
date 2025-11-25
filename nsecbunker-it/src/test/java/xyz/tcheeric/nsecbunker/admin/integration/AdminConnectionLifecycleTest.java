@@ -1,10 +1,13 @@
 package xyz.tcheeric.nsecbunker.admin.integration;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.tcheeric.nsecbunker.admin.AdminEventListener;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.connection.ConnectionState;
@@ -32,12 +35,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Tag("integration")
 class AdminConnectionLifecycleTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminConnectionLifecycleTest.class);
+
     // Well-known test keys (secp256k1 scalar = 1, 2)
     private static final String TEST_BUNKER_PUBKEY = "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798";
     private static final String TEST_ADMIN_PRIVKEY = "0000000000000000000000000000000000000000000000000000000000000002";
 
     private MockRelayServer mockRelay;
     private NsecBunkerAdminClient client;
+
+    @BeforeAll
+    static void noteExpectedConnectionErrors() {
+        LOGGER.info("Admin connection lifecycle integration tests intentionally hit invalid/mocked relays; connection errors in logs are expected.");
+    }
 
     @BeforeEach
     void setUp() throws IOException {
