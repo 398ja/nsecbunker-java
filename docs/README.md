@@ -13,3 +13,6 @@ This repository follows the Diátaxis structure. Use the sections below to find 
   - [Migrate From Other Signers](how-to/migrate-from-other-signers.md)
 - Explanations
   - [Security Best Practices](explanations/security-best-practices.md)
+  - [Architecture Overview](explanations/architecture.md)
+- Reference
+  - [API Reference](reference/api-reference.md)
