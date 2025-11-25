@@ -44,6 +44,7 @@
         <module>nsecbunker-monitoring</module>
         <module>nsecbunker-account</module>
         <module>nsecbunker-spring-boot-starter</module>
+        <module>nsecbunker-it</module>
     </modules>
 
     <properties>
