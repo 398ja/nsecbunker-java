@@ -44,7 +44,8 @@ class RelayContainerIntegrationTest {
         assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available");
         relay.start();
 
-        String relayUrl = "ws://" + relay.getHost() + ":" + relay.getMappedPort(8080);
+        int mappedPort = relay.getFirstMappedPort();
+        String relayUrl = "ws://" + relay.getHost() + ":" + mappedPort;
         RelayConnection connection = new RelayConnection(relayUrl, null, Duration.ofSeconds(15));
         CountDownLatch connected = new CountDownLatch(1);
         CountDownLatch eoseReceived = new CountDownLatch(1);
