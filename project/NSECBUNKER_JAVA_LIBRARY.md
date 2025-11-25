@@ -644,8 +644,8 @@ nsecbunker-java/
 | 8.1.2 | Create integration test suite | End-to-end integration | L | 8243cc6 | All phases | ✅ DONE |
 | 8.1.3 | Create end-to-end test suite | Full user scenarios (see test list below) | L | | All phases | ⬜ TODO |
 | 8.1.4 | Create performance test suite | Load, stress tests; see planned scenarios below | L | | Phase 3 | ⬜ TODO |
-| 8.1.5 | Create security test suite | Security scanning | M | | All phases | ⬜ TODO |
-| 8.1.6 | Add chaos testing | Network failures, etc. | M | | All phases | ⬜ TODO |
+| 8.1.5 | Create security test suite | Security scanning; see planned scenarios below | M | | All phases | ⬜ TODO |
+| 8.1.6 | Add chaos testing | Network failures, etc.; see planned scenarios below | M | | All phases | ⬜ TODO |
 
 **Planned E2E Tests (using pablof7z/nsecbunkerd in Testcontainers)**
 - Admin connection lifecycle: start container, connect via admin client, subscribe for responses, disconnect/close.
@@ -669,6 +669,20 @@ nsecbunker-java/
 - Nip46/JSON event encode/decode serialization benchmarks.
 - Admin/signer round-trip latency against a Testcontainers relay under load (with/without packet loss).
 - Resource profiling under sustained load (CPU, heap, GC) on Java 21 to catch regressions.
+
+**Planned Security Tests (8.1.5)**
+- Dependency and container image scanning (e.g., OWASP Dependency-Check, Trivy) in CI.
+- Fuzzing/negative tests for protocol parsers (NIP-46 decode, Nip04 decrypt) and admin input validation.
+- TLS/WS transport hardening checks (cipher suites, hostname verification) and secret handling audits.
+- Permission/policy enforcement tests to ensure no privilege escalation across admin/signer APIs.
+- Static analysis rules for crypto misuse and logging of sensitive data.
+
+**Planned Chaos Tests (8.1.6)**
+- RelayPool resilience under network partitions, latency injection, and dropped frames (Testcontainers + Toxiproxy).
+- Admin/signer retry/backoff correctness under flapping relays and mid-flight disconnects.
+- Message deduplication/ordering guarantees when relays replay or reorder events.
+- Storage/cache consistency checks when intermittent failures occur during policy/token updates.
+- Circuit breaker/fallback behavior for monitoring and health checks under sustained errors.
 
 #### 8.2 Performance Optimization
 
