@@ -1,0 +1,20 @@
+digraph architecture {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+
+  app [label="Application"];
+  admin [label="Admin Client"];
+  signer [label="Remote Signer"];
+  keyManager [label="KeyManager\nPolicy/Permission/Token"];
+  protocol [label="NIP-46 Protocol"];
+  relays [label="Relays", shape=ellipse];
+  bunker [label="nsecBunker", shape=box];
+
+  app -> admin;
+  app -> signer;
+  admin -> keyManager;
+  signer -> protocol;
+  keyManager -> protocol;
+  protocol -> relays;
+  relays -> bunker;
+}
