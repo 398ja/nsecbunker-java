@@ -640,7 +640,7 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 8.1.1 | Increase unit test coverage to >90% | Add missing tests | XL | | All phases | ⬜ TODO |
+| 8.1.1 | Increase unit test coverage to >90% | Add missing tests | XL | 8593a94 | All phases | ✅ DONE |
 | 8.1.2 | Create integration test suite | End-to-end integration | L | 8243cc6 | All phases | ✅ DONE |
 | 8.1.3 | Create end-to-end test suite | Full user scenarios (see test list below) | L | | All phases | ⬜ TODO |
 | 8.1.4 | Create performance test suite | Load, stress tests | L | | Phase 3 | ⬜ TODO |
