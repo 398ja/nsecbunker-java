@@ -610,8 +610,8 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 7.3.1 | Create simple signer example | Basic signing app | M | | Phase 3 | ⬜ TODO |
-| 7.3.2 | Create admin CLI example | Command-line admin tool | M | | Phase 2 | ⬜ TODO |
+| 7.3.1 | Create simple signer example | Basic signing app | M | cc72f8a | Phase 3 | ✅ DONE |
+| 7.3.2 | Create admin CLI example | Command-line admin tool | M | cc72f8a | Phase 2 | ✅ DONE |
 | 7.3.3 | Create cashu-client integration example | Integration demo | L | | Phase 3 | ⬜ TODO |
 | 7.3.4 | Create Spring Boot application example | Full Spring Boot app | L | | Phase 6 | ⬜ TODO |
 | 7.3.5 | Create multi-tenant application example | Multi-user scenario | XL | | Phase 2, Phase 3 | ⬜ TODO |
