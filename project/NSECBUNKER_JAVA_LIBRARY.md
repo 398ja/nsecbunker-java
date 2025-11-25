@@ -346,7 +346,7 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 2.6.1 | Create admin connection lifecycle tests | Connect, disconnect, reconnect | M | | 2.1.* | ⬜ TODO |
+| 2.6.1 | Create admin connection lifecycle tests | Connect, disconnect, reconnect | M | 7c82fe0 | 2.1.* | ✅ DONE |
 | 2.6.2 | Create key CRUD operation tests | Create, list, unlock, delete | M | 8c396f5 | 2.2.* | ✅ DONE |
 | 2.6.3 | Create policy CRUD operation tests | Create, list, get, delete | M | 8c396f5 | 2.3.* | ✅ DONE |
 | 2.6.4 | Create permission grant/revoke tests | Grant, revoke, list | M | 8c396f5 | 2.4.* | ✅ DONE |
