@@ -513,30 +513,30 @@ nsecbunker-java/
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 5.1.1 | Create `AccountManager` interface | Abstract account operations | S | | Phase 2 | ⬜ TODO |
-| 5.1.2 | Implement `DefaultAccountManager` | Concrete implementation | M | | 5.1.1 | ⬜ TODO |
-| 5.1.3 | Implement `createAccount(username, domain)` | Create new account | S | | 5.1.2 | ⬜ TODO |
-| 5.1.4 | Implement account registration flow | Multi-step registration | M | | 5.1.3 | ⬜ TODO |
-| 5.1.5 | Add key generation for new accounts | Generate keys in bunker | S | | 5.1.4 | ⬜ TODO |
+| 5.1.1 | Create `AccountManager` interface | Abstract account operations | S | 8dba980 | Phase 2 | ✅ DONE |
+| 5.1.2 | Implement `DefaultAccountManager` | Concrete implementation | M | 8dba980 | 5.1.1 | ✅ DONE |
+| 5.1.3 | Implement `createAccount(username, domain)` | Create new account | S | 8dba980 | 5.1.2 | ✅ DONE |
+| 5.1.4 | Implement account registration flow | Multi-step registration | M | 8dba980 | 5.1.3 | ✅ DONE |
+| 5.1.5 | Add key generation for new accounts | Generate keys in bunker | S | 8dba980 | 5.1.4 | ✅ DONE |
 
 #### 5.2 NIP-05 Management (`nsecbunker-account/nip05`)
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 5.2.1 | Create `Nip05Manager` interface | Abstract NIP-05 operations | S | | Phase 2 | ⬜ TODO |
-| 5.2.2 | Implement `DefaultNip05Manager` | Concrete implementation | M | | 5.2.1 | ⬜ TODO |
-| 5.2.3 | Implement `setupNip05(username, domain)` | Setup identifier | M | | 5.2.2 | ⬜ TODO |
-| 5.2.4 | Implement `verifyNip05(nip05)` | Verify identifier | M | | 5.2.2 | ⬜ TODO |
-| 5.2.5 | Add NIP-05 JSON generation | Generate .well-known JSON | S | | 5.2.3 | ⬜ TODO |
+| 5.2.1 | Create `Nip05Manager` interface | Abstract NIP-05 operations | S | 8dba980 | Phase 2 | ✅ DONE |
+| 5.2.2 | Implement `DefaultNip05Manager` | Concrete implementation | M | 8dba980 | 5.2.1 | ✅ DONE |
+| 5.2.3 | Implement `setupNip05(username, domain)` | Setup identifier | M | 8dba980 | 5.2.2 | ✅ DONE |
+| 5.2.4 | Implement `verifyNip05(nip05)` | Verify identifier | M | 8dba980 | 5.2.2 | ✅ DONE |
+| 5.2.5 | Add NIP-05 JSON generation | Generate .well-known JSON | S | 8dba980 | 5.2.3 | ✅ DONE |
 
 #### 5.3 Wallet Integration (`nsecbunker-account/wallet`)
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
-| 5.3.1 | Create `WalletManager` interface | Abstract wallet operations | S | | Phase 2 | ⬜ TODO |
-| 5.3.2 | Implement `LNBitsWalletManager` | LNBits implementation | M | | 5.3.1 | ⬜ TODO |
-| 5.3.3 | Implement `createWallet(keyName)` | Create LNBits wallet | S | | 5.3.2 | ⬜ TODO |
-| 5.3.4 | Implement `getWalletInfo(keyName)` | Get wallet details | S | | 5.3.2 | ⬜ TODO |
+| 5.3.1 | Create `WalletManager` interface | Abstract wallet operations | S | 8dba980 | Phase 2 | ✅ DONE |
+| 5.3.2 | Implement `LNBitsWalletManager` | LNBits implementation | M | 8dba980 | 5.3.1 | ✅ DONE |
+| 5.3.3 | Implement `createWallet(keyName)` | Create LNBits wallet | S | 8dba980 | 5.3.2 | ✅ DONE |
+| 5.3.4 | Implement `getWalletInfo(keyName)` | Get wallet details | S | 8dba980 | 5.3.2 | ✅ DONE |
 
 ---
 
