@@ -591,9 +591,9 @@ nsecbunker-java/
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
 |---------|-----------------|------|------|-----------|------------|--------|
 | 7.1.1 | Write Javadoc for all public APIs | Complete API docs | XL | | All phases | ⬜ TODO |
-| 7.1.2 | Create architecture diagrams | System architecture | M | | All phases | ⬜ TODO |
+| 7.1.2 | Create architecture diagrams | System architecture | M | 79150e0 | All phases | ✅ DONE |
 | 7.1.3 | Create sequence diagrams for key flows | Visual flow docs | M | | All phases | ⬜ TODO |
-| 7.1.4 | Write API reference documentation | Markdown API docs | L | | 7.1.1 | ⬜ TODO |
+| 7.1.4 | Write API reference documentation | Markdown API docs | L | 46d51c5 | 7.1.1 | ✅ DONE |
 
 #### 7.2 User Guides
 
