@@ -656,6 +656,13 @@ nsecbunker-java/
 - Signing flow: connect signer, request permissions, sign event, encrypt/decrypt NIP-04 and NIP-44, ping.
 - Batch signing: sign multiple events and validate distinct signatures returned.
 
+**Planned Integration Tests (nsecbunker-it module)**
+- Testcontainers availability smoke (existing).
+- Admin client request/response wiring against a mock/loopback NIP-46 handler: validate connect/ping/error paths without full bunker.
+- Signer request executor: retries/timeouts against a stub transport that drops/returns late.
+- Spring Boot starter context load: auto-config beans present, health indicator reports DOWN when ping fails (using mocked signer).
+- Monitoring components: log reader/metrics collector parsing with synthetic JSON payloads; alert manager thresholds; health checker ping response classification.
+
 #### 8.2 Performance Optimization
 
 | Task ID | Task Description | Note | Size | Commit ID | Dependency | Status |
