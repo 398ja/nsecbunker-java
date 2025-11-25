@@ -34,10 +34,21 @@ public class DefaultPermissionManager implements PermissionManager {
     private final NsecBunkerAdminClient adminClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a permission manager with the default object mapper.
+     *
+     * @param adminClient the admin client for bunker communication
+     */
     public DefaultPermissionManager(NsecBunkerAdminClient adminClient) {
         this(adminClient, createDefaultObjectMapper());
     }
 
+    /**
+     * Creates a permission manager with a custom object mapper.
+     *
+     * @param adminClient  the admin client for bunker communication
+     * @param objectMapper custom mapper for JSON serialization
+     */
     public DefaultPermissionManager(NsecBunkerAdminClient adminClient, ObjectMapper objectMapper) {
         this.adminClient = Objects.requireNonNull(adminClient, "adminClient must not be null");
         this.objectMapper = objectMapper != null ? objectMapper : createDefaultObjectMapper();

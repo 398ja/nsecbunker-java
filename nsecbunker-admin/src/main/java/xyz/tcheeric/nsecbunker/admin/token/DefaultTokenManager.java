@@ -35,10 +35,21 @@ public class DefaultTokenManager implements TokenManager {
     private final NsecBunkerAdminClient adminClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a token manager with the default object mapper.
+     *
+     * @param adminClient the admin client for bunker communication
+     */
     public DefaultTokenManager(NsecBunkerAdminClient adminClient) {
         this(adminClient, createDefaultObjectMapper());
     }
 
+    /**
+     * Creates a token manager with a custom object mapper.
+     *
+     * @param adminClient  the admin client for bunker communication
+     * @param objectMapper custom mapper for JSON serialization
+     */
     public DefaultTokenManager(NsecBunkerAdminClient adminClient, ObjectMapper objectMapper) {
         this.adminClient = Objects.requireNonNull(adminClient, "adminClient must not be null");
         this.objectMapper = objectMapper != null ? objectMapper : createDefaultObjectMapper();

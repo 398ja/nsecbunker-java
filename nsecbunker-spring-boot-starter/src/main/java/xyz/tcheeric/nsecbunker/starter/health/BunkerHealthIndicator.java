@@ -8,18 +8,31 @@ import xyz.tcheeric.nsecbunker.starter.NsecBunkerProperties;
 import java.util.Objects;
 
 /**
- * Simple health indicator that pings the bunker signer when available.
+ * Health indicator for nsecBunker signer connectivity.
+ *
+ * <p>Pings the bunker and reports health status for Spring Boot Actuator.
  */
 public class BunkerHealthIndicator implements HealthIndicator {
 
     private final NsecBunkerSigner signer;
     private final NsecBunkerProperties properties;
 
+    /**
+     * Creates a new health indicator.
+     *
+     * @param signer     the signer to check (may be null)
+     * @param properties configuration properties
+     */
     public BunkerHealthIndicator(NsecBunkerSigner signer, NsecBunkerProperties properties) {
         this.signer = signer;
         this.properties = Objects.requireNonNull(properties, "properties must not be null");
     }
 
+    /**
+     * Checks bunker health by sending a ping request.
+     *
+     * @return health status with bunker details
+     */
     @Override
     public Health health() {
         if (signer == null) {

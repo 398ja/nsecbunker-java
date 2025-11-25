@@ -6,8 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Default implementation of {@link AlertManager}.
+ *
+ * <p>Evaluates metrics against failure thresholds and error rate thresholds
+ * to generate alerts.
+ */
 public class DefaultAlertManager implements AlertManager {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Alert> evaluate(MetricsRecord metrics, AlertThresholds thresholds) {
         Objects.requireNonNull(metrics, "metrics must not be null");
