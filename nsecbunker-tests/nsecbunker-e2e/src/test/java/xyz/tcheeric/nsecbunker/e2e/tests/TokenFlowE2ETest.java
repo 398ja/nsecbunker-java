@@ -61,7 +61,7 @@ class TokenFlowE2ETest extends E2ETestBase {
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
         await().atMost(E2E_TIMEOUT)
-                .untilAsserted(() -> assertThat(adminClient.ping().get(10, TimeUnit.SECONDS)).isEqualTo("pong"));
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();

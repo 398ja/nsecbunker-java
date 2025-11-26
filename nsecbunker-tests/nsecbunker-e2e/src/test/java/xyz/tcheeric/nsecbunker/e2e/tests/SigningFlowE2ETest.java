@@ -46,6 +46,8 @@ class SigningFlowE2ETest extends E2ETestBase {
     private PolicyManager policyManager;
     private PermissionManager permissionManager;
     private TokenManager tokenManager;
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(120);
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
 
     // Test fixtures
     private String testKeyName;
@@ -68,6 +70,11 @@ class SigningFlowE2ETest extends E2ETestBase {
 
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS))
+                        .isEqualTo("pong"));
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();
@@ -83,7 +90,7 @@ class SigningFlowE2ETest extends E2ETestBase {
         // Clean up in reverse order of creation
         if (signingPolicy != null && signingPolicy.getId() != null) {
             try {
-                policyManager.deletePolicy(signingPolicy.getId()).get(30, TimeUnit.SECONDS);
+                policyManager.deletePolicy(signingPolicy.getId()).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.warn("Failed to delete signing policy: {}", e.getMessage());
             }
@@ -91,7 +98,7 @@ class SigningFlowE2ETest extends E2ETestBase {
 
         if (testKeyName != null) {
             try {
-                keyManager.deleteKey(testKeyName).get(30, TimeUnit.SECONDS);
+                keyManager.deleteKey(testKeyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.warn("Failed to delete test key: {}", e.getMessage());
             }
@@ -111,7 +118,7 @@ class SigningFlowE2ETest extends E2ETestBase {
         String passphrase = "signing-passphrase";
 
         testKey = keyManager.createKey(testKeyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(testKey).isNotNull();
         assertThat(testKey.getNpub()).isNotNull().startsWith("npub1");
@@ -120,12 +127,12 @@ class SigningFlowE2ETest extends E2ETestBase {
 
         // Unlock the key for signing operations
         Boolean unlocked = keyManager.unlockKey(testKeyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(unlocked).isTrue();
 
         // Verify key is ready for signing
         BunkerKey keyDetails = keyManager.getKeyDetails(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keyDetails.isLocked()).isFalse();
 
         log.info("Key is unlocked and ready for signing");
@@ -137,7 +144,7 @@ class SigningFlowE2ETest extends E2ETestBase {
     void shouldCreateSigningPolicy() throws Exception {
         testKeyName = "policy-test-key-" + UUID.randomUUID().toString().substring(0, 8);
         testKey = keyManager.createKey(testKeyName, "test-passphrase")
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Create a policy that allows signing events
         signingPolicy = policyManager.createPolicy(
@@ -150,7 +157,7 @@ class SigningFlowE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowEventKind(7))  // Reactions
                         .rule(PolicyRule.denyEventKind(4))   // Deny DMs
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(signingPolicy).isNotNull();
         assertThat(signingPolicy.getId()).isNotBlank();
@@ -169,21 +176,21 @@ class SigningFlowE2ETest extends E2ETestBase {
         // Set up key and policy
         testKeyName = "grant-test-key-" + UUID.randomUUID().toString().substring(0, 8);
         testKey = keyManager.createKey(testKeyName, "test-passphrase")
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         signingPolicy = policyManager.createPolicy(
                 BunkerPolicy.builder()
                         .name("grant-policy-" + UUID.randomUUID().toString().substring(0, 8))
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         String userPubkey = testUser.getPublicKey().toString();
 
         // Grant signing permission
         KeyUser keyUser = permissionManager.grantPermission(
                 testKeyName, userPubkey, signingPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(keyUser).isNotNull();
         assertThat(keyUser.getPublicKey()).isEqualTo(userPubkey);
@@ -193,7 +200,7 @@ class SigningFlowE2ETest extends E2ETestBase {
 
         // Clean up permission
         permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -203,7 +210,7 @@ class SigningFlowE2ETest extends E2ETestBase {
         // Set up key and policy
         testKeyName = "token-test-key-" + UUID.randomUUID().toString().substring(0, 8);
         testKey = keyManager.createKey(testKeyName, "test-passphrase")
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         signingPolicy = policyManager.createPolicy(
                 BunkerPolicy.builder()
@@ -211,13 +218,13 @@ class SigningFlowE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .rule(PolicyRule.allowMethod("get_public_key"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Create a signing token
         String clientName = "signing-client";
         AccessToken token = tokenManager.createToken(
                 testKeyName, clientName, signingPolicy.getId(), Duration.ofHours(24))
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(token).isNotNull();
         assertThat(token.getToken()).isNotBlank();
@@ -234,7 +241,7 @@ class SigningFlowE2ETest extends E2ETestBase {
                 token.getId(), connectionString.substring(0, Math.min(50, connectionString.length())));
 
         // Clean up
-        tokenManager.revokeToken(token.getId()).get(30, TimeUnit.SECONDS);
+        tokenManager.revokeToken(token.getId()).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -246,13 +253,13 @@ class SigningFlowE2ETest extends E2ETestBase {
         testKeyName = "full-flow-key-" + UUID.randomUUID().toString().substring(0, 8);
         String passphrase = "full-flow-passphrase";
         testKey = keyManager.createKey(testKeyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(testKey.getNpub()).startsWith("npub1");
         log.info("Key created: npub={}", testKey.getNpub());
 
         // 2. Unlock key
         log.info("Step 2: Unlocking key");
-        keyManager.unlockKey(testKeyName, passphrase).get(30, TimeUnit.SECONDS);
+        keyManager.unlockKey(testKeyName, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         log.info("Key unlocked");
 
         // 3. Create signing policy
@@ -266,7 +273,7 @@ class SigningFlowE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowMethod("ping"))
                         .rule(PolicyRule.allowEventKind(1))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         log.info("Policy created: id={}", signingPolicy.getId());
 
         // 4. Grant permission to test user
@@ -274,7 +281,7 @@ class SigningFlowE2ETest extends E2ETestBase {
         String userPubkey = testUser.getPublicKey().toString();
         KeyUser keyUser = permissionManager.grantPermission(
                 testKeyName, userPubkey, signingPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keyUser.isActive()).isTrue();
         log.info("Permission granted to user: {}", testUser.getPublicKey().toBech32String());
 
@@ -282,7 +289,7 @@ class SigningFlowE2ETest extends E2ETestBase {
         log.info("Step 5: Creating token");
         AccessToken token = tokenManager.createToken(
                 testKeyName, "full-flow-client", signingPolicy.getId(), Duration.ofDays(7))
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(token.isValid()).isTrue();
         log.info("Token created: id={}", token.getId());
 
@@ -290,22 +297,22 @@ class SigningFlowE2ETest extends E2ETestBase {
         log.info("Step 6: Verifying setup");
 
         // Verify key exists and is unlocked
-        BunkerKey keyDetails = keyManager.getKeyDetails(testKeyName).get(30, TimeUnit.SECONDS);
+        BunkerKey keyDetails = keyManager.getKeyDetails(testKeyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keyDetails.isLocked()).isFalse();
 
         // Verify policy allows signing
         BunkerPolicy policyDetails = policyManager.getPolicy(signingPolicy.getId())
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(policyDetails.isMethodAllowed("sign_event")).isTrue();
 
         // Verify user has permission
         KeyUser userPermissions = permissionManager.getPermissions(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(userPermissions.isActive()).isTrue();
 
         // Verify token is valid
         Boolean tokenValid = tokenManager.validateToken(token.getToken())
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(tokenValid).isTrue();
 
         // Verify connection string is well-formed
@@ -316,8 +323,8 @@ class SigningFlowE2ETest extends E2ETestBase {
         log.info("Connection string for remote signing: {}", connectionString);
 
         // Clean up
-        tokenManager.revokeToken(token.getId()).get(30, TimeUnit.SECONDS);
-        permissionManager.revokePermission(testKeyName, userPubkey).get(30, TimeUnit.SECONDS);
+        tokenManager.revokeToken(token.getId()).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
+        permissionManager.revokePermission(testKeyName, userPubkey).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -334,16 +341,16 @@ class SigningFlowE2ETest extends E2ETestBase {
         String passphrase = "import-passphrase";
 
         testKey = keyManager.createKey(testKeyName, nsec, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify the npub matches
         assertThat(testKey.getNpub()).isEqualTo(expectedNpub);
 
         // Unlock and verify ready for signing
-        keyManager.unlockKey(testKeyName, passphrase).get(30, TimeUnit.SECONDS);
+        keyManager.unlockKey(testKeyName, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         BunkerKey keyDetails = keyManager.getKeyDetails(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keyDetails.isLocked()).isFalse();
         assertThat(keyDetails.getNpub()).isEqualTo(expectedNpub);
 

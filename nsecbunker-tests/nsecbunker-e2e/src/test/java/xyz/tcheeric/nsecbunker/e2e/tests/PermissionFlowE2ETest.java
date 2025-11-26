@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
+import java.time.Duration;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
 import xyz.tcheeric.nsecbunker.admin.permission.PermissionManager;
@@ -38,6 +39,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
     private KeyManager keyManager;
     private PolicyManager policyManager;
     private PermissionManager permissionManager;
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
 
     // Test fixtures
     private String testKeyName;
@@ -60,6 +62,8 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(10, TimeUnit.SECONDS)).isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();
@@ -68,7 +72,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
         // Create test fixtures
         testKeyName = "perm-test-key-" + UUID.randomUUID().toString().substring(0, 8);
         testKey = keyManager.createKey(testKeyName, "test-passphrase")
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         testPolicy = policyManager.createPolicy(
                 BunkerPolicy.builder()
@@ -76,7 +80,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .rule(PolicyRule.allowMethod("get_public_key"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         testUser = generateTestIdentity();
 

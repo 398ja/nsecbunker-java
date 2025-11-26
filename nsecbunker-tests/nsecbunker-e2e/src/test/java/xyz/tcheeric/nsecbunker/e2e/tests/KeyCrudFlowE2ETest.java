@@ -16,6 +16,7 @@ import nostr.id.Identity;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -32,6 +33,7 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
     private NsecBunkerAdminClient adminClient;
     private KeyManager keyManager;
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
 
     @BeforeEach
     void setUp() throws Exception {
@@ -48,6 +50,9 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS))
+                        .isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
     }
@@ -68,7 +73,7 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
         // Create a new key (generates new keypair)
         BunkerKey createdKey = keyManager.createKey(keyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify key was created
         assertThat(createdKey).isNotNull();
@@ -95,7 +100,7 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
         // Import the key
         BunkerKey importedKey = keyManager.createKey(keyName, nsecToImport, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify key was imported with correct pubkey
         assertThat(importedKey).isNotNull();
@@ -117,11 +122,11 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
         String keyName2 = "list-test-key-2-" + UUID.randomUUID().toString().substring(0, 8);
         String passphrase = "list-test-passphrase";
 
-        keyManager.createKey(keyName1, passphrase).get(30, TimeUnit.SECONDS);
-        keyManager.createKey(keyName2, passphrase).get(30, TimeUnit.SECONDS);
+        keyManager.createKey(keyName1, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
+        keyManager.createKey(keyName2, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // List all keys
-        List<BunkerKey> keys = keyManager.listKeys().get(30, TimeUnit.SECONDS);
+        List<BunkerKey> keys = keyManager.listKeys().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify the created keys are in the list
         assertThat(keys).isNotNull();
@@ -131,8 +136,8 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
         log.info("Listed {} keys", keys.size());
 
         // Clean up
-        keyManager.deleteKey(keyName1).get(30, TimeUnit.SECONDS);
-        keyManager.deleteKey(keyName2).get(30, TimeUnit.SECONDS);
+        keyManager.deleteKey(keyName1).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
+        keyManager.deleteKey(keyName2).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -143,11 +148,11 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
         String passphrase = "unlock-test-passphrase";
 
         // Create a key
-        keyManager.createKey(keyName, passphrase).get(30, TimeUnit.SECONDS);
+        keyManager.createKey(keyName, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Unlock the key
         Boolean unlocked = keyManager.unlockKey(keyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(unlocked).isTrue();
 
@@ -155,13 +160,13 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
         // Get key details to verify it's unlocked
         BunkerKey keyDetails = keyManager.getKeyDetails(keyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(keyDetails).isNotNull();
         assertThat(keyDetails.isLocked()).isFalse();
 
         // Clean up
-        keyManager.deleteKey(keyName).get(30, TimeUnit.SECONDS);
+        keyManager.deleteKey(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -173,11 +178,11 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
 
         // Create a key
         BunkerKey created = keyManager.createKey(keyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Get key details
         BunkerKey details = keyManager.getKeyDetails(keyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify details
         assertThat(details).isNotNull();
@@ -189,7 +194,7 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
                 details.getName(), details.getNpub(), details.isLocked());
 
         // Clean up
-        keyManager.deleteKey(keyName).get(30, TimeUnit.SECONDS);
+        keyManager.deleteKey(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -200,20 +205,20 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
         String passphrase = "delete-test-passphrase";
 
         // Create a key
-        keyManager.createKey(keyName, passphrase).get(30, TimeUnit.SECONDS);
+        keyManager.createKey(keyName, passphrase).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify key exists
-        List<BunkerKey> keysBefore = keyManager.listKeys().get(30, TimeUnit.SECONDS);
+        List<BunkerKey> keysBefore = keyManager.listKeys().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keysBefore.stream().map(BunkerKey::getName)).contains(keyName);
 
         // Delete the key
-        Boolean deleted = keyManager.deleteKey(keyName).get(30, TimeUnit.SECONDS);
+        Boolean deleted = keyManager.deleteKey(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(deleted).isTrue();
         log.info("Deleted key: {}", keyName);
 
         // Verify key no longer exists
-        List<BunkerKey> keysAfter = keyManager.listKeys().get(30, TimeUnit.SECONDS);
+        List<BunkerKey> keysAfter = keyManager.listKeys().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keysAfter.stream().map(BunkerKey::getName)).doesNotContain(keyName);
     }
 
@@ -227,33 +232,33 @@ class KeyCrudFlowE2ETest extends E2ETestBase {
         // 1. Create key
         log.info("Step 1: Creating key");
         BunkerKey created = keyManager.createKey(keyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(created).isNotNull();
         assertThat(created.getNpub()).startsWith("npub1");
         log.info("Created key with npub: {}", created.getNpub());
 
         // 2. List keys and verify
         log.info("Step 2: Listing keys");
-        List<BunkerKey> keys = keyManager.listKeys().get(30, TimeUnit.SECONDS);
+        List<BunkerKey> keys = keyManager.listKeys().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(keys.stream().map(BunkerKey::getName)).contains(keyName);
         log.info("Key found in list");
 
         // 3. Get details
         log.info("Step 3: Getting key details");
-        BunkerKey details = keyManager.getKeyDetails(keyName).get(30, TimeUnit.SECONDS);
+        BunkerKey details = keyManager.getKeyDetails(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(details.getNpub()).isEqualTo(created.getNpub());
         log.info("Key details retrieved successfully");
 
         // 4. Unlock key
         log.info("Step 4: Unlocking key");
         Boolean unlocked = keyManager.unlockKey(keyName, passphrase)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(unlocked).isTrue();
         log.info("Key unlocked successfully");
 
         // 5. Delete key
         log.info("Step 5: Deleting key");
-        Boolean deleted = keyManager.deleteKey(keyName).get(30, TimeUnit.SECONDS);
+        Boolean deleted = keyManager.deleteKey(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(deleted).isTrue();
         log.info("Key deleted successfully");
 

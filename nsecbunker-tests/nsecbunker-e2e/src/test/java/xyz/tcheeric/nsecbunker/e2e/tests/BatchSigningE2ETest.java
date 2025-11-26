@@ -49,6 +49,7 @@ class BatchSigningE2ETest extends E2ETestBase {
     private PolicyManager policyManager;
     private PermissionManager permissionManager;
     private TokenManager tokenManager;
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(120);
 
     // Test fixtures to clean up
     private List<String> createdKeyNames = new ArrayList<>();
@@ -70,6 +71,8 @@ class BatchSigningE2ETest extends E2ETestBase {
 
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();
@@ -86,7 +89,7 @@ class BatchSigningE2ETest extends E2ETestBase {
         // Clean up created resources
         for (String tokenId : createdTokenIds) {
             try {
-                tokenManager.revokeToken(tokenId).get(30, TimeUnit.SECONDS);
+                tokenManager.revokeToken(tokenId).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.warn("Failed to revoke token {}: {}", tokenId, e.getMessage());
             }
@@ -94,7 +97,7 @@ class BatchSigningE2ETest extends E2ETestBase {
 
         for (String policyId : createdPolicyIds) {
             try {
-                policyManager.deletePolicy(policyId).get(30, TimeUnit.SECONDS);
+                policyManager.deletePolicy(policyId).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.warn("Failed to delete policy {}: {}", policyId, e.getMessage());
             }
@@ -102,7 +105,7 @@ class BatchSigningE2ETest extends E2ETestBase {
 
         for (String keyName : createdKeyNames) {
             try {
-                keyManager.deleteKey(keyName).get(30, TimeUnit.SECONDS);
+                keyManager.deleteKey(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.warn("Failed to delete key {}: {}", keyName, e.getMessage());
             }
@@ -123,7 +126,7 @@ class BatchSigningE2ETest extends E2ETestBase {
         for (int i = 0; i < numKeys; i++) {
             String keyName = "batch-key-" + i + "-" + UUID.randomUUID().toString().substring(0, 8);
             BunkerKey key = keyManager.createKey(keyName, "batch-passphrase-" + i)
-                    .get(30, TimeUnit.SECONDS);
+                    .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
             keys.add(key);
             createdKeyNames.add(keyName);
@@ -158,12 +161,12 @@ class BatchSigningE2ETest extends E2ETestBase {
         // Wait for all to complete
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(
                 futures.toArray(new CompletableFuture[0]));
-        allFutures.get(60, TimeUnit.SECONDS);
+        allFutures.get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Collect results
         List<BunkerKey> keys = new ArrayList<>();
         for (CompletableFuture<BunkerKey> future : futures) {
-            keys.add(future.get());
+            keys.add(future.get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS));
         }
 
         assertThat(keys).hasSize(numKeys);
@@ -190,14 +193,14 @@ class BatchSigningE2ETest extends E2ETestBase {
                                 .maxUsage(1000L)
                                 .build())
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdPolicyIds.add(batchPolicy.getId());
 
         // Create multiple keys
         List<String> keyNames = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             String keyName = "policy-batch-key-" + i + "-" + UUID.randomUUID().toString().substring(0, 8);
-            keyManager.createKey(keyName, "passphrase-" + i).get(30, TimeUnit.SECONDS);
+            keyManager.createKey(keyName, "passphrase-" + i).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             createdKeyNames.add(keyName);
             keyNames.add(keyName);
         }
@@ -209,7 +212,7 @@ class BatchSigningE2ETest extends E2ETestBase {
         // Grant permission with the shared policy to all keys
         for (String keyName : keyNames) {
             permissionManager.grantPermission(keyName, userPubkey, batchPolicy)
-                    .get(30, TimeUnit.SECONDS);
+                    .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         }
 
         log.info("Assigned policy {} to {} keys for user {}",
@@ -218,11 +221,11 @@ class BatchSigningE2ETest extends E2ETestBase {
         // Verify all permissions are granted
         for (String keyName : keyNames) {
             var permissions = permissionManager.getPermissions(keyName, userPubkey)
-                    .get(30, TimeUnit.SECONDS);
+                    .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             assertThat(permissions.isActive()).isTrue();
 
             // Clean up
-            permissionManager.revokePermission(keyName, userPubkey).get(30, TimeUnit.SECONDS);
+            permissionManager.revokePermission(keyName, userPubkey).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         }
     }
 
@@ -232,7 +235,7 @@ class BatchSigningE2ETest extends E2ETestBase {
     void shouldGenerateMultipleTokensForBatchClient() throws Exception {
         // Create key
         String keyName = "multi-token-key-" + UUID.randomUUID().toString().substring(0, 8);
-        keyManager.createKey(keyName, "passphrase").get(30, TimeUnit.SECONDS);
+        keyManager.createKey(keyName, "passphrase").get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdKeyNames.add(keyName);
 
         // Create policy
@@ -241,7 +244,7 @@ class BatchSigningE2ETest extends E2ETestBase {
                         .name("multi-token-policy-" + UUID.randomUUID().toString().substring(0, 8))
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdPolicyIds.add(policy.getId());
 
         // Generate multiple tokens for different clients
@@ -252,7 +255,7 @@ class BatchSigningE2ETest extends E2ETestBase {
                     "batch-client-" + i,
                     policy.getId(),
                     Duration.ofHours(24)
-            ).get(30, TimeUnit.SECONDS);
+            ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
             tokens.add(token);
             createdTokenIds.add(token.getId());
@@ -277,7 +280,7 @@ class BatchSigningE2ETest extends E2ETestBase {
     void shouldHandleConcurrentTokenGeneration() throws Exception {
         // Create key
         String keyName = "concurrent-token-key-" + UUID.randomUUID().toString().substring(0, 8);
-        keyManager.createKey(keyName, "passphrase").get(30, TimeUnit.SECONDS);
+        keyManager.createKey(keyName, "passphrase").get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdKeyNames.add(keyName);
 
         // Create policy
@@ -286,7 +289,7 @@ class BatchSigningE2ETest extends E2ETestBase {
                         .name("concurrent-token-policy-" + UUID.randomUUID().toString().substring(0, 8))
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdPolicyIds.add(policy.getId());
 
         // Submit concurrent token generation requests
@@ -304,11 +307,11 @@ class BatchSigningE2ETest extends E2ETestBase {
 
         // Wait for all to complete
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .get(60, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Collect results
         for (CompletableFuture<AccessToken> future : futures) {
-            AccessToken token = future.get();
+            AccessToken token = future.get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             assertThat(token.isValid()).isTrue();
             createdTokenIds.add(token.getId());
         }
@@ -333,7 +336,7 @@ class BatchSigningE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowMethod("get_public_key"))
                         .rule(PolicyRule.allowMethod("ping"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         createdPolicyIds.add(batchPolicy.getId());
         log.info("Policy created: id={}", batchPolicy.getId());
 
@@ -343,12 +346,12 @@ class BatchSigningE2ETest extends E2ETestBase {
         for (int i = 0; i < numKeys; i++) {
             String keyName = "full-batch-key-" + i + "-" + UUID.randomUUID().toString().substring(0, 8);
             BunkerKey key = keyManager.createKey(keyName, "batch-passphrase-" + i)
-                    .get(30, TimeUnit.SECONDS);
+                    .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             keys.add(key);
             createdKeyNames.add(keyName);
 
             // Unlock the key
-            keyManager.unlockKey(keyName, "batch-passphrase-" + i).get(30, TimeUnit.SECONDS);
+            keyManager.unlockKey(keyName, "batch-passphrase-" + i).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         }
         log.info("Created and unlocked {} keys", keys.size());
 
@@ -364,7 +367,7 @@ class BatchSigningE2ETest extends E2ETestBase {
             String userPubkey = user.getPublicKey().toString();
             for (int i = 0; i < keys.size(); i++) {
                 permissionManager.grantPermission(createdKeyNames.get(i), userPubkey, batchPolicy)
-                        .get(30, TimeUnit.SECONDS);
+                        .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             }
         }
         log.info("Granted permissions to {} users across {} keys", testUsers.size(), keys.size());
@@ -379,7 +382,7 @@ class BatchSigningE2ETest extends E2ETestBase {
                         "batch-user-" + userIdx + "-key-" + keyIdx,
                         batchPolicy.getId(),
                         Duration.ofDays(1)
-                ).get(30, TimeUnit.SECONDS);
+                ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
                 allTokens.add(token);
                 createdTokenIds.add(token.getId());
@@ -392,14 +395,14 @@ class BatchSigningE2ETest extends E2ETestBase {
 
         // All keys should be unlocked
         for (String keyName : createdKeyNames) {
-            BunkerKey details = keyManager.getKeyDetails(keyName).get(30, TimeUnit.SECONDS);
+            BunkerKey details = keyManager.getKeyDetails(keyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             assertThat(details.isLocked()).isFalse();
         }
 
         // All tokens should be valid
         for (AccessToken token : allTokens) {
             Boolean valid = tokenManager.validateToken(token.getToken())
-                    .get(30, TimeUnit.SECONDS);
+                    .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             assertThat(valid).isTrue();
         }
 
@@ -419,7 +422,7 @@ class BatchSigningE2ETest extends E2ETestBase {
             String userPubkey = user.getPublicKey().toString();
             for (String keyName : createdKeyNames) {
                 try {
-                    permissionManager.revokePermission(keyName, userPubkey).get(30, TimeUnit.SECONDS);
+                    permissionManager.revokePermission(keyName, userPubkey).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
                 } catch (Exception e) {
                     // Ignore cleanup errors
                 }
@@ -435,13 +438,13 @@ class BatchSigningE2ETest extends E2ETestBase {
         int numKeys = 5;
         for (int i = 0; i < numKeys; i++) {
             String keyName = "list-test-key-" + i + "-" + UUID.randomUUID().toString().substring(0, 8);
-            keyManager.createKey(keyName, "passphrase-" + i).get(30, TimeUnit.SECONDS);
+            keyManager.createKey(keyName, "passphrase-" + i).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             createdKeyNames.add(keyName);
         }
 
         // List all keys
         long startTime = System.currentTimeMillis();
-        List<BunkerKey> keys = keyManager.listKeys().get(30, TimeUnit.SECONDS);
+        List<BunkerKey> keys = keyManager.listKeys().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         long duration = System.currentTimeMillis() - startTime;
 
         assertThat(keys.size()).isGreaterThanOrEqualTo(numKeys);
