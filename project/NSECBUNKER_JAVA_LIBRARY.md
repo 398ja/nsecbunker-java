@@ -644,7 +644,7 @@ nsecbunker-java/
 | 8.1.2 | Create integration test suite | End-to-end integration | L | 8243cc6 | All phases | ✅ DONE |
 | 8.1.3 | Create end-to-end test suite | Full user scenarios (see test list below) | L | | All phases | ⬜ TODO |
 | 8.1.4 | Create performance test suite | Load, stress tests; see planned scenarios below | L | | Phase 3 | ⬜ TODO |
-| 8.1.5 | Create security test suite | Security scanning; see planned scenarios below | M | | All phases | ⬜ TODO |
+| 8.1.5 | Create security test suite | Security scanning; see planned scenarios below | M | | All phases | ✅ DONE |
 | 8.1.6 | Add chaos testing | Network failures, etc.; see planned scenarios below | M | | All phases | ⬜ TODO |
 
 **Planned E2E Tests (using pablof7z/nsecbunkerd in Testcontainers)**
