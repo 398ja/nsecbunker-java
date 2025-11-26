@@ -3,7 +3,7 @@
 ![Architecture diagram](../diagrams/architecture.png)
 
 ## Modules
-- `nsecbunker-admin`: admin ops over NIP-46 (kind 24134)
+- `nsecbunker-admin`: admin ops over NIP-46 (kind 24133)
 - `nsecbunker-client`: remote signer, batching, request queue/executor
 - `nsecbunker-account`: account/NIP-05/wallet stubs
 - `nsecbunker-spring-boot-starter`: auto-config, health/info

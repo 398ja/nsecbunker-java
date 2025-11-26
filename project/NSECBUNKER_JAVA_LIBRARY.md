@@ -288,7 +288,7 @@ nsecbunker-java/
 |---------|-----------------|------|------|-----------|------------|--------|
 | 2.1.1 | Implement `NsecBunkerAdminClient` class | Main admin client with builder | M | 5928e8c | Phase 1 | ✅ DONE |
 | 2.1.2 | Add admin connection setup | Generate ephemeral keypair for auth | S | 5928e8c | 2.1.1 | ✅ DONE |
-| 2.1.3 | Implement admin request/response handling | Send kind 24134 messages | M | 5928e8c | 2.1.1, 1.4.* | ✅ DONE |
+| 2.1.3 | Implement admin request/response handling | Send kind 24133 messages | M | 5928e8c | 2.1.1, 1.4.* | ✅ DONE |
 | 2.1.4 | Add admin authentication validation | Verify admin npub matches | S | 5928e8c | 2.1.3 | ✅ DONE |
 
 #### 2.2 Key Management (`nsecbunker-admin/key`)

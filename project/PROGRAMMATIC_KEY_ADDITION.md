@@ -137,7 +137,7 @@ async function addKeyViaRPC(
         bunkerNpub,
         'create_new_key',
         params,
-        24134
+        24133
     );
 
     console.log('Key created:', response);
@@ -324,7 +324,7 @@ await rpc.sendRequest(
     bunkerNpub,
     'unlock_key',
     [keyName, passphrase],
-    24134
+    24133
 );
 ```
 

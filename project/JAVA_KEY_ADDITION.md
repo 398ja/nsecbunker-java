@@ -12,7 +12,7 @@ nsecBunker exposes an admin RPC method called `create_new_key` that:
 - Stores it in the bunker
 - Returns the npub
 
-**Protocol**: NIP-46 RPC over Nostr relays (kind 24134)
+**Protocol**: NIP-46 RPC over Nostr relays (kind 24133)
 
 ## Java Implementation
 
@@ -81,10 +81,10 @@ public class NsecBunkerAdminClient {
     public void connect() throws Exception {
         relayPool.connect();
 
-        // Subscribe to admin responses (kind 24134)
+        // Subscribe to admin responses (kind 24133)
         relayPool.subscribe(
             new SubscriptionFilter()
-                .kinds(24134)
+                .kinds(24133)
                 .authors(bunkerPubkey.toString())
                 .since(System.currentTimeMillis() / 1000),
             this::handleAdminResponse
@@ -128,9 +128,9 @@ public class NsecBunkerAdminClient {
             payload
         );
 
-        // Create kind 24134 event
+        // Create kind 24133 event
         GenericEvent event = new GenericEvent();
-        event.setKind(24134);
+        event.setKind(24133);
         event.setPubKey(adminPrivkey.getPublicKey());
         event.setContent(encrypted);
         event.addTag("p", bunkerPubkey.toString());
@@ -180,7 +180,7 @@ public class NsecBunkerAdminClient {
         String encrypted = Nip04.encrypt(adminPrivkey, bunkerPubkey, payload);
 
         GenericEvent event = new GenericEvent();
-        event.setKind(24134);
+        event.setKind(24133);
         event.setPubKey(adminPrivkey.getPublicKey());
         event.setContent(encrypted);
         event.addTag("p", bunkerPubkey.toString());
@@ -209,7 +209,7 @@ public class NsecBunkerAdminClient {
         String encrypted = Nip04.encrypt(adminPrivkey, bunkerPubkey, payload);
 
         GenericEvent event = new GenericEvent();
-        event.setKind(24134);
+        event.setKind(24133);
         event.setPubKey(adminPrivkey.getPublicKey());
         event.setContent(encrypted);
         event.addTag("p", bunkerPubkey.toString());
@@ -243,7 +243,7 @@ public class NsecBunkerAdminClient {
         String encrypted = Nip04.encrypt(adminPrivkey, bunkerPubkey, payload);
 
         GenericEvent event = new GenericEvent();
-        event.setKind(24134);
+        event.setKind(24133);
         event.setPubKey(adminPrivkey.getPublicKey());
         event.setContent(encrypted);
         event.addTag("p", bunkerPubkey.toString());

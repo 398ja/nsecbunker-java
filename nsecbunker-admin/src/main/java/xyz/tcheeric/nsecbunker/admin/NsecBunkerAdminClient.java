@@ -62,7 +62,7 @@ public class NsecBunkerAdminClient implements Closeable {
     /**
      * Event kind for NIP-46 admin requests.
      */
-    public static final int KIND_ADMIN_REQUEST = 24134;
+    public static final int KIND_ADMIN_REQUEST = 24133;
 
     /**
      * Event kind for NIP-46 responses.
@@ -443,11 +443,16 @@ public class NsecBunkerAdminClient implements Closeable {
      * Creates an Identity from a private key (hex or nsec format).
      */
     private Identity createIdentity(String privateKey) {
+        String hexKey = privateKey;
         if (privateKey.startsWith("nsec1")) {
-            return Identity.create(privateKey);
+            // Decode bech32 nsec to hex
+            try {
+                hexKey = nostr.crypto.bech32.Bech32.fromBech32(privateKey);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid nsec: " + privateKey, e);
+            }
         }
-        // Assume hex format
-        return Identity.create(privateKey);
+        return Identity.create(hexKey);
     }
 
     /**

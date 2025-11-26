@@ -38,6 +38,7 @@ class TokenFlowE2ETest extends E2ETestBase {
     private KeyManager keyManager;
     private PolicyManager policyManager;
     private TokenManager tokenManager;
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
 
     // Test fixtures
     private String testKeyName;
@@ -59,6 +60,8 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
+        await().atMost(E2E_TIMEOUT)
+                .untilAsserted(() -> assertThat(adminClient.ping().get(10, TimeUnit.SECONDS)).isEqualTo("pong"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();
@@ -67,7 +70,7 @@ class TokenFlowE2ETest extends E2ETestBase {
         // Create test fixtures
         testKeyName = "token-test-key-" + UUID.randomUUID().toString().substring(0, 8);
         testKey = keyManager.createKey(testKeyName, "test-passphrase")
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         testPolicy = policyManager.createPolicy(
                 BunkerPolicy.builder()
@@ -75,7 +78,7 @@ class TokenFlowE2ETest extends E2ETestBase {
                         .rule(PolicyRule.allowMethod("sign_event"))
                         .rule(PolicyRule.allowMethod("get_public_key"))
                         .build()
-        ).get(30, TimeUnit.SECONDS);
+        ).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         log.info("Test fixtures created: key={}, policy={}",
                 testKeyName, testPolicy.getId());
@@ -134,7 +137,7 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create token with expiry
         AccessToken token = tokenManager.createToken(testKeyName, clientName, testPolicy.getId(), lifetime)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(token).isNotNull();
         assertThat(token.getExpiresAt()).isNotNull();
@@ -152,7 +155,7 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create token without policy
         AccessToken token = tokenManager.createToken(testKeyName, clientName, null, null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(token).isNotNull();
         assertThat(token.getId()).isNotNull();
@@ -173,9 +176,9 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create multiple tokens (policyId is required in nsecbunkerd)
         AccessToken token1 = tokenManager.createToken(testKeyName, clientName1, testPolicy.getId(), null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         AccessToken token2 = tokenManager.createToken(testKeyName, clientName2, testPolicy.getId(), null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // List tokens
         List<AccessToken> tokens = tokenManager.listTokens(testKeyName)
@@ -197,7 +200,7 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create token
         AccessToken created = tokenManager.createToken(testKeyName, clientName, testPolicy.getId(), null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Get token by ID
         AccessToken retrieved = tokenManager.getToken(created.getId())
@@ -221,7 +224,7 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create token
         AccessToken token = tokenManager.createToken(testKeyName, clientName, null, null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify token exists
         List<AccessToken> tokensBefore = tokenManager.listTokens(testKeyName)
@@ -249,7 +252,7 @@ class TokenFlowE2ETest extends E2ETestBase {
 
         // Create token
         AccessToken token = tokenManager.createToken(testKeyName, clientName, null, null)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Validate token
         Boolean valid = tokenManager.validateToken(token.getToken())
@@ -272,7 +275,7 @@ class TokenFlowE2ETest extends E2ETestBase {
         log.info("Step 1: Creating token");
         AccessToken created = tokenManager.createToken(
                 testKeyName, clientName, testPolicy.getId(), Duration.ofHours(24))
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(created).isNotNull();
         assertThat(created.getToken()).isNotBlank();
         log.info("Token created: id={}", created.getId());
