@@ -207,10 +207,6 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 - Submitting pull requests
 - Coding standards
 
-## Security
-
-For security vulnerabilities, please see our [Security Policy](SECURITY.md).
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
