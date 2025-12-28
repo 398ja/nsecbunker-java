@@ -160,8 +160,7 @@ nsecbunker-java/
 ├── nsecbunker-admin/          # Admin operations
 ├── nsecbunker-monitoring/     # Logging, metrics, health
 ├── nsecbunker-account/        # Account management
-├── nsecbunker-spring-boot-starter/  # Spring Boot integration
-└── project/                   # Project documentation
+└── nsecbunker-spring-boot-starter/  # Spring Boot integration
 ```
 
 ## Pull Request Process
