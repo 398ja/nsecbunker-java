@@ -198,10 +198,6 @@ This library is under active development.
 - [x] CI/CD with GitHub Actions
 - [x] Documentation structure
 
-### Next: Core Models & Connection Management
-
-See [NSECBUNKER_JAVA_LIBRARY.md](project/NSECBUNKER_JAVA_LIBRARY.md) for the full implementation roadmap.
-
 ## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
