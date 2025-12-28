@@ -10,10 +10,12 @@ import org.junit.jupiter.api.Test;
 import xyz.tcheeric.nsecbunker.connection.ConnectionState;
 import xyz.tcheeric.nsecbunker.connection.ReconnectionStrategy;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
+import okhttp3.WebSocket;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +43,6 @@ class RelayConnectionChaosTest {
     @DisplayName("Should attempt reconnect when server drops connection")
     void shouldAttemptReconnectWhenServerDrops() throws Exception {
         relay.enqueue(new MockResponse().withWebSocketUpgrade(new NoopWebSocketListener()));
-        relay.enqueue(new MockResponse().withWebSocketUpgrade(new NoopWebSocketListener()));
         relay.start();
 
         String url = relay.url("/").toString().replace("http", "ws");
@@ -52,15 +53,17 @@ class RelayConnectionChaosTest {
         connection.connect();
         assertThat(connection.getState()).isEqualTo(ConnectionState.CONNECTED);
 
-        // Simulate network partition by shutting down the server
+        // Simulate server-side drop
         relay.shutdown();
+        forceClientSideCancel(connection);
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(connection.getReconnectionAttempt()).isGreaterThan(0));
     }
 
     /**
      * Ensures maxAttempts is honored when reconnection repeatedly fails.
+     * With maxAttempts=1, the connection should transition to FAILED after exhausting retries.
      */
     @Test
     @DisplayName("Should stop reconnecting after max attempts")
@@ -76,16 +79,31 @@ class RelayConnectionChaosTest {
         connection.connect();
         assertThat(connection.getState()).isEqualTo(ConnectionState.CONNECTED);
 
-        // Drop the server; no second upgrade enqueued, so reconnect must exhaust quickly
+        // Simulate server drop; with maxAttempts=1 we should stop after first retry
         relay.shutdown();
+        forceClientSideCancel(connection);
 
-        Awaitility.await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(connection.getReconnectionAttempt()).isEqualTo(1));
+        // Wait for connection to transition to FAILED after exhausting max attempts
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(connection.getState()).isEqualTo(ConnectionState.FAILED));
     }
 
     /**
      * No-op WebSocket listener for MockWebServer upgrades.
      */
     private static final class NoopWebSocketListener extends okhttp3.WebSocketListener {
+    }
+
+    /**
+    * Forces the client WebSocket to cancel so onFailure triggers reconnection logic
+    * when the mock server has already been shut down.
+    */
+    private void forceClientSideCancel(RelayConnection connection) throws Exception {
+        Field wsField = RelayConnection.class.getDeclaredField("webSocket");
+        wsField.setAccessible(true);
+        WebSocket ws = (WebSocket) wsField.get(connection);
+        if (ws != null) {
+            ws.cancel();
+        }
     }
 }

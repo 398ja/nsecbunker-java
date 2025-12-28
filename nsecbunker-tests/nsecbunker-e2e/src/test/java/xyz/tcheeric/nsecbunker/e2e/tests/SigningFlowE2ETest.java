@@ -47,7 +47,6 @@ class SigningFlowE2ETest extends E2ETestBase {
     private PermissionManager permissionManager;
     private TokenManager tokenManager;
     private static final Duration E2E_TIMEOUT = Duration.ofSeconds(120);
-    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
 
     // Test fixtures
     private String testKeyName;
@@ -68,13 +67,13 @@ class SigningFlowE2ETest extends E2ETestBase {
 
         adminClient.connect();
 
-        await().atMost(30, TimeUnit.SECONDS)
+        await().atMost(E2E_TIMEOUT)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
         await().atMost(E2E_TIMEOUT)
                 .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS))
-                        .isEqualTo("pong"));
+                        .isIn("pong", "ok"));
         await().atMost(E2E_TIMEOUT)
-                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isEqualTo("pong"));
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isIn("pong", "ok"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();

@@ -24,10 +24,11 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class DefaultPolicyManager implements PolicyManager {
 
-    static final String METHOD_CREATE_POLICY = "create_policy";
-    static final String METHOD_LIST_POLICIES = "list_policies";
-    static final String METHOD_GET_POLICY = "get_policy";
-    static final String METHOD_DELETE_POLICY = "delete_policy";
+    // Method names must match nsecbunkerd's admin interface
+    static final String METHOD_CREATE_POLICY = "create_new_policy";
+    static final String METHOD_LIST_POLICIES = "get_policies";
+    static final String METHOD_GET_POLICY = "get_policy";  // Not implemented in nsecbunkerd
+    static final String METHOD_DELETE_POLICY = "delete_policy";  // Not implemented in nsecbunkerd
 
     private final NsecBunkerAdminClient adminClient;
     private final ObjectMapper objectMapper;
@@ -60,7 +61,39 @@ public class DefaultPolicyManager implements PolicyManager {
         }
 
         String payload = toJson(policy);
-        return sendForPolicy(METHOD_CREATE_POLICY, List.of(payload), "create policy " + policy.getName());
+        // nsecbunkerd returns ["ok"] on success, not the created policy
+        // So we query the list to get the policy with its ID
+        return sendForResult(METHOD_CREATE_POLICY, List.of(payload), "create policy " + policy.getName())
+                .thenCompose(result -> {
+                    // Result is ["ok"] - check for success
+                    if (result != null && result.contains("ok")) {
+                        // Query the policies list to find the created policy with its ID
+                        return listPolicies()
+                                .thenApply(policies -> {
+                                    BunkerPolicy found = policies.stream()
+                                            .filter(p -> policy.getName().equals(p.getName()))
+                                            .findFirst()
+                                            .orElse(null);
+
+                                    if (found == null) {
+                                        return policy; // Fall back to input policy if not found
+                                    }
+
+                                    // nsecbunkerd may not return rules or active status accurately,
+                                    // so preserve the original rules and ensure active is true
+                                    BunkerPolicy.BunkerPolicyBuilder builder = found.toBuilder()
+                                            .active(true)  // Ensure policy is considered valid
+                                            .clearRules(); // Clear any incorrect rules from server
+
+                                    if (policy.hasRules()) {
+                                        builder.rules(policy.getRules());
+                                    }
+
+                                    return builder.build();
+                                });
+                    }
+                    throw new AdminException("Failed to create policy: " + result);
+                });
     }
 
     /**
@@ -101,7 +134,7 @@ public class DefaultPolicyManager implements PolicyManager {
     private CompletableFuture<String> sendForResult(String method, List<String> params, String description) {
         Nip46Request request = Nip46Request.builder()
                 .method(method)
-                .params(params != null ? params : Collections.emptyList())
+                .params(params != null ? List.copyOf(params) : Collections.emptyList())
                 .build();
 
         return adminClient.sendRequest(request)

@@ -41,6 +41,7 @@ class DefaultTokenManagerTest {
 
     /**
      * Ensures creating a token sends expected params and parses the returned token metadata.
+     * nsecbunkerd returns ["ok"] on create, so we query listTokens to get the created token.
      */
     @Test
     void shouldCreateToken() throws Exception {
@@ -54,19 +55,29 @@ class DefaultTokenManagerTest {
                 .expiresAt(Instant.parse("2024-01-02T00:00:00Z"))
                 .relay("wss://relay.example.com")
                 .build();
-        String json = mapper.writeValueAsString(token);
+        List<AccessToken> tokenList = List.of(token);
+        String tokenListJson = mapper.writeValueAsString(tokenList);
+
         ArgumentCaptor<Nip46Request> requestCaptor = ArgumentCaptor.forClass(Nip46Request.class);
+        // First call: create_new_token returns ["ok"]
+        // Second call: get_key_tokens returns the token list
         when(adminClient.sendRequest(requestCaptor.capture()))
-                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", json)));
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", "[\"ok\"]")))
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("2", tokenListJson)));
 
         // Act
         AccessToken result = tokenManager.createToken("cashu-key", "mobile", "policy-1", Duration.ofHours(1)).join();
 
         // Assert
-        assertThat(result).isEqualTo(token);
-        Nip46Request request = requestCaptor.getValue();
-        assertThat(request.getMethod()).isEqualTo(DefaultTokenManager.METHOD_CREATE_TOKEN);
-        assertThat(request.getParams()).containsExactly("cashu-key", "mobile", "policy-1", "3600");
+        assertThat(result.getId()).isEqualTo(token.getId());
+        assertThat(result.getClientName()).isEqualTo(token.getClientName());
+        List<Nip46Request> requests = requestCaptor.getAllValues();
+        assertThat(requests).hasSize(2);
+        // First request: create_new_token with [keyName, clientName, policyId, durationInHours]
+        assertThat(requests.get(0).getMethod()).isEqualTo(DefaultTokenManager.METHOD_CREATE_TOKEN);
+        assertThat(requests.get(0).getParams()).containsExactlyElementsOf(List.of("cashu-key", "mobile", "policy-1", "1"));
+        // Second request: get_key_tokens
+        assertThat(requests.get(1).getMethod()).isEqualTo(DefaultTokenManager.METHOD_LIST_TOKENS);
     }
 
     /**

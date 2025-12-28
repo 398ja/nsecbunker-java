@@ -26,11 +26,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class DefaultTokenManager implements TokenManager {
 
-    static final String METHOD_CREATE_TOKEN = "create_token";
-    static final String METHOD_LIST_TOKENS = "list_tokens";
-    static final String METHOD_GET_TOKEN = "get_token";
-    static final String METHOD_REVOKE_TOKEN = "revoke_token";
-    static final String METHOD_VALIDATE_TOKEN = "validate_token";
+    // Method names must match nsecbunkerd's admin interface
+    static final String METHOD_CREATE_TOKEN = "create_new_token";
+    static final String METHOD_LIST_TOKENS = "get_key_tokens";  // nsecbunkerd uses get_key_tokens
+    static final String METHOD_GET_TOKEN = "get_token";  // Not implemented in nsecbunkerd
+    static final String METHOD_REVOKE_TOKEN = "revoke_token";  // Not implemented in nsecbunkerd
+    static final String METHOD_VALIDATE_TOKEN = "validate_token";  // Not implemented in nsecbunkerd
 
     private final NsecBunkerAdminClient adminClient;
     private final ObjectMapper objectMapper;
@@ -60,17 +61,43 @@ public class DefaultTokenManager implements TokenManager {
         validateKeyName(keyName);
         validateClientName(clientName);
 
-        List<String> params = new ArrayList<>();
-        params.add(keyName);
-        params.add(clientName);
-        if (policyId != null && !policyId.isBlank()) {
-            params.add(policyId);
-        }
-        if (lifetime != null) {
-            params.add(Long.toString(lifetime.getSeconds()));
+        // nsecbunkerd requires policyId
+        if (policyId == null || policyId.isBlank()) {
+            throw new IllegalArgumentException("Policy ID is required for creating tokens");
         }
 
-        return sendForToken(METHOD_CREATE_TOKEN, params, "create token for " + keyName);
+        // nsecbunkerd expects: [keyName, clientName, policyId, durationInHours?]
+        List<Object> params = new ArrayList<>();
+        params.add(keyName);
+        params.add(clientName);
+        params.add(toNumericPolicyId(policyId));
+        if (lifetime != null) {
+            // Convert duration to hours (nsecbunkerd expects hours, not seconds)
+            long hours = lifetime.toHours();
+            if (hours < 1) {
+                hours = 1; // Minimum 1 hour
+            }
+            params.add(Long.toString(hours));
+        }
+
+        // nsecbunkerd returns ["ok"] on success, not the token
+        // So we need to query the tokens list to get the created token
+        return sendForResult(METHOD_CREATE_TOKEN, params, "create token for " + keyName)
+                .thenCompose(result -> {
+                    if (result != null && result.contains("ok")) {
+                        // Query the tokens list to find the newly created token
+                        return listTokens(keyName)
+                                .thenApply(tokens -> {
+                                    // Find the token by clientName (most recently created)
+                                    return tokens.stream()
+                                            .filter(t -> clientName.equals(t.getClientName()))
+                                            .findFirst()
+                                            .orElseThrow(() -> new AdminException(
+                                                    "Token created but not found in list"));
+                                });
+                    }
+                    throw new AdminException("Failed to create token: " + result);
+                });
     }
 
     @Override
@@ -99,20 +126,37 @@ public class DefaultTokenManager implements TokenManager {
             throw new IllegalArgumentException("Token must not be null or blank");
         }
         return sendForResult(METHOD_VALIDATE_TOKEN, List.of(token), "validate token")
-                .thenApply(result -> Boolean.parseBoolean(result));
+                .thenApply(this::parseValidationResult);
     }
 
-    private CompletableFuture<String> sendForResult(String method, List<String> params, String description) {
+    private boolean parseValidationResult(String result) {
+        if (result == null || result.isBlank()) {
+            return false;
+        }
+        // nsecbunkerd returns JSON: {valid: true, key_name: ..., ...}
+        // Try to parse as JSON first, fall back to boolean string
+        try {
+            var node = objectMapper.readTree(result);
+            if (node.has("valid")) {
+                return node.get("valid").asBoolean(false);
+            }
+        } catch (JsonProcessingException e) {
+            // Not JSON, try boolean string
+        }
+        return Boolean.parseBoolean(result);
+    }
+
+    private CompletableFuture<String> sendForResult(String method, List<Object> params, String description) {
         Nip46Request request = Nip46Request.builder()
                 .method(method)
-                .params(params != null ? params : Collections.emptyList())
+                .params(params != null ? List.copyOf(params) : Collections.emptyList())
                 .build();
 
         return adminClient.sendRequest(request)
                 .thenApply(response -> unwrapResponse(response, method, description));
     }
 
-    private CompletableFuture<AccessToken> sendForToken(String method, List<String> params, String description) {
+    private CompletableFuture<AccessToken> sendForToken(String method, List<Object> params, String description) {
         return sendForResult(method, params, description)
                 .thenApply(this::parseToken);
     }
@@ -148,6 +192,21 @@ public class DefaultTokenManager implements TokenManager {
             return List.copyOf(tokens);
         } catch (JsonProcessingException e) {
             throw new AdminException("Failed to parse token list: " + e.getMessage(), e);
+        }
+    }
+
+    private Object toNumericPolicyId(String policyId) {
+        if (policyId == null || policyId.isBlank()) {
+            throw new IllegalArgumentException("Policy ID must not be null or blank");
+        }
+        try {
+            long parsed = Long.parseLong(policyId);
+            if (parsed <= Integer.MAX_VALUE && parsed >= Integer.MIN_VALUE) {
+                return (int) parsed;
+            }
+            return parsed;
+        } catch (NumberFormatException e) {
+            return policyId;
         }
     }
 

@@ -74,10 +74,11 @@ public class Nip46Request {
     /**
      * Parameters for the method.
      * May be empty but never null.
+     * Can contain String, Integer, Long, or other JSON-serializable types.
      */
     @JsonProperty("params")
     @Builder.Default
-    private final List<String> params = Collections.emptyList();
+    private final List<Object> params = Collections.emptyList();
 
     /**
      * Returns the method as a Nip46Method enum.
@@ -106,7 +107,7 @@ public class Nip46Request {
      */
     @JsonIgnore
     public String getFirstParam() {
-        return params != null && !params.isEmpty() ? params.get(0) : null;
+        return params != null && !params.isEmpty() ? String.valueOf(params.get(0)) : null;
     }
 
     /**
@@ -116,7 +117,7 @@ public class Nip46Request {
      */
     @JsonIgnore
     public String getSecondParam() {
-        return params != null && params.size() > 1 ? params.get(1) : null;
+        return params != null && params.size() > 1 ? String.valueOf(params.get(1)) : null;
     }
 
     // ==================== Factory Methods ====================
@@ -140,7 +141,7 @@ public class Nip46Request {
      */
     public static Nip46Request connect(String pubkey, String secret) {
         Objects.requireNonNull(pubkey, "pubkey must not be null");
-        List<String> params = secret != null
+        List<Object> params = secret != null
                 ? Arrays.asList(pubkey, secret)
                 : Collections.singletonList(pubkey);
         return Nip46Request.builder()

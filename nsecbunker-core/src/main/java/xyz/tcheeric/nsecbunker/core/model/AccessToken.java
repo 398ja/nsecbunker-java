@@ -1,5 +1,6 @@
 package xyz.tcheeric.nsecbunker.core.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -44,6 +45,7 @@ public final class AccessToken {
 
     /**
      * The public key (npub) of the key this token grants access to.
+     * In nsecbunkerd, the token field contains "npub#secret".
      */
     @JsonProperty("key_npub")
     private final String keyNpub;
@@ -66,10 +68,22 @@ public final class AccessToken {
     private final String policyId;
 
     /**
+     * The name of the policy (from nsecbunkerd).
+     */
+    @JsonProperty("policy_name")
+    private final String policyName;
+
+    /**
      * When this token was created.
      */
     @JsonProperty("created_at")
     private final Instant createdAt;
+
+    /**
+     * When this token was last updated (from nsecbunkerd).
+     */
+    @JsonProperty("updated_at")
+    private final Instant updatedAt;
 
     /**
      * When this token expires.
@@ -82,6 +96,24 @@ public final class AccessToken {
      */
     @JsonProperty("last_used_at")
     private final Instant lastUsedAt;
+
+    /**
+     * When this token was redeemed (from nsecbunkerd).
+     */
+    @JsonProperty("redeemed_at")
+    private final Instant redeemedAt;
+
+    /**
+     * Description of who redeemed this token (from nsecbunkerd).
+     */
+    @JsonProperty("redeemed_by")
+    private final String redeemedBy;
+
+    /**
+     * Seconds until this token expires (from nsecbunkerd).
+     */
+    @JsonProperty("time_until_expiration")
+    private final Long timeUntilExpirationSeconds;
 
     /**
      * Number of times this token has been used.
@@ -98,8 +130,10 @@ public final class AccessToken {
 
     /**
      * Whether this token has been revoked.
+     * nsecbunkerd may use "revoked" or "is_revoked" to indicate revocation status.
      */
     @Builder.Default
+    @JsonAlias({"is_revoked"})
     private final boolean revoked = false;
 
     /**

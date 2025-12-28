@@ -71,7 +71,7 @@ class DefaultKeyManagerTest {
         assertThat(result).isEqualTo(expectedKey);
         Nip46Request request = requestCaptor.getValue();
         assertThat(request.getMethod()).isEqualTo(DefaultKeyManager.METHOD_CREATE_NEW_KEY);
-        assertThat(request.getParams()).containsExactly(expectedKey.getName(), TEST_PASSPHRASE, TEST_NSEC);
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of(expectedKey.getName(), TEST_PASSPHRASE, TEST_NSEC));
     }
 
     /**
@@ -94,7 +94,7 @@ class DefaultKeyManagerTest {
         assertThat(result.getPubkeyHex()).isNull();
 
         Nip46Request request = requestCaptor.getValue();
-        assertThat(request.getParams()).containsExactly("cashu-generated", TEST_PASSPHRASE);
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("cashu-generated", TEST_PASSPHRASE));
     }
 
     /**
@@ -139,7 +139,7 @@ class DefaultKeyManagerTest {
         assertThat(result).isTrue();
         Nip46Request request = requestCaptor.getValue();
         assertThat(request.getMethod()).isEqualTo(DefaultKeyManager.METHOD_UNLOCK_KEY);
-        assertThat(request.getParams()).containsExactly("cashu-locker", TEST_PASSPHRASE);
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("cashu-locker", TEST_PASSPHRASE));
     }
 
     /**
@@ -159,7 +159,7 @@ class DefaultKeyManagerTest {
         assertThat(result).isTrue();
         Nip46Request request = requestCaptor.getValue();
         assertThat(request.getMethod()).isEqualTo(DefaultKeyManager.METHOD_DELETE_KEY);
-        assertThat(request.getParams()).containsExactly("cashu-legacy");
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("cashu-legacy"));
     }
 
     /**
@@ -185,7 +185,7 @@ class DefaultKeyManagerTest {
         assertThat(result).isEqualTo(expectedKey);
         Nip46Request request = requestCaptor.getValue();
         assertThat(request.getMethod()).isEqualTo(DefaultKeyManager.METHOD_GET_KEY);
-        assertThat(request.getParams()).containsExactly("cashu-detail");
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("cashu-detail"));
     }
 
     /**
@@ -210,7 +210,7 @@ class DefaultKeyManagerTest {
         assertThat(result).isEqualTo(rotatedKey);
         Nip46Request request = requestCaptor.getValue();
         assertThat(request.getMethod()).isEqualTo(DefaultKeyManager.METHOD_ROTATE_KEY);
-        assertThat(request.getParams()).containsExactly("cashu-old", "cashu-rotated", TEST_PASSPHRASE);
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("cashu-old", "cashu-rotated", TEST_PASSPHRASE));
     }
 
     /**

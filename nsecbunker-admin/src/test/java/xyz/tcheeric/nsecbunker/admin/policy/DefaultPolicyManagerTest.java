@@ -40,7 +40,8 @@ class DefaultPolicyManagerTest {
     }
 
     /**
-     * Ensures createPolicy serializes the payload and returns the parsed policy metadata.
+     * Ensures createPolicy serializes the payload and returns the created policy.
+     * nsecbunkerd returns ["ok"] on success, so we query listPolicies to get the created policy.
      */
     @Test
     void shouldCreatePolicy() throws Exception {
@@ -50,21 +51,32 @@ class DefaultPolicyManagerTest {
                 .description("signing policy")
                 .rule(PolicyRule.allowMethod("sign_event"))
                 .build();
-        String json = objectMapper.writeValueAsString(policy);
+        BunkerPolicy policyWithId = policy.toBuilder().id("generated-id").build();
+        List<BunkerPolicy> policyList = List.of(policyWithId);
+        String policyListJson = objectMapper.writeValueAsString(policyList);
+
         ArgumentCaptor<Nip46Request> requestCaptor = ArgumentCaptor.forClass(Nip46Request.class);
+        // First call: create_new_policy returns ["ok"]
+        // Second call: get_policies returns the policy list
         when(adminClient.sendRequest(requestCaptor.capture()))
-                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", json)));
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", "[\"ok\"]")))
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("2", policyListJson)));
 
         // Act
         BunkerPolicy result = policyManager.createPolicy(policy).join();
 
-        // Assert
-        assertThat(result).isEqualTo(policy);
-        Nip46Request request = requestCaptor.getValue();
-        assertThat(request.getMethod()).isEqualTo(DefaultPolicyManager.METHOD_CREATE_POLICY);
-        assertThat(request.getParams()).hasSize(1);
-        BunkerPolicy sentPolicy = objectMapper.readValue(request.getParams().get(0), BunkerPolicy.class);
-        assertThat(sentPolicy).isEqualTo(policy);
+        // Assert - returns the policy found in the list (with generated id)
+        assertThat(result.getName()).isEqualTo(policy.getName());
+        assertThat(result.getId()).isEqualTo("generated-id");
+        List<Nip46Request> requests = requestCaptor.getAllValues();
+        assertThat(requests).hasSize(2);
+        // First request: create_new_policy
+        assertThat(requests.get(0).getMethod()).isEqualTo(DefaultPolicyManager.METHOD_CREATE_POLICY);
+        assertThat(requests.get(0).getParams()).hasSize(1);
+        BunkerPolicy sentPolicy = objectMapper.readValue(requests.get(0).getParams().get(0).toString(), BunkerPolicy.class);
+        assertThat(sentPolicy.getName()).isEqualTo(policy.getName());
+        // Second request: get_policies
+        assertThat(requests.get(1).getMethod()).isEqualTo(DefaultPolicyManager.METHOD_LIST_POLICIES);
     }
 
     /**

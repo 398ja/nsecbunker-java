@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    OWASP Dependency Check suppressions file.
-    Use this file to suppress false positives or accepted risks.
--->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <!-- Example suppression:
+    <!--
+    OWASP Dependency-Check suppression file for nsecbunker-java.
+
+    Add suppressions for known false positives here. Example:
+
     <suppress>
         <notes>This is a false positive because...</notes>
-        <packageUrl regex="true">^pkg:maven/com\.example/example-lib@.*$</packageUrl>
-        <cve>CVE-2021-12345</cve>
+        <packageUrl regex="true">^pkg:maven/com\.example/library@.*$</packageUrl>
+        <cve>CVE-2021-XXXXX</cve>
     </suppress>
+
+    Documentation: https://jeremylong.github.io/DependencyCheck/general/suppression.html
     -->
 </suppressions>

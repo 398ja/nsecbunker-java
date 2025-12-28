@@ -92,6 +92,12 @@ public class Nip46Decoder {
     /**
      * Decodes a NIP-46 response from JSON.
      *
+     * <p>This method handles both object-style errors and string-style errors:
+     * <ul>
+     *   <li>Object style: {@code {"id":"...", "error": {"code":"...", "message":"..."}}}</li>
+     *   <li>String style: {@code {"id":"...", "result":"error", "error": "Error message"}}</li>
+     * </ul>
+     *
      * @param json the JSON string
      * @return the decoded response
      * @throws Nip46DecodingException if decoding fails
@@ -103,7 +109,35 @@ public class Nip46Decoder {
 
         try {
             log.debug("Decoding response: {}", json);
-            return objectMapper.readValue(json, Nip46Response.class);
+
+            // First, try to parse as JSON tree to handle both string and object errors
+            JsonNode node = objectMapper.readTree(json);
+            String id = node.has("id") && !node.get("id").isNull() ? node.get("id").asText() : null;
+            String result = node.has("result") && !node.get("result").isNull() ? node.get("result").asText() : null;
+
+            // Check if there's an error field
+            if (node.has("error") && !node.get("error").isNull()) {
+                JsonNode errorNode = node.get("error");
+                Nip46Error error;
+
+                if (errorNode.isTextual()) {
+                    // String-style error: {"error": "Error message"} or {"result":"error", "error":"message"}
+                    error = Nip46Error.of("ERROR", errorNode.asText());
+                } else if (errorNode.isObject()) {
+                    // Object-style error: {"error": {"code":"...", "message":"..."}}
+                    String code = errorNode.has("code") ? errorNode.get("code").asText() : "ERROR";
+                    String message = errorNode.has("message") ? errorNode.get("message").asText() : "Unknown error";
+                    error = Nip46Error.of(code, message);
+                } else {
+                    error = Nip46Error.of("ERROR", errorNode.toString());
+                }
+
+                return Nip46Response.error(id, error);
+            }
+
+            // No error, return success response
+            return Nip46Response.success(id, result);
+
         } catch (JsonProcessingException e) {
             throw new Nip46DecodingException("Failed to decode response: " + e.getMessage(), e);
         }

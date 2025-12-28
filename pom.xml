@@ -44,7 +44,7 @@
         <module>nsecbunker-monitoring</module>
         <module>nsecbunker-account</module>
         <module>nsecbunker-spring-boot-starter</module>
-        <module>nsecbunker-it</module>
+        <module>nsecbunker-tests</module>
     </modules>
 
     <properties>
@@ -86,6 +86,8 @@
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <spotbugs-maven-plugin.version>4.8.3.1</spotbugs-maven-plugin.version>
         <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
+        <jmh.version>1.37</jmh.version>
+        <dependency-check-maven.version>9.0.9</dependency-check-maven.version>
     </properties>
 
     <dependencyManagement>
@@ -345,8 +347,43 @@
                 <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- JMH (Performance Testing) -->
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>reposilite-releases</id>
+            <url>https://maven.398ja.xyz/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>reposilite-snapshots</id>
+            <url>https://maven.398ja.xyz/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>reposilite-releases</id>
+            <url>https://maven.398ja.xyz/releases</url>
+        </repository>
+        <repository>
+            <id>reposilite-snapshots</id>
+            <url>https://maven.398ja.xyz/snapshots</url>
+        </repository>
+    </repositories>
+
 
     <build>
         <pluginManagement>
@@ -694,6 +731,47 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Security vulnerability scanning profile -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <!-- OWASP Dependency-Check for CVE scanning -->
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${dependency-check-maven.version}</version>
+                        <configuration>
+                            <!-- Fail build on CVSS score >= 7 (High) -->
+                            <failBuildOnCVSS>7</failBuildOnCVSS>
+                            <!-- Generate HTML and JSON reports -->
+                            <formats>
+                                <format>HTML</format>
+                                <format>JSON</format>
+                            </formats>
+                            <!-- Output directory -->
+                            <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
+                            <!-- Skip test scope dependencies -->
+                            <skipTestScope>false</skipTestScope>
+                            <!-- Suppress known false positives (create this file if needed) -->
+                            <suppressionFiles>
+                                <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
+                            </suppressionFiles>
+                            <!-- NVD API key for faster updates (optional, set via -Dnvd.api.key=...) -->
+                            <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

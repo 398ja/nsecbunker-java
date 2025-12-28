@@ -17,3 +17,4 @@ This repository follows the Diátaxis structure. Use the sections below to find 
   - [Sequence Flows](explanations/sequence-flows.md)
 - Reference
   - [API Reference](reference/api-reference.md)
+  - [Test Suites](reference/test-suites.md)

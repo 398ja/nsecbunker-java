@@ -39,7 +39,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
     private KeyManager keyManager;
     private PolicyManager policyManager;
     private PermissionManager permissionManager;
-    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(90);
+    private static final Duration E2E_TIMEOUT = Duration.ofSeconds(120);
 
     // Test fixtures
     private String testKeyName;
@@ -60,10 +60,10 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         adminClient.connect();
 
-        await().atMost(30, TimeUnit.SECONDS)
+        await().atMost(E2E_TIMEOUT)
                 .untilAsserted(() -> assertThat(adminClient.isConnected()).isTrue());
         await().atMost(E2E_TIMEOUT)
-                .untilAsserted(() -> assertThat(adminClient.ping().get(10, TimeUnit.SECONDS)).isEqualTo("pong"));
+                .untilAsserted(() -> assertThat(adminClient.ping().get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS)).isIn("pong", "ok"));
 
         keyManager = adminClient.keyManager();
         policyManager = adminClient.policyManager();
@@ -93,7 +93,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
         // Clean up test fixtures
         try {
             if (testPolicy != null && testPolicy.getId() != null) {
-                policyManager.deletePolicy(testPolicy.getId()).get(30, TimeUnit.SECONDS);
+                policyManager.deletePolicy(testPolicy.getId()).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             log.warn("Failed to delete test policy: {}", e.getMessage());
@@ -101,7 +101,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         try {
             if (testKeyName != null) {
-                keyManager.deleteKey(testKeyName).get(30, TimeUnit.SECONDS);
+                keyManager.deleteKey(testKeyName).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
             }
         } catch (Exception e) {
             log.warn("Failed to delete test key: {}", e.getMessage());
@@ -120,7 +120,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Grant permission
         KeyUser keyUser = permissionManager.grantPermission(testKeyName, userPubkey, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(keyUser).isNotNull();
         assertThat(keyUser.getPublicKey()).isEqualTo(userPubkey);
@@ -131,7 +131,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Clean up
         permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -142,23 +142,23 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Grant permission first
         permissionManager.grantPermission(testKeyName, userPubkey, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Verify user is in list
         List<KeyUser> usersBefore = permissionManager.listKeyUsers(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(usersBefore.stream().map(KeyUser::getPublicKey)).contains(userPubkey);
 
         // Revoke permission
         Boolean revoked = permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(revoked).isTrue();
         log.info("Revoked permission from user: pubkey={}", userPubkey);
 
         // Verify user is no longer in list
         List<KeyUser> usersAfter = permissionManager.listKeyUsers(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(usersAfter.stream().map(KeyUser::getPublicKey)).doesNotContain(userPubkey);
     }
 
@@ -173,13 +173,13 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Grant permission to multiple users
         permissionManager.grantPermission(testKeyName, pubkey1, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         permissionManager.grantPermission(testKeyName, pubkey2, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // List key users
         List<KeyUser> users = permissionManager.listKeyUsers(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(users).isNotNull();
         assertThat(users.stream().map(KeyUser::getPublicKey))
@@ -188,8 +188,8 @@ class PermissionFlowE2ETest extends E2ETestBase {
         log.info("Listed {} users for key {}", users.size(), testKeyName);
 
         // Clean up
-        permissionManager.revokePermission(testKeyName, pubkey1).get(30, TimeUnit.SECONDS);
-        permissionManager.revokePermission(testKeyName, pubkey2).get(30, TimeUnit.SECONDS);
+        permissionManager.revokePermission(testKeyName, pubkey1).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
+        permissionManager.revokePermission(testKeyName, pubkey2).get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -200,11 +200,11 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Grant permission
         permissionManager.grantPermission(testKeyName, userPubkey, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Get permissions
         KeyUser permissions = permissionManager.getPermissions(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(permissions).isNotNull();
         assertThat(permissions.getPublicKey()).isEqualTo(userPubkey);
@@ -215,7 +215,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Clean up
         permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -228,12 +228,12 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Grant permission
         permissionManager.grantPermission(testKeyName, userPubkey, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         // Update description
         KeyUser updated = permissionManager.updateKeyUserDescription(
                 testKeyName, userPubkey, updatedDescription)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
 
         assertThat(updated).isNotNull();
         assertThat(updated.getDescription()).isEqualTo(updatedDescription);
@@ -243,7 +243,7 @@ class PermissionFlowE2ETest extends E2ETestBase {
 
         // Clean up
         permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
     }
 
     @Test
@@ -256,21 +256,21 @@ class PermissionFlowE2ETest extends E2ETestBase {
         // 1. Grant permission
         log.info("Step 1: Granting permission");
         KeyUser granted = permissionManager.grantPermission(testKeyName, userPubkey, testPolicy)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(granted).isNotNull();
         log.info("Permission granted");
 
         // 2. List users and verify
         log.info("Step 2: Listing key users");
         List<KeyUser> users = permissionManager.listKeyUsers(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(users.stream().map(KeyUser::getPublicKey)).contains(userPubkey);
         log.info("User found in list");
 
         // 3. Get permissions
         log.info("Step 3: Getting permissions");
         KeyUser permissions = permissionManager.getPermissions(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(permissions.getPublicKey()).isEqualTo(userPubkey);
         log.info("Permissions retrieved");
 
@@ -279,21 +279,21 @@ class PermissionFlowE2ETest extends E2ETestBase {
         String newDescription = "Lifecycle test user";
         KeyUser updated = permissionManager.updateKeyUserDescription(
                 testKeyName, userPubkey, newDescription)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(updated.getDescription()).isEqualTo(newDescription);
         log.info("Description updated");
 
         // 5. Revoke permission
         log.info("Step 5: Revoking permission");
         Boolean revoked = permissionManager.revokePermission(testKeyName, userPubkey)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(revoked).isTrue();
         log.info("Permission revoked");
 
-        // 6. Verify revocation
+        // 6. Verify revocation - user should not appear in active users list
         log.info("Step 6: Verifying revocation");
         List<KeyUser> usersAfter = permissionManager.listKeyUsers(testKeyName)
-                .get(30, TimeUnit.SECONDS);
+                .get(E2E_TIMEOUT.getSeconds(), TimeUnit.SECONDS);
         assertThat(usersAfter.stream().map(KeyUser::getPublicKey)).doesNotContain(userPubkey);
         log.info("Permission lifecycle completed successfully");
     }

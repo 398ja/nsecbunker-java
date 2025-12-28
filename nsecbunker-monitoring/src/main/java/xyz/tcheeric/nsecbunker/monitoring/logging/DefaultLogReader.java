@@ -44,7 +44,7 @@ public class DefaultLogReader implements LogReader {
         List<String> params = List.of(keyName, serializeFilter(filter));
         Nip46Request request = Nip46Request.builder()
                 .method(METHOD_GET_LOGS)
-                .params(params)
+                .params(List.copyOf(params))
                 .build();
 
         return adminClient.sendRequest(request)

@@ -46,22 +46,25 @@ public final class PolicyRule {
     /**
      * The Nostr event kind this rule applies to (e.g., 1 for text notes, 4 for DMs).
      * If null, the rule applies to all event kinds.
+     * Note: nsecbunkerd uses "kind" for input but "kind" in response too
      */
-    @JsonProperty("event_kind")
+    @JsonProperty("kind")
     private final Integer eventKind;
 
     /**
      * Maximum number of times this operation can be performed.
      * If null, there is no usage limit.
+     * Note: nsecbunkerd uses "use_count" for input but "max_usage_count" in response
      */
-    @JsonProperty("max_usage")
+    @JsonProperty("use_count")
     private final Long maxUsage;
 
     /**
      * Current usage count for this rule.
+     * Note: nsecbunkerd uses "current_usage_count" in response
      */
     @Builder.Default
-    @JsonProperty("current_usage")
+    @JsonProperty("current_usage_count")
     private final long currentUsage = 0;
 
     /**

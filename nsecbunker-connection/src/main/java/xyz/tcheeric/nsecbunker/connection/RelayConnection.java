@@ -608,7 +608,7 @@ public class RelayConnection {
 
         if (!strategy.shouldReconnect(attempt)) {
             log.info("Max reconnection attempts ({}) reached for {}", attempt - 1, url);
-            reconnectionAttempt.set(0);
+            setState(ConnectionState.FAILED);
             return;
         }
 

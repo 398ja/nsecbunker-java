@@ -37,6 +37,10 @@ class Nip04CryptoSecurityTest {
         random = new Random(42);
     }
 
+    private Nip04Crypto createCrypto(byte[] privateKey, byte[] publicKey) {
+        return Nip04Crypto.create(privateKey, publicKey);
+    }
+
     @Nested
     @DisplayName("Malformed Ciphertext Tests")
     class MalformedCiphertextTests {
@@ -46,25 +50,26 @@ class Nip04CryptoSecurityTest {
                 "",
                 "notbase64!@#$",
                 "aGVsbG8=",  // No IV separator
-                "aGVsbG8=?",  // Empty IV
-                "?aGVsbG8=",  // Empty ciphertext
-                "YWJj?eHl6",  // Too short IV
-                "a]b[c?xyz",  // Invalid base64 chars in ciphertext
-                "abc?x]y[z",  // Invalid base64 chars in IV
+                "aGVsbG8=?iv=",  // Empty IV
+                "?iv=aGVsbG8=",  // Empty ciphertext
+                "YWJj?iv=eHl6",  // Too short IV
+                "a]b[c?iv=xyz",  // Invalid base64 chars in ciphertext
+                "abc?iv=x]y[z",  // Invalid base64 chars in IV
         })
         @DisplayName("Should reject malformed ciphertext format")
         void shouldRejectMalformedCiphertext(String malformed) {
             // Ensures malformed ciphertext inputs do not crash or leak timing details.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             assertThatCode(() -> {
                 try {
-                    Nip04Crypto.decrypt(malformed, privateKey, publicKey);
+                    crypto.decrypt(malformed);
                 } catch (Exception e) {
                     // Expected - should not crash or leak timing info
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -73,22 +78,23 @@ class Nip04CryptoSecurityTest {
             // Ensures extra separators in ciphertext are safely rejected.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             String[] testCases = {
-                    "YWJj?eHl6?extra",
-                    "YWJj??eHl6",
-                    "?YWJj?eHl6",
-                    "YWJj?eHl6?",
+                    "YWJj?iv=eHl6?iv=extra",
+                    "YWJj?iv=?iv=eHl6",
+                    "?iv=YWJj?iv=eHl6",
+                    "YWJj?iv=eHl6?iv=",
             };
 
             for (String ciphertext : testCases) {
                 assertThatCode(() -> {
                     try {
-                        Nip04Crypto.decrypt(ciphertext, privateKey, publicKey);
+                        crypto.decrypt(ciphertext);
                     } catch (Exception e) {
                         // Expected - malformed input
                     }
-                }).doesNotThrowAny();
+                }).doesNotThrowAnyException();
             }
         }
 
@@ -98,11 +104,12 @@ class Nip04CryptoSecurityTest {
             // Ensures truncated ciphertexts are handled without crashes or data leaks.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             // Generate valid ciphertext first
             String validCiphertext = null;
             try {
-                validCiphertext = Nip04Crypto.encrypt("test message", privateKey, publicKey);
+                validCiphertext = crypto.encrypt("test message");
             } catch (Exception e) {
                 // If encryption not available, skip test
                 return;
@@ -113,11 +120,11 @@ class Nip04CryptoSecurityTest {
                 String truncated = validCiphertext.substring(0, i);
                 assertThatCode(() -> {
                     try {
-                        Nip04Crypto.decrypt(truncated, privateKey, publicKey);
+                        crypto.decrypt(truncated);
                     } catch (Exception e) {
                         // Expected
                     }
-                }).doesNotThrowAny();
+                }).doesNotThrowAnyException();
             }
         }
     }
@@ -131,15 +138,9 @@ class Nip04CryptoSecurityTest {
         void shouldRejectNullPrivateKey() {
             // Ensures decrypt rejects or safely handles missing private keys.
             byte[] publicKey = generateRandomKey();
-            String ciphertext = "YWJj?MTIzNDU2Nzg5MDEyMzQ1Ng==";
 
-            assertThatCode(() -> {
-                try {
-                    Nip04Crypto.decrypt(ciphertext, null, publicKey);
-                } catch (NullPointerException | IllegalArgumentException e) {
-                    // Expected
-                }
-            }).doesNotThrowAny();
+            assertThatThrownBy(() -> Nip04Crypto.create((byte[]) null, publicKey))
+                    .isInstanceOf(NullPointerException.class);
         }
 
         @Test
@@ -147,23 +148,15 @@ class Nip04CryptoSecurityTest {
         void shouldRejectNullPublicKey() {
             // Ensures decrypt rejects or safely handles missing public keys.
             byte[] privateKey = generateRandomKey();
-            String ciphertext = "YWJj?MTIzNDU2Nzg5MDEyMzQ1Ng==";
 
-            assertThatCode(() -> {
-                try {
-                    Nip04Crypto.decrypt(ciphertext, privateKey, null);
-                } catch (NullPointerException | IllegalArgumentException e) {
-                    // Expected
-                }
-            }).doesNotThrowAny();
+            assertThatThrownBy(() -> Nip04Crypto.create(privateKey, (byte[]) null))
+                    .isInstanceOf(NullPointerException.class);
         }
 
         @Test
         @DisplayName("Should reject keys of wrong length")
         void shouldRejectKeysOfWrongLength() {
             // Ensures invalid key lengths cannot be used to decrypt without clear failure.
-            String ciphertext = "YWJj?MTIzNDU2Nzg5MDEyMzQ1Ng==";
-
             int[] wrongLengths = {0, 1, 16, 31, 33, 64, 128};
 
             for (int length : wrongLengths) {
@@ -171,21 +164,11 @@ class Nip04CryptoSecurityTest {
                 random.nextBytes(wrongKey);
                 byte[] validKey = generateRandomKey();
 
-                assertThatCode(() -> {
-                    try {
-                        Nip04Crypto.decrypt(ciphertext, wrongKey, validKey);
-                    } catch (Exception e) {
-                        // Expected
-                    }
-                }).doesNotThrowAny();
+                assertThatThrownBy(() -> Nip04Crypto.create(wrongKey, validKey))
+                        .isInstanceOf(IllegalArgumentException.class);
 
-                assertThatCode(() -> {
-                    try {
-                        Nip04Crypto.decrypt(ciphertext, validKey, wrongKey);
-                    } catch (Exception e) {
-                        // Expected
-                    }
-                }).doesNotThrowAny();
+                assertThatThrownBy(() -> Nip04Crypto.create(validKey, wrongKey))
+                        .isInstanceOf(IllegalArgumentException.class);
             }
         }
 
@@ -195,16 +178,16 @@ class Nip04CryptoSecurityTest {
             // Ensures all-zero keys are rejected or handled safely without crashes.
             byte[] zeroKey = new byte[32];
             byte[] validKey = generateRandomKey();
-            String ciphertext = "YWJj?MTIzNDU2Nzg5MDEyMzQ1Ng==";
 
             // All-zero keys should either work or be rejected, but not crash
             assertThatCode(() -> {
                 try {
-                    Nip04Crypto.decrypt(ciphertext, zeroKey, validKey);
+                    Nip04Crypto crypto = Nip04Crypto.create(zeroKey, validKey);
+                    crypto.encrypt("test");
                 } catch (Exception e) {
                     // May be rejected
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
     }
 
@@ -218,35 +201,37 @@ class Nip04CryptoSecurityTest {
             // Ensures IV tampering corrupts output or fails decryption, preventing silent reuse.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             String encrypted = null;
             try {
-                encrypted = Nip04Crypto.encrypt("test message", privateKey, publicKey);
+                encrypted = crypto.encrypt("test message");
             } catch (Exception e) {
                 // Skip if encryption unavailable
                 return;
             }
 
             // Split into ciphertext and IV
-            String[] parts = encrypted.split("\\?");
+            String[] parts = encrypted.split("\\?iv=");
             if (parts.length != 2) return;
 
             // Modify IV
             byte[] ivBytes = Base64.getDecoder().decode(parts[1]);
             ivBytes[0] ^= 0xFF; // Flip first byte
             String modifiedIv = Base64.getEncoder().encodeToString(ivBytes);
-            String modifiedCiphertext = parts[0] + "?" + modifiedIv;
+            String modifiedCiphertext = parts[0] + "?iv=" + modifiedIv;
 
             // Decryption should either fail or produce different output
+            String finalEncrypted = encrypted;
             assertThatCode(() -> {
                 try {
-                    String decrypted = Nip04Crypto.decrypt(modifiedCiphertext, privateKey, publicKey);
+                    String decrypted = crypto.decrypt(modifiedCiphertext);
                     // If decryption succeeds, output should be different (corrupted)
                     assertThat(decrypted).isNotEqualTo("test message");
                 } catch (Exception e) {
                     // Decryption failure is acceptable
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -255,18 +240,19 @@ class Nip04CryptoSecurityTest {
             // Ensures IVs shorter than required length are handled safely.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             // IV shorter than required 16 bytes
             String shortIv = Base64.getEncoder().encodeToString(new byte[8]);
-            String ciphertext = "YWJjZGVmZ2hpamtsbW5vcA==?" + shortIv;
+            String ciphertext = "YWJjZGVmZ2hpamtsbW5vcA==?iv=" + shortIv;
 
             assertThatCode(() -> {
                 try {
-                    Nip04Crypto.decrypt(ciphertext, privateKey, publicKey);
+                    crypto.decrypt(ciphertext);
                 } catch (Exception e) {
                     // Expected - short IV should be rejected
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -275,18 +261,19 @@ class Nip04CryptoSecurityTest {
             // Ensures overly long IVs do not break decryption logic.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             // IV longer than required 16 bytes
             String longIv = Base64.getEncoder().encodeToString(new byte[32]);
-            String ciphertext = "YWJjZGVmZ2hpamtsbW5vcA==?" + longIv;
+            String ciphertext = "YWJjZGVmZ2hpamtsbW5vcA==?iv=" + longIv;
 
             assertThatCode(() -> {
                 try {
-                    Nip04Crypto.decrypt(ciphertext, privateKey, publicKey);
+                    crypto.decrypt(ciphertext);
                 } catch (Exception e) {
                     // Expected - long IV should be handled
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
     }
 
@@ -300,12 +287,13 @@ class Nip04CryptoSecurityTest {
             // Ensures invalid ciphertext processing is timing-consistent to reduce side channels.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             String[] invalidCiphertexts = {
-                    "AAAA?AAAAAAAAAAAAAAAAAAA",
-                    "BBBB?BBBBBBBBBBBBBBBBBB",
-                    "CCCC?CCCCCCCCCCCCCCCCCC",
-                    "DDDD?DDDDDDDDDDDDDDDDDD",
+                    "AAAA?iv=AAAAAAAAAAAAAAAAAAAAAA==",
+                    "BBBB?iv=BBBBBBBBBBBBBBBBBBBBBB==",
+                    "CCCC?iv=CCCCCCCCCCCCCCCCCCCCCC==",
+                    "DDDD?iv=DDDDDDDDDDDDDDDDDDDDDD==",
             };
 
             long[] times = new long[invalidCiphertexts.length];
@@ -316,7 +304,7 @@ class Nip04CryptoSecurityTest {
 
                 for (int j = 0; j < 100; j++) {
                     try {
-                        Nip04Crypto.decrypt(ciphertext, privateKey, publicKey);
+                        crypto.decrypt(ciphertext);
                     } catch (Exception e) {
                         // Expected
                     }
@@ -349,16 +337,17 @@ class Nip04CryptoSecurityTest {
             // Ensures empty plaintext can be encrypted/decrypted without errors.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             assertThatCode(() -> {
                 try {
-                    String encrypted = Nip04Crypto.encrypt("", privateKey, publicKey);
-                    String decrypted = Nip04Crypto.decrypt(encrypted, privateKey, publicKey);
+                    String encrypted = crypto.encrypt("");
+                    String decrypted = crypto.decrypt(encrypted);
                     assertThat(decrypted).isEqualTo("");
                 } catch (Exception e) {
                     // Empty string handling may vary
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -367,18 +356,19 @@ class Nip04CryptoSecurityTest {
             // Ensures very large plaintexts are handled safely or rejected gracefully.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             String longPlaintext = "a".repeat(100000);
 
             assertThatCode(() -> {
                 try {
-                    String encrypted = Nip04Crypto.encrypt(longPlaintext, privateKey, publicKey);
-                    String decrypted = Nip04Crypto.decrypt(encrypted, privateKey, publicKey);
+                    String encrypted = crypto.encrypt(longPlaintext);
+                    String decrypted = crypto.decrypt(encrypted);
                     assertThat(decrypted).isEqualTo(longPlaintext);
                 } catch (Exception e) {
                     // Size limits may cause failure
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -387,6 +377,7 @@ class Nip04CryptoSecurityTest {
             // Ensures binary plaintext round-trips or fails safely without data leaks.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             byte[] binaryData = new byte[256];
             for (int i = 0; i < 256; i++) {
@@ -396,13 +387,13 @@ class Nip04CryptoSecurityTest {
 
             assertThatCode(() -> {
                 try {
-                    String encrypted = Nip04Crypto.encrypt(binaryString, privateKey, publicKey);
-                    String decrypted = Nip04Crypto.decrypt(encrypted, privateKey, publicKey);
+                    String encrypted = crypto.encrypt(binaryString);
+                    String decrypted = crypto.decrypt(encrypted);
                     assertThat(decrypted).isEqualTo(binaryString);
                 } catch (Exception e) {
                     // Binary data may cause issues
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
         }
 
         @Test
@@ -411,18 +402,46 @@ class Nip04CryptoSecurityTest {
             // Ensures Unicode plaintext encrypts/decrypts correctly without corruption.
             byte[] privateKey = generateRandomKey();
             byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
 
             String unicodeText = "Hello 世界 🌍 مرحبا";
 
             assertThatCode(() -> {
                 try {
-                    String encrypted = Nip04Crypto.encrypt(unicodeText, privateKey, publicKey);
-                    String decrypted = Nip04Crypto.decrypt(encrypted, privateKey, publicKey);
+                    String encrypted = crypto.encrypt(unicodeText);
+                    String decrypted = crypto.decrypt(encrypted);
                     assertThat(decrypted).isEqualTo(unicodeText);
                 } catch (Exception e) {
                     // Unicode should work
                 }
-            }).doesNotThrowAny();
+            }).doesNotThrowAnyException();
+        }
+    }
+
+    @Nested
+    @DisplayName("Null Ciphertext Tests")
+    class NullCiphertextTests {
+
+        @Test
+        @DisplayName("Should reject null ciphertext")
+        void shouldRejectNullCiphertext() {
+            byte[] privateKey = generateRandomKey();
+            byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
+
+            assertThatThrownBy(() -> crypto.decrypt(null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        @Test
+        @DisplayName("Should reject null plaintext")
+        void shouldRejectNullPlaintext() {
+            byte[] privateKey = generateRandomKey();
+            byte[] publicKey = generateRandomKey();
+            Nip04Crypto crypto = createCrypto(privateKey, publicKey);
+
+            assertThatThrownBy(() -> crypto.encrypt(null))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 

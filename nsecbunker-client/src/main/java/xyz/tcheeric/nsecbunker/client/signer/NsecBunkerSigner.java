@@ -141,7 +141,7 @@ public class NsecBunkerSigner implements RemoteSigner {
 
     @Override
     public CompletableFuture<String> requestPermissions(List<String> methods) {
-        List<String> params = methods == null ? Collections.emptyList() : methods;
+        List<Object> params = methods == null ? Collections.emptyList() : new java.util.ArrayList<>(methods);
         Nip46Request request = Nip46Request.builder()
                 .method("request_permissions")
                 .params(params)
@@ -209,10 +209,16 @@ public class NsecBunkerSigner implements RemoteSigner {
     }
 
     private Identity createIdentity(String privateKey) {
+        String hexKey = privateKey;
         if (privateKey.startsWith("nsec1")) {
-            return Identity.create(privateKey);
+            // Decode bech32 nsec to hex
+            try {
+                hexKey = nostr.crypto.bech32.Bech32.fromBech32(privateKey);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid nsec: " + privateKey, e);
+            }
         }
-        return Identity.create(privateKey);
+        return Identity.create(hexKey);
     }
 
     private String resolvePubkeyToHex(String pubkey) {

@@ -208,13 +208,15 @@ class PolicyRuleTest {
     void shouldDeserializeFromJson() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
+        // JSON property names must match nsecbunkerd format:
+        // "kind" for event kind, "use_count" for max usage, "current_usage_count" for current usage
         String json = """
             {
                 "type": "DENY",
                 "method": "sign_event",
-                "event_kind": 4,
-                "max_usage": 100,
-                "current_usage": 25
+                "kind": 4,
+                "use_count": 100,
+                "current_usage_count": 25
             }
             """;
 

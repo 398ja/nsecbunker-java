@@ -1,5 +1,6 @@
 package xyz.tcheeric.nsecbunker.core.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -28,9 +29,16 @@ import java.util.List;
 public final class KeyUser {
 
     /**
+     * Unique identifier for this key user (from nsecbunkerd database).
+     */
+    private final String id;
+
+    /**
      * The public key of this user (in hex format).
+     * nsecbunkerd uses "user_pubkey" in grant_permission response, "userPubkey" in get_key_users.
      */
     @JsonProperty("pubkey")
+    @JsonAlias({"user_pubkey", "userPubkey"})
     private final String pubkeyHex;
 
     /**
@@ -94,8 +102,10 @@ public final class KeyUser {
 
     /**
      * Whether this user's access is currently active.
+     * nsecbunkerd may use "active", "is_active", or "enabled" to indicate user status.
      */
     @Builder.Default
+    @JsonAlias({"is_active", "enabled"})
     private final boolean active = true;
 
     /**

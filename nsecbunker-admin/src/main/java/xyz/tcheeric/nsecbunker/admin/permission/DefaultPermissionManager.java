@@ -25,11 +25,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class DefaultPermissionManager implements PermissionManager {
 
-    static final String METHOD_GRANT_PERMISSION = "grant_permission";
-    static final String METHOD_REVOKE_PERMISSION = "revoke_permission";
-    static final String METHOD_LIST_KEY_USERS = "list_key_users";
-    static final String METHOD_GET_PERMISSIONS = "get_permissions";
-    static final String METHOD_UPDATE_DESCRIPTION = "update_key_user_description";
+    // Method names must match nsecbunkerd's admin interface
+    static final String METHOD_GRANT_PERMISSION = "grant_permission";  // Not implemented in nsecbunkerd
+    static final String METHOD_REVOKE_PERMISSION = "revoke_user";  // nsecbunkerd uses revoke_user
+    static final String METHOD_LIST_KEY_USERS = "get_key_users";  // nsecbunkerd uses get_key_users
+    static final String METHOD_GET_PERMISSIONS = "get_permissions";  // Not implemented in nsecbunkerd
+    static final String METHOD_UPDATE_DESCRIPTION = "rename_key_user";  // nsecbunkerd uses rename_key_user
 
     private final NsecBunkerAdminClient adminClient;
     private final ObjectMapper objectMapper;
@@ -60,33 +61,93 @@ public class DefaultPermissionManager implements PermissionManager {
         validatePubkey(userPubkey);
         Objects.requireNonNull(policy, "policy must not be null");
 
-        String policyJson = toJson(policy);
-        return sendForUser(METHOD_GRANT_PERMISSION, List.of(keyName, userPubkey, policyJson),
-                "grant permission for " + keyName);
+        // nsecbunkerd expects policyId (numeric string), not full policy JSON
+        String policyId = policy.getId();
+        if (policyId == null || policyId.isBlank()) {
+            throw new IllegalArgumentException("Policy must have an ID to grant permission");
+        }
+
+        // nsecbunkerd returns the KeyUser object directly (not ["ok"])
+        return sendForResult(METHOD_GRANT_PERMISSION, List.of(keyName, userPubkey, policyId),
+                "grant permission for " + keyName)
+                .thenApply(result -> {
+                    if (result == null || result.isBlank()) {
+                        throw new AdminException("Empty response from grant_permission");
+                    }
+                    try {
+                        // Try to parse the result as a KeyUser object directly
+                        // nsecbunkerd returns: {"id":..., "key_name":..., "user_pubkey":..., ...}
+                        return objectMapper.readValue(result, KeyUser.class);
+                    } catch (JsonProcessingException e) {
+                        // If parsing fails, return a minimal KeyUser
+                        log.warn("Failed to parse grant_permission response as KeyUser: {}", result, e);
+                        return KeyUser.builder()
+                                .pubkeyHex(userPubkey)
+                                .keyName(keyName)
+                                .active(true)
+                                .build();
+                    }
+                });
     }
 
     @Override
     public CompletableFuture<Boolean> revokePermission(String keyName, String userPubkey) {
         validateKeyName(keyName);
         validatePubkey(userPubkey);
-        return sendForResult(METHOD_REVOKE_PERMISSION, List.of(keyName, userPubkey),
-                "revoke permission for " + keyName)
-                .thenApply(ignored -> Boolean.TRUE);
+
+        // nsecbunkerd's revoke_user expects [keyUserId] (numeric ID), not [keyName, userPubkey]
+        // So we need to first query the key users to find the keyUserId
+        return listKeyUsers(keyName)
+                .thenCompose(users -> {
+                    KeyUser user = users.stream()
+                            .filter(u -> userPubkey.equals(u.getPublicKey()) || userPubkey.equals(u.getPubkeyHex()))
+                            .findFirst()
+                            .orElseThrow(() -> new AdminException("Key user not found for pubkey: " + userPubkey));
+
+                    if (user.getId() == null) {
+                        throw new AdminException("Key user ID not found for pubkey: " + userPubkey);
+                    }
+
+                    // Now call revoke_user with the keyUserId
+                    return sendForResult(METHOD_REVOKE_PERMISSION, List.of(user.getId()),
+                            "revoke permission for " + keyName);
+                })
+                .thenApply(result -> {
+                    // Result is ["ok"]
+                    return result != null && result.contains("ok");
+                });
     }
 
     @Override
     public CompletableFuture<List<KeyUser>> listKeyUsers(String keyName) {
         validateKeyName(keyName);
         return sendForResult(METHOD_LIST_KEY_USERS, List.of(keyName), "list key users for " + keyName)
-                .thenApply(this::parseUserList);
+                .thenApply(this::parseUserList)
+                .thenApply(users -> users.stream()
+                        // Filter out inactive/revoked users - nsecbunkerd sets active: false on revoke
+                        .filter(KeyUser::isActive)
+                        .toList());
     }
 
     @Override
     public CompletableFuture<KeyUser> getPermissions(String keyName, String userPubkey) {
         validateKeyName(keyName);
         validatePubkey(userPubkey);
-        return sendForUser(METHOD_GET_PERMISSIONS, List.of(keyName, userPubkey),
-                "get permissions for " + keyName);
+
+        // get_permissions is not implemented in nsecbunkerd
+        // Use listKeyUsers to find the user instead
+        return listKeyUsers(keyName)
+                .thenApply(users -> users.stream()
+                        .filter(u -> userPubkey.equals(u.getPublicKey()) || userPubkey.equals(u.getPubkeyHex()))
+                        .findFirst()
+                        .map(user -> {
+                            // Ensure keyName is populated since listKeyUsers may not include it
+                            if (user.getKeyName() == null) {
+                                return user.toBuilder().keyName(keyName).build();
+                            }
+                            return user;
+                        })
+                        .orElseThrow(() -> new AdminException("Key user not found for pubkey: " + userPubkey)));
     }
 
     @Override
@@ -96,14 +157,34 @@ public class DefaultPermissionManager implements PermissionManager {
         if (description == null) {
             description = "";
         }
-        return sendForUser(METHOD_UPDATE_DESCRIPTION, List.of(keyName, userPubkey, description),
-                "update description for " + keyName);
+
+        // nsecbunkerd's rename_key_user expects [userPubkey, name], not [keyName, userPubkey, description]
+        // and returns ["ok"], not the updated KeyUser
+        final String finalDescription = description;
+        return sendForResult(METHOD_UPDATE_DESCRIPTION, List.of(userPubkey, description),
+                "update description for " + keyName)
+                .thenCompose(result -> {
+                    // Result is ["ok"] - now query to get the updated user
+                    if (result != null && result.contains("ok")) {
+                        return listKeyUsers(keyName)
+                                .thenApply(users -> users.stream()
+                                        .filter(u -> userPubkey.equals(u.getPublicKey()) || userPubkey.equals(u.getPubkeyHex()))
+                                        .findFirst()
+                                        // Return a user with the updated description if not found
+                                        .orElse(KeyUser.builder()
+                                                .pubkeyHex(userPubkey)
+                                                .keyName(keyName)
+                                                .description(finalDescription)
+                                                .build()));
+                    }
+                    throw new AdminException("Failed to update key user description: " + result);
+                });
     }
 
     private CompletableFuture<String> sendForResult(String method, List<String> params, String description) {
         Nip46Request request = Nip46Request.builder()
                 .method(method)
-                .params(params != null ? params : Collections.emptyList())
+                .params(params != null ? List.copyOf(params) : Collections.emptyList())
                 .build();
 
         return adminClient.sendRequest(request)
@@ -145,14 +226,6 @@ public class DefaultPermissionManager implements PermissionManager {
             return List.copyOf(users);
         } catch (JsonProcessingException e) {
             throw new AdminException("Failed to parse key user list: " + e.getMessage(), e);
-        }
-    }
-
-    private String toJson(BunkerPolicy policy) {
-        try {
-            return objectMapper.writeValueAsString(policy);
-        } catch (JsonProcessingException e) {
-            throw new AdminException("Failed to serialize policy: " + e.getMessage(), e);
         }
     }
 

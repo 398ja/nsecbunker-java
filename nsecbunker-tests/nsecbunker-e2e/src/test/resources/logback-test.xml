@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- E2E test logging -->
+    <logger name="xyz.tcheeric.nsecbunker.e2e" level="INFO"/>
+
+    <!-- Testcontainers logging - reduce noise -->
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="org.apache.hc.client5" level="WARN"/>
+
+    <!-- Container output logging -->
+    <logger name="tc" level="INFO"/>
+
+    <!-- nsecBunker library logging -->
+    <logger name="xyz.tcheeric.nsecbunker" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

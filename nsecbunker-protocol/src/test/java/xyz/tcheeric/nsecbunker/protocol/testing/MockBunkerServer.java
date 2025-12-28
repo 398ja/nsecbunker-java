@@ -223,7 +223,7 @@ public class MockBunkerServer implements AutoCloseable {
      *
      * @param handler function that receives (pubkey, plaintext) and returns ciphertext
      */
-    public void onNip04Encrypt(Function<List<String>, String> handler) {
+    public void onNip04Encrypt(Function<List<Object>, String> handler) {
         onMethod("nip04_encrypt", req -> {
             String result = handler.apply(req.getParams());
             return Nip46Response.success(req.getId(), result);
@@ -235,7 +235,7 @@ public class MockBunkerServer implements AutoCloseable {
      *
      * @param handler function that receives (pubkey, ciphertext) and returns plaintext
      */
-    public void onNip04Decrypt(Function<List<String>, String> handler) {
+    public void onNip04Decrypt(Function<List<Object>, String> handler) {
         onMethod("nip04_decrypt", req -> {
             String result = handler.apply(req.getParams());
             return Nip46Response.success(req.getId(), result);

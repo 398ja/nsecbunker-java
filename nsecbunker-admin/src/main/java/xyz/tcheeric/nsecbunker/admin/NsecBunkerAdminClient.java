@@ -70,6 +70,12 @@ public class NsecBunkerAdminClient implements Closeable {
     public static final int KIND_RESPONSE = 24133;
 
     /**
+     * Legacy/eventually deprecated response kind some relays still emit.
+     * Accept both 24133 (NIP-46) and 24134 (older clients) to stay compatible.
+     */
+    public static final int KIND_RESPONSE_LEGACY = 24134;
+
+    /**
      * The admin client configuration.
      */
     @Getter
@@ -478,9 +484,10 @@ public class NsecBunkerAdminClient implements Closeable {
         String commPubkeyHex = communicationIdentity.getPublicKey().toString();
 
         // Create filter for responses addressed to our communication pubkey
+        String kinds = String.format("[%d,%d]", KIND_RESPONSE, KIND_RESPONSE_LEGACY);
         String filter = String.format(
-                "{\"kinds\":[%d],\"#p\":[\"%s\"],\"authors\":[\"%s\"]}",
-                KIND_RESPONSE, commPubkeyHex, bunkerPubkeyHex);
+                "{\"kinds\":%s,\"#p\":[\"%s\"],\"authors\":[\"%s\"]}",
+                kinds, commPubkeyHex, bunkerPubkeyHex);
 
         subscriptionId = "admin-" + System.currentTimeMillis();
         relayPool.broadcastReq(subscriptionId, filter);
@@ -566,7 +573,8 @@ public class NsecBunkerAdminClient implements Closeable {
      */
     private void handleEvent(nostr.event.impl.GenericEvent event) {
         // Check if this is a response to our request
-        if (event.getKind() != KIND_RESPONSE) {
+        int kind = event.getKind();
+        if (kind != KIND_RESPONSE && kind != KIND_RESPONSE_LEGACY) {
             return;
         }
 
@@ -579,7 +587,7 @@ public class NsecBunkerAdminClient implements Closeable {
         try {
             // Decrypt the content
             String decrypted = crypto.decrypt(event.getContent());
-            log.debug("Decrypted response: {}", decrypted);
+            log.debug("Decrypted response (kind={}): {}", kind, decrypted);
 
             // Decode the response
             Nip46Response response = decoder.decodeResponse(decrypted);

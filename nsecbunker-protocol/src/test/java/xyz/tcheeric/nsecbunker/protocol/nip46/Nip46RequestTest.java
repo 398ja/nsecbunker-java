@@ -40,7 +40,7 @@ class Nip46RequestTest {
 
     @Test
     void builderWithParams() {
-        List<String> params = Arrays.asList("param1", "param2");
+        List<Object> params = Arrays.asList("param1", "param2");
         Nip46Request request = Nip46Request.builder()
                 .method("test")
                 .params(params)

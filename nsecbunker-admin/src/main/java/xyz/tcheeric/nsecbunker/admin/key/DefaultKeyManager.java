@@ -116,7 +116,7 @@ public class DefaultKeyManager implements KeyManager {
     private CompletableFuture<String> sendForResult(String method, List<String> params, String description) {
         Nip46Request request = Nip46Request.builder()
                 .method(method)
-                .params(params != null ? params : Collections.emptyList())
+                .params(params != null ? List.copyOf(params) : Collections.emptyList())
                 .build();
 
         return adminClient.sendRequest(request)
@@ -144,7 +144,12 @@ public class DefaultKeyManager implements KeyManager {
         }
 
         try {
-            return objectMapper.readValue(result, BunkerKey.class);
+            BunkerKey parsed = objectMapper.readValue(result, BunkerKey.class);
+            // nsecbunkerd may not return the key name in the response, so preserve it
+            if (parsed.getName() == null && keyName != null) {
+                return parsed.toBuilder().name(keyName).build();
+            }
+            return parsed;
         } catch (JsonProcessingException e) {
             log.debug("Falling back to minimal key for {} because parsing failed: {}", keyName, e.getMessage());
             return BunkerKey.withName(keyName)
