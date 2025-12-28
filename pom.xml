@@ -762,8 +762,11 @@
                             <suppressionFiles>
                                 <suppressionFile>dependency-check-suppressions.xml</suppressionFile>
                             </suppressionFiles>
-                            <!-- NVD API key for faster updates (optional, set via -Dnvd.api.key=...) -->
+                            <!-- NVD API key for faster updates (set via -Dnvd.api.key=... or environment) -->
+                            <!-- Get a free key at: https://nvd.nist.gov/developers/request-an-api-key -->
                             <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                            <!-- Continue build even if NVD update fails (uses cached data) -->
+                            <failOnError>false</failOnError>
                         </configuration>
                         <executions>
                             <execution>
