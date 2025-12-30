@@ -31,6 +31,10 @@
             <groupId>xyz.tcheeric</groupId>
             <artifactId>nsecbunker-monitoring</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xyz.tcheeric</groupId>
+            <artifactId>nsecbunker-account</artifactId>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>

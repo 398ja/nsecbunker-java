@@ -17,6 +17,7 @@ public class NsecBunkerProperties {
     private final Admin admin = new Admin();
     private final Signer signer = new Signer();
     private final Metrics metrics = new Metrics();
+    private final Nip05 nip05 = new Nip05();
 
     /**
      * Admin client configuration properties.
@@ -84,5 +85,47 @@ public class NsecBunkerProperties {
          * Whether to record per-method metrics.
          */
         private boolean perMethodMetrics = true;
+    }
+
+    /**
+     * NIP-05 configuration properties.
+     *
+     * <p>These properties control how NIP-05 identity management is configured,
+     * including which provider implementation to use.</p>
+     */
+    @Data
+    public static class Nip05 {
+        /**
+         * Whether NIP-05 functionality is enabled.
+         */
+        private boolean enabled = true;
+
+        /**
+         * The provider to use for NIP-05 management.
+         *
+         * <p>Options:</p>
+         * <ul>
+         *   <li>{@code auto} - Automatically select highest priority provider</li>
+         *   <li>{@code in-memory} - Use in-memory storage (default)</li>
+         *   <li>{@code bottin} - Use bottin persistent storage</li>
+         *   <li>Custom provider name</li>
+         * </ul>
+         */
+        private String provider = "auto";
+
+        /**
+         * Default relays to associate with new NIP-05 records.
+         */
+        private List<String> defaultRelays = new ArrayList<>();
+
+        /**
+         * Whether to auto-register NIP-05 when creating keys via admin client.
+         */
+        private boolean autoRegister = false;
+
+        /**
+         * Default domain for auto-registration (required if autoRegister is true).
+         */
+        private String defaultDomain;
     }
 }
