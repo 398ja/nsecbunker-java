@@ -22,6 +22,85 @@ nsecbunker-java provides interfaces for NIP-05 identity management through the `
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+## How nsecbunker-java Leverages Bottin
+
+When `bottin-spring-boot-starter` is on the classpath, nsecbunker-java **automatically** uses bottin's database-backed implementation through a Service Provider Interface (SPI) pattern. The integration is transparent - your code doesn't need to know which implementation is being used.
+
+### Auto-Configuration Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Your Application                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  nsecbunker-spring-boot-starter       bottin-spring-boot-starter    │
+│  ┌───────────────────────────┐        ┌───────────────────────────┐ │
+│  │ NsecBunkerAutoConfiguration│        │ BottinAutoConfiguration   │ │
+│  │                           │        │                           │ │
+│  │ nip05Manager() method:    │        │ Creates:                  │ │
+│  │ - Collects all providers  │◄───────│ - PersistentNip05Manager  │ │
+│  │ - Sorts by priority       │injects │ - BottinNip05Provider(100)│ │
+│  │ - Selects highest (bottin)│        │                           │ │
+│  └───────────────────────────┘        └───────────────────────────┘ │
+│              │                                    │                  │
+│              ▼                                    ▼                  │
+│      Nip05Manager interface              PostgreSQL / H2            │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Provider Selection Logic
+
+The `NsecBunkerAutoConfiguration` automatically selects the best available provider:
+
+```java
+// From NsecBunkerAutoConfiguration.java
+Optional<Nip05ManagerProvider> best = providers.stream()
+    .filter(Nip05ManagerProvider::isAvailable)
+    .max(Comparator.comparingInt(Nip05ManagerProvider::priority));
+```
+
+### NIP-05 Operations via Bottin
+
+When bottin is active, all `Nip05Manager` operations are database-backed:
+
+| Operation | Method | Description |
+|-----------|--------|-------------|
+| Check if taken | `verifyNip05(String nip05)` | Returns `true` if NIP-05 exists and is enabled |
+| Store NIP-05 | `setupNip05(String username, String domain)` | Creates record with auto-generated identity |
+| Lookup pubkey | `findByNip05(String nip05)` | Returns the record with pubkey if found |
+| Reverse lookup | `findByPubkey(String pubkey)` | Find NIP-05 by public key |
+| List by domain | `findByDomain(String domain)` | List all NIP-05s for a domain |
+| Delete | `deleteNip05(String nip05)` | Remove a NIP-05 record |
+| Update relays | `updateRelays(String nip05, List<String> relays)` | Update relay list |
+
+### Transparent Usage Example
+
+```java
+@Service
+@RequiredArgsConstructor
+public class IdentityService {
+    // Bottin's PersistentNip05Manager is injected automatically
+    private final Nip05Manager nip05Manager;
+
+    public CompletableFuture<Boolean> isNip05Taken(String nip05) {
+        // Checks database via bottin
+        return nip05Manager.verifyNip05(nip05);
+    }
+
+    public CompletableFuture<Nip05Record> registerNip05(String username, String domain) {
+        // Stores in database via bottin, generates identity via nostr-java
+        return nip05Manager.setupNip05(username, domain);
+    }
+
+    public CompletableFuture<Optional<String>> lookupPubkey(String nip05) {
+        // Queries database via bottin
+        return nip05Manager.findByNip05(nip05)
+            .thenApply(opt -> opt.map(Nip05Record::getPubkey));
+    }
+}
+```
+
 ## Integration Patterns
 
 ### Pattern 1: In-Memory (Default)
@@ -244,6 +323,18 @@ public class WellKnownController {
 
 ## Troubleshooting
 
+### Verifying Bottin Integration is Active
+
+Check the application logs at startup for these messages:
+
+```
+INFO  bottin_autoconfiguration_nip05_manager_created
+INFO  bottin_autoconfiguration_nip05_provider_created
+INFO  nip05_manager_created provider=bottin-persistent priority=100
+```
+
+If you see `provider=in-memory` instead, bottin is not being used.
+
 ### Provider Not Found
 
 ```
@@ -268,8 +359,16 @@ spring:
     password: ${BOTTIN_DB_PASS}
 ```
 
+### Domain Must Be Verified
+
+When using `setupNip05()`, the domain must already be registered and verified in bottin. Otherwise you'll get:
+
+- `DomainNotFoundException` - domain not registered
+- `DomainNotVerifiedException` - domain registered but not verified
+
+Register and verify domains via bottin's admin API or dashboard before creating NIP-05 records.
+
 ## Related Documentation
 
 - [NIP-05 Specification](https://github.com/nostr-protocol/nips/blob/master/05.md)
-- [nsecbunker-account Module](../reference/account-module.md)
 - [Bottin Project](https://github.com/tcheeric/bottin)
