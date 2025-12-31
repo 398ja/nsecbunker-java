@@ -82,10 +82,13 @@ class BottinE2ETest {
 
     @BeforeAll
     static void setup() {
-        client = new BottinTestClient(bottin.getBaseUrl());
+        client = new BottinTestClient(
+                bottin.getBaseUrl(),
+                bottin.getAdminUser(),
+                bottin.getAdminPassword());
         testPubkey = Identity.generateRandomIdentity().getPublicKey().toString();
-        log.info("bottin_e2e_test_started base_url={} test_pubkey={}",
-                bottin.getBaseUrl(), testPubkey);
+        log.info("bottin_e2e_test_started base_url={} admin_user={} test_pubkey={}",
+                bottin.getBaseUrl(), bottin.getAdminUser(), testPubkey);
     }
 
     // =========================================================================

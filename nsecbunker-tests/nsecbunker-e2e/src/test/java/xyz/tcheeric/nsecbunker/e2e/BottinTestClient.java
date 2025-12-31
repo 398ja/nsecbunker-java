@@ -11,7 +11,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ import java.util.Map;
  *
  * <p>Provides convenient methods for domain management, NIP-05 record operations,
  * and well-known endpoint verification.
+ *
+ * <p>Supports Basic Authentication for secured API endpoints.
  */
 public class BottinTestClient {
 
@@ -30,8 +34,25 @@ public class BottinTestClient {
     private final String apiUrl;
     private final String wellKnownUrl;
     private final ObjectMapper objectMapper;
+    private final String authHeader;
 
+    /**
+     * Creates a new BottinTestClient without authentication.
+     *
+     * @param baseUrl the base URL of the Bottin service
+     */
     public BottinTestClient(String baseUrl) {
+        this(baseUrl, null, null);
+    }
+
+    /**
+     * Creates a new BottinTestClient with Basic Authentication.
+     *
+     * @param baseUrl  the base URL of the Bottin service
+     * @param username the admin username
+     * @param password the admin password
+     */
+    public BottinTestClient(String baseUrl, String username, String password) {
         this.baseUrl = baseUrl;
         this.apiUrl = baseUrl + "/api/v1";
         this.wellKnownUrl = baseUrl + "/.well-known/nostr.json";
@@ -39,6 +60,24 @@ public class BottinTestClient {
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
         this.objectMapper = new ObjectMapper();
+
+        if (username != null && password != null) {
+            String credentials = username + ":" + password;
+            this.authHeader = "Basic " + Base64.getEncoder()
+                    .encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+        } else {
+            this.authHeader = null;
+        }
+    }
+
+    /**
+     * Adds authentication header to the request builder if credentials are configured.
+     */
+    private HttpRequest.Builder addAuth(HttpRequest.Builder builder) {
+        if (authHeader != null) {
+            builder.header("Authorization", authHeader);
+        }
+        return builder;
     }
 
     // --- Domain Operations ---
@@ -52,7 +91,7 @@ public class BottinTestClient {
     public HttpResponse<String> createDomain(String name) throws IOException, InterruptedException {
         String json = objectMapper.writeValueAsString(Map.of("name", name));
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/domains"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
@@ -69,7 +108,7 @@ public class BottinTestClient {
      * @return the HTTP response with domain list
      */
     public HttpResponse<String> getDomains() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/domains"))
                 .GET()
                 .build();
@@ -84,7 +123,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> getDomain(Long id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/domains/" + id))
                 .GET()
                 .build();
@@ -99,7 +138,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> deleteDomain(Long id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/domains/" + id))
                 .DELETE()
                 .build();
@@ -130,7 +169,7 @@ public class BottinTestClient {
         );
         String json = objectMapper.writeValueAsString(body);
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
@@ -153,7 +192,7 @@ public class BottinTestClient {
             url += "?domain=" + domain;
         }
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(url))
                 .GET()
                 .build();
@@ -168,7 +207,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> getRecordByNip05(String nip05) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records/by-nip05/" + nip05))
                 .GET()
                 .build();
@@ -183,7 +222,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> getRecord(Long id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records/" + id))
                 .GET()
                 .build();
@@ -201,7 +240,7 @@ public class BottinTestClient {
     public HttpResponse<String> updateRecord(Long id, List<String> relays) throws IOException, InterruptedException {
         String json = objectMapper.writeValueAsString(Map.of("relays", relays));
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records/" + id))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
@@ -219,7 +258,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> deleteRecord(Long id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records/" + id))
                 .DELETE()
                 .build();
@@ -236,7 +275,7 @@ public class BottinTestClient {
      * @return the HTTP response
      */
     public HttpResponse<String> toggleRecord(Long id) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = addAuth(HttpRequest.newBuilder())
                 .uri(URI.create(apiUrl + "/records/" + id + "/toggle"))
                 .method("PATCH", HttpRequest.BodyPublishers.noBody())
                 .build();
@@ -246,7 +285,7 @@ public class BottinTestClient {
         return response;
     }
 
-    // --- Well-Known Endpoint ---
+    // --- Well-Known Endpoint (Public - No Auth Required) ---
 
     /**
      * Queries the .well-known/nostr.json endpoint for a specific name.
@@ -260,6 +299,7 @@ public class BottinTestClient {
             url += "?name=" + name;
         }
 
+        // Well-known endpoint is public, no auth needed
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .GET()
@@ -279,7 +319,7 @@ public class BottinTestClient {
         return getWellKnown(null);
     }
 
-    // --- Health Check ---
+    // --- Health Check (Public - No Auth Required) ---
 
     /**
      * Checks if Bottin is healthy.

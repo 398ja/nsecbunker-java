@@ -30,9 +30,14 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
             DockerImageName.parse("docker.398ja.xyz/bottin-web:latest");
     private static final int HTTP_PORT = 8080;
 
+    private static final String DEFAULT_ADMIN_USER = "admin";
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
+
     private String postgresUrl;
     private String postgresUser = "bottin";
     private String postgresPassword = "bottin";
+    private String adminUser = DEFAULT_ADMIN_USER;
+    private String adminPassword = DEFAULT_ADMIN_PASSWORD;
     private boolean verificationSkip = Boolean.parseBoolean(
             System.getProperty("bottin.verification.skip", "true"));
 
@@ -100,6 +105,28 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
         return this;
     }
 
+    /**
+     * Configures the admin username for API authentication.
+     *
+     * @param user the admin username
+     * @return this container for method chaining
+     */
+    public BottinContainer withAdminUser(String user) {
+        this.adminUser = user;
+        return this;
+    }
+
+    /**
+     * Configures the admin password for API authentication.
+     *
+     * @param password the admin password
+     * @return this container for method chaining
+     */
+    public BottinContainer withAdminPassword(String password) {
+        this.adminPassword = password;
+        return this;
+    }
+
     @Override
     protected void configure() {
         // Spring Boot datasource configuration
@@ -116,14 +143,18 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
         // Disable Flyway for tests (use Hibernate DDL auto)
         withEnv("SPRING_FLYWAY_ENABLED", "false");
 
+        // Admin credentials for API authentication
+        withEnv("BOTTIN_ADMIN_USERNAME", adminUser);
+        withEnv("BOTTIN_ADMIN_PASSWORD", adminPassword);
+
         // Bottin test mode - skip domain verification
         withEnv("BOTTIN_VERIFICATION_SKIP", String.valueOf(verificationSkip));
 
         // Logging configuration
         withEnv("LOGGING_LEVEL_XYZ_TCHEERIC", "DEBUG");
 
-        log.info("bottin_container_configured postgres_url={} verification_skip={}",
-                postgresUrl, verificationSkip);
+        log.info("bottin_container_configured postgres_url={} verification_skip={} admin_user={}",
+                postgresUrl, verificationSkip, adminUser);
     }
 
     /**
@@ -160,5 +191,23 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
      */
     public String getHealthUrl() {
         return getBaseUrl() + "/actuator/health";
+    }
+
+    /**
+     * Gets the admin username for API authentication.
+     *
+     * @return the admin username
+     */
+    public String getAdminUser() {
+        return adminUser;
+    }
+
+    /**
+     * Gets the admin password for API authentication.
+     *
+     * @return the admin password
+     */
+    public String getAdminPassword() {
+        return adminPassword;
     }
 }
