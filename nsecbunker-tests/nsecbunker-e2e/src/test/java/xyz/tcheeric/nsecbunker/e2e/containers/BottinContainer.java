@@ -106,10 +106,15 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
         withEnv("SPRING_DATASOURCE_URL", postgresUrl);
         withEnv("SPRING_DATASOURCE_USERNAME", postgresUser);
         withEnv("SPRING_DATASOURCE_PASSWORD", postgresPassword);
+        withEnv("SPRING_DATASOURCE_DRIVER_CLASS_NAME", "org.postgresql.Driver");
 
         // JPA configuration for test environment
         withEnv("SPRING_JPA_HIBERNATE_DDL_AUTO", "create-drop");
         withEnv("SPRING_JPA_SHOW_SQL", "false");
+        withEnv("SPRING_JPA_DATABASE_PLATFORM", "org.hibernate.dialect.PostgreSQLDialect");
+
+        // Disable Flyway for tests (use Hibernate DDL auto)
+        withEnv("SPRING_FLYWAY_ENABLED", "false");
 
         // Bottin test mode - skip domain verification
         withEnv("BOTTIN_VERIFICATION_SKIP", String.valueOf(verificationSkip));
