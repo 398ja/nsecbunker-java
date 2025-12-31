@@ -27,7 +27,7 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
     private static final Logger log = LoggerFactory.getLogger(BottinContainer.class);
 
     private static final DockerImageName DEFAULT_IMAGE =
-            DockerImageName.parse("docker.398ja.xyz/bottin:latest");
+            DockerImageName.parse("docker.398ja.xyz/bottin-web:latest");
     private static final int HTTP_PORT = 8080;
 
     private String postgresUrl;
