@@ -56,6 +56,8 @@ public class BottinTestClient {
         this.baseUrl = baseUrl;
         this.apiUrl = baseUrl + "/api/v1";
         this.wellKnownUrl = baseUrl + "/.well-known/nostr.json";
+        // Allow setting the Host header (restricted by default in Java HttpClient)
+        System.setProperty("jdk.httpclient.allowRestrictedHeaders", "Host");
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
@@ -290,24 +292,39 @@ public class BottinTestClient {
     /**
      * Queries the .well-known/nostr.json endpoint for a specific name.
      *
-     * @param name the username to look up
+     * @param name   the username to look up
+     * @param domain the domain to use in Host header (determines which domain records are returned)
      * @return the HTTP response with NIP-05 JSON
      */
-    public HttpResponse<String> getWellKnown(String name) throws IOException, InterruptedException {
+    public HttpResponse<String> getWellKnown(String name, String domain) throws IOException, InterruptedException {
         String url = wellKnownUrl;
         if (name != null && !name.isEmpty()) {
             url += "?name=" + name;
         }
 
         // Well-known endpoint is public, no auth needed
-        HttpRequest request = HttpRequest.newBuilder()
+        // Domain is determined from Host header per NIP-05 spec
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .GET()
-                .build();
+                .GET();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        log.debug("get_well_known name={} status={}", name, response.statusCode());
+        if (domain != null && !domain.isEmpty()) {
+            builder.header("Host", domain);
+        }
+
+        HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        log.debug("get_well_known name={} domain={} status={}", name, domain, response.statusCode());
         return response;
+    }
+
+    /**
+     * Queries the .well-known/nostr.json endpoint for a specific name (uses default Host).
+     *
+     * @param name the username to look up
+     * @return the HTTP response with NIP-05 JSON
+     */
+    public HttpResponse<String> getWellKnown(String name) throws IOException, InterruptedException {
+        return getWellKnown(name, null);
     }
 
     /**
@@ -316,7 +333,17 @@ public class BottinTestClient {
      * @return the HTTP response with NIP-05 JSON
      */
     public HttpResponse<String> getWellKnown() throws IOException, InterruptedException {
-        return getWellKnown(null);
+        return getWellKnown(null, null);
+    }
+
+    /**
+     * Queries the .well-known/nostr.json endpoint for all records for a specific domain.
+     *
+     * @param domain the domain to query
+     * @return the HTTP response with NIP-05 JSON
+     */
+    public HttpResponse<String> getWellKnownForDomain(String domain) throws IOException, InterruptedException {
+        return getWellKnown(null, domain);
     }
 
     // --- Health Check (Public - No Auth Required) ---
