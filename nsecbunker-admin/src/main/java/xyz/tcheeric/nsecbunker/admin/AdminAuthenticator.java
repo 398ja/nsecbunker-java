@@ -2,7 +2,6 @@ package xyz.tcheeric.nsecbunker.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
-import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Response;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

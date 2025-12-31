@@ -1,5 +1,7 @@
 package xyz.tcheeric.nsecbunker.core.exception;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when there are connection-related errors with nsecBunker.
  *
@@ -8,6 +10,7 @@ package xyz.tcheeric.nsecbunker.core.exception;
  */
 public class BunkerConnectionException extends BunkerException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String relay;

@@ -399,7 +399,6 @@ public class RelayHealthMonitor implements HealthMonitor {
         }
 
         // Determine health status
-        long totalPings = successfulPings.get() + failedPings.get();
         int consecutiveFailures = calculateConsecutiveFailures();
         boolean healthy = connected && consecutiveFailures < unhealthyThreshold;
 

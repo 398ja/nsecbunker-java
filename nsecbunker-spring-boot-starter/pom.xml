@@ -8,7 +8,7 @@
     <parent>
         <groupId>xyz.tcheeric</groupId>
         <artifactId>nsecbunker-java</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>nsecbunker-spring-boot-starter</artifactId>
@@ -30,6 +30,10 @@
         <dependency>
             <groupId>xyz.tcheeric</groupId>
             <artifactId>nsecbunker-monitoring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xyz.tcheeric</groupId>
+            <artifactId>nsecbunker-account</artifactId>
         </dependency>
 
         <!-- Spring Boot -->

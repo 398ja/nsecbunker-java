@@ -1,5 +1,6 @@
 package xyz.tcheeric.nsecbunker.core.exception;
 
+import java.io.Serial;
 import java.time.Duration;
 
 /**
@@ -10,6 +11,7 @@ import java.time.Duration;
  */
 public class BunkerTimeoutException extends BunkerException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Duration timeout;

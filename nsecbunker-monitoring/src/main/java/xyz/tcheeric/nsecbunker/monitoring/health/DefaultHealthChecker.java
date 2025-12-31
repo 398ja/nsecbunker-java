@@ -5,9 +5,7 @@ import xyz.tcheeric.nsecbunker.connection.ConnectionHealth;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
 import xyz.tcheeric.nsecbunker.connection.RelayPool;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

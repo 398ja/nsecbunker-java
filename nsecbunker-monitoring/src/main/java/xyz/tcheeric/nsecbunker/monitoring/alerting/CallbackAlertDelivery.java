@@ -59,10 +59,11 @@ public class CallbackAlertDelivery implements AlertDelivery {
             try {
                 callback.accept(alert);
                 long latency = System.currentTimeMillis() - start;
-                log.debug("Alert delivered via callback: {}", alert.getType());
+                log.debug("callback_delivered channel={} type={}", name, alert.getType());
                 return DeliveryResult.success(alert, name, latency);
             } catch (Exception e) {
-                log.warn("Failed to deliver alert via callback: {}", e.getMessage());
+                log.warn("callback_delivery_failed channel={} type={} error={}",
+                        name, alert.getType(), e.getMessage());
                 return DeliveryResult.failure(alert, name, e.getMessage());
             }
         });
@@ -79,7 +80,8 @@ public class CallbackAlertDelivery implements AlertDelivery {
                     long latency = System.currentTimeMillis() - start;
                     results.add(DeliveryResult.success(alert, name, latency));
                 } catch (Exception e) {
-                    log.warn("Failed to deliver alert via callback: {}", e.getMessage());
+                    log.warn("callback_batch_delivery_failed channel={} type={} error={}",
+                            name, alert.getType(), e.getMessage());
                     results.add(DeliveryResult.failure(alert, name, e.getMessage()));
                 }
             }

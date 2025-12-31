@@ -1,14 +1,13 @@
 package xyz.tcheeric.nsecbunker.e2e.tests;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.e2e.E2ETestBase;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;

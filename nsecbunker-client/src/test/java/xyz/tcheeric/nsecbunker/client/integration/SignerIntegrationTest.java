@@ -5,7 +5,6 @@ import xyz.tcheeric.nsecbunker.client.signer.DefaultBatchSigner;
 import xyz.tcheeric.nsecbunker.client.signer.NsecBunkerSigner;
 import xyz.tcheeric.nsecbunker.client.signer.SignerConfig;
 import xyz.tcheeric.nsecbunker.client.signer.SignerException;
-import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Response;
 
 import java.time.Duration;

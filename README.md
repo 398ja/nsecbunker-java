@@ -1,9 +1,9 @@
 # nsecbunker-java
 
-[![CI](https://github.com/tcheeric/nsecbunker-java/actions/workflows/ci.yml/badge.svg)](https://github.com/tcheeric/nsecbunker-java/actions/workflows/ci.yml)
+[![CI](https://github.com/398ja/nsecbunker-java/actions/workflows/ci.yml/badge.svg)](https://github.com/398ja/nsecbunker-java/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/xyz.tcheeric/nsecbunker-java.svg)](https://search.maven.org/search?q=g:xyz.tcheeric%20AND%20a:nsecbunker-java)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Java Version](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.org/)
+[![Java Version](https://img.shields.io/badge/Java-21-blue)](https://openjdk.org/)
 
 A comprehensive Java client library for interacting with [nsecBunker](https://github.com/kind-0/nsecbunkerd) instances. Provides high-level APIs for key management, remote signing (NIP-46), permission control, and monitoring.
 

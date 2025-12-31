@@ -1,5 +1,9 @@
 package xyz.tcheeric.nsecbunker.it;
 
+import nostr.event.BaseTag;
+import nostr.event.impl.GenericEvent;
+import nostr.event.tag.PubKeyTag;
+import nostr.id.Identity;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -8,22 +12,18 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import nostr.id.Identity;
-import nostr.event.impl.GenericEvent;
-import nostr.event.BaseTag;
-import nostr.event.tag.PubKeyTag;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
 import xyz.tcheeric.nsecbunker.connection.RelayListener;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @Testcontainers
 @Tag("integration")

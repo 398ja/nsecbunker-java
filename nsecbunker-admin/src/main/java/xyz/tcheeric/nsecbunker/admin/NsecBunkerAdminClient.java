@@ -3,20 +3,20 @@ package xyz.tcheeric.nsecbunker.admin;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import nostr.id.Identity;
+import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
+import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
+import xyz.tcheeric.nsecbunker.admin.permission.DefaultPermissionManager;
+import xyz.tcheeric.nsecbunker.admin.permission.PermissionManager;
+import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
+import xyz.tcheeric.nsecbunker.admin.policy.PolicyManager;
+import xyz.tcheeric.nsecbunker.admin.token.DefaultTokenManager;
+import xyz.tcheeric.nsecbunker.admin.token.TokenManager;
 import xyz.tcheeric.nsecbunker.connection.ConnectionListener;
 import xyz.tcheeric.nsecbunker.connection.ConnectionState;
 import xyz.tcheeric.nsecbunker.connection.ExponentialBackoffStrategy;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
 import xyz.tcheeric.nsecbunker.connection.RelayListener;
 import xyz.tcheeric.nsecbunker.connection.RelayPool;
-import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
-import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
-import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
-import xyz.tcheeric.nsecbunker.admin.policy.PolicyManager;
-import xyz.tcheeric.nsecbunker.admin.permission.DefaultPermissionManager;
-import xyz.tcheeric.nsecbunker.admin.permission.PermissionManager;
-import xyz.tcheeric.nsecbunker.admin.token.DefaultTokenManager;
-import xyz.tcheeric.nsecbunker.admin.token.TokenManager;
 import xyz.tcheeric.nsecbunker.core.exception.BunkerConnectionException;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
@@ -650,7 +650,7 @@ public class NsecBunkerAdminClient implements Closeable {
     /**
      * Connection listener for handling connection state changes.
      */
-    private class AdminConnectionListener implements ConnectionListener {
+    private static class AdminConnectionListener implements ConnectionListener {
         @Override
         public void onConnected(String relayUrl) {
             log.debug("Connected to relay: {}", relayUrl);

@@ -1,7 +1,7 @@
 package xyz.tcheeric.nsecbunker.admin.permission;
 
-import xyz.tcheeric.nsecbunker.core.model.KeyUser;
 import xyz.tcheeric.nsecbunker.core.model.BunkerPolicy;
+import xyz.tcheeric.nsecbunker.core.model.KeyUser;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

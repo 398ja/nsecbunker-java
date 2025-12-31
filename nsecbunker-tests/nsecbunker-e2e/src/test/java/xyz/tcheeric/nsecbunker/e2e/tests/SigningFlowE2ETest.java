@@ -1,12 +1,13 @@
 package xyz.tcheeric.nsecbunker.e2e.tests;
 
+import nostr.id.Identity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
 import xyz.tcheeric.nsecbunker.admin.permission.PermissionManager;
@@ -18,7 +19,6 @@ import xyz.tcheeric.nsecbunker.core.model.BunkerPolicy;
 import xyz.tcheeric.nsecbunker.core.model.KeyUser;
 import xyz.tcheeric.nsecbunker.core.model.PolicyRule;
 import xyz.tcheeric.nsecbunker.e2e.E2ETestBase;
-import nostr.id.Identity;
 
 import java.time.Duration;
 import java.util.UUID;

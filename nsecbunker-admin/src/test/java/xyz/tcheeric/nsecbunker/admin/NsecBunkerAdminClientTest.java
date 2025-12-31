@@ -1,15 +1,15 @@
 package xyz.tcheeric.nsecbunker.admin;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.DisplayName;
-import xyz.tcheeric.nsecbunker.connection.ConnectionState;
-
 import nostr.base.PublicKey;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import xyz.tcheeric.nsecbunker.connection.ConnectionState;
 
 import java.time.Duration;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests for {@link NsecBunkerAdminClient}.

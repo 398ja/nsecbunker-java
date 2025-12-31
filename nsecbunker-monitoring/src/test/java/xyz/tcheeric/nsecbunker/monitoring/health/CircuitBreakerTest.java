@@ -1,7 +1,7 @@
 package xyz.tcheeric.nsecbunker.monitoring.health;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -7,11 +7,20 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import xyz.tcheeric.nsecbunker.connection.testing.MockRelayServer;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
-import xyz.tcheeric.nsecbunker.protocol.nip46.*;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Encoder;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Response;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**

@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * }</pre>
  */
 @Slf4j
-public class RelayConnection {
+public final class RelayConnection {
 
     private static final int NORMAL_CLOSURE = 1000;
     private static final int GOING_AWAY = 1001;

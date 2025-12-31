@@ -1,14 +1,11 @@
 package xyz.tcheeric.nsecbunker.client.transport;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import nostr.event.impl.GenericEvent;
 import nostr.id.Identity;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
-import xyz.tcheeric.nsecbunker.connection.RelayListener;
 import xyz.tcheeric.nsecbunker.connection.RelayPool;
 import xyz.tcheeric.nsecbunker.protocol.crypto.Nip04Crypto;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
