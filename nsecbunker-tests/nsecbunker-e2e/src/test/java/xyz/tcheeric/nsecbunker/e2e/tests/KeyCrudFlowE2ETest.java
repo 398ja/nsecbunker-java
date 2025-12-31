@@ -1,22 +1,22 @@
 package xyz.tcheeric.nsecbunker.e2e.tests;
 
+import nostr.id.Identity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.admin.key.KeyManager;
 import xyz.tcheeric.nsecbunker.core.model.BunkerKey;
 import xyz.tcheeric.nsecbunker.e2e.E2ETestBase;
-import nostr.id.Identity;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

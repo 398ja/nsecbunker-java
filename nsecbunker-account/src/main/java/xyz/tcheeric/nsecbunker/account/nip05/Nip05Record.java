@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import xyz.tcheeric.nsecbunker.core.model.BunkerKey;
 
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Objects;
  */
 @Value
 @Builder(toBuilder = true)
+@Slf4j
 public class Nip05Record {
 
     private static final ObjectMapper DEFAULT_MAPPER = new ObjectMapper();
@@ -64,6 +66,8 @@ public class Nip05Record {
         try {
             return DEFAULT_MAPPER.readValue(relaysJson, STRING_LIST_TYPE);
         } catch (JsonProcessingException e) {
+            log.debug("relays_json_parse_failed nip05={} relaysJson={} error={}",
+                    nip05, relaysJson, e.getMessage());
             return List.of();
         }
     }
@@ -144,19 +148,10 @@ public class Nip05Record {
         Objects.requireNonNull(username, "username must not be null");
         Objects.requireNonNull(domain, "domain must not be null");
 
-        String relaysJsonStr = "[]";
-        if (relays != null && !relays.isEmpty()) {
-            try {
-                relaysJsonStr = DEFAULT_MAPPER.writeValueAsString(relays);
-            } catch (JsonProcessingException e) {
-                relaysJsonStr = "[]";
-            }
-        }
-
         return Nip05Record.builder()
                 .nip05(username + "@" + domain)
                 .pubkey(key.getPubkeyHex() != null ? key.getPubkeyHex() : key.getNpub())
-                .relaysJson(relaysJsonStr)
+                .relaysJson(serializeRelays(relays))
                 .build();
     }
 
@@ -186,19 +181,29 @@ public class Nip05Record {
      * @return a new Nip05Record
      */
     public static Nip05Record of(String username, String domain, String pubkey, List<String> relays) {
-        String relaysJsonStr = "[]";
-        if (relays != null && !relays.isEmpty()) {
-            try {
-                relaysJsonStr = DEFAULT_MAPPER.writeValueAsString(relays);
-            } catch (JsonProcessingException e) {
-                relaysJsonStr = "[]";
-            }
-        }
-
         return Nip05Record.builder()
                 .nip05(username + "@" + domain)
                 .pubkey(pubkey)
-                .relaysJson(relaysJsonStr)
+                .relaysJson(serializeRelays(relays))
                 .build();
+    }
+
+    /**
+     * Serializes a list of relay URLs to JSON string.
+     *
+     * <p>Returns empty array "[]" if relays is null, empty, or serialization fails.
+     *
+     * @param relays the relay URLs to serialize
+     * @return JSON array string of relays
+     */
+    private static String serializeRelays(List<String> relays) {
+        if (relays == null || relays.isEmpty()) {
+            return "[]";
+        }
+        try {
+            return DEFAULT_MAPPER.writeValueAsString(relays);
+        } catch (JsonProcessingException e) {
+            return "[]";
+        }
     }
 }

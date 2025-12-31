@@ -1,17 +1,26 @@
 package xyz.tcheeric.nsecbunker.protocol.testing;
 
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import xyz.tcheeric.nsecbunker.protocol.nip46.*;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Decoder;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Encoder;
+import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link MockBunkerServer}.

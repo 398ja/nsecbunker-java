@@ -1,9 +1,5 @@
 package xyz.tcheeric.nsecbunker.protocol.testing;
 
-import xyz.tcheeric.nsecbunker.connection.testing.MockRelayServer;
-
-import java.util.concurrent.TimeUnit;
-
 /**
  * Base class for integration tests that only need a mock relay server.
  *

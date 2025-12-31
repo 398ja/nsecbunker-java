@@ -1,10 +1,10 @@
 package xyz.tcheeric.nsecbunker.admin;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Error;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link AdminException}.

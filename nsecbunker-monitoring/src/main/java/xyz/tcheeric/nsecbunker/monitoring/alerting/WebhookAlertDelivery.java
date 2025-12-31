@@ -90,7 +90,7 @@ public class WebhookAlertDelivery implements AlertDelivery {
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    log.warn("Webhook delivery failed: {}", e.getMessage());
+                    log.warn("webhook_network_error channel={} error={}", name, e.getMessage());
                     future.complete(DeliveryResult.failure(alert, name, e.getMessage()));
                 }
 
@@ -99,18 +99,18 @@ public class WebhookAlertDelivery implements AlertDelivery {
                     long latency = System.currentTimeMillis() - start;
                     try (response) {
                         if (response.isSuccessful()) {
-                            log.debug("Alert delivered via webhook: {} -> {}", alert.getType(), response.code());
+                            log.debug("webhook_delivered channel={} type={} status={}", name, alert.getType(), response.code());
                             future.complete(DeliveryResult.success(alert, name, latency));
                         } else {
                             String error = "HTTP " + response.code() + ": " + response.message();
-                            log.warn("Webhook delivery failed: {}", error);
+                            log.warn("webhook_http_error channel={} status={}", name, error);
                             future.complete(DeliveryResult.failure(alert, name, error));
                         }
                     }
                 }
             });
         } catch (Exception e) {
-            log.warn("Failed to send webhook: {}", e.getMessage());
+            log.warn("webhook_request_failed channel={} error={}", name, e.getMessage());
             future.complete(DeliveryResult.failure(alert, name, e.getMessage()));
         }
 
@@ -158,6 +158,17 @@ public class WebhookAlertDelivery implements AlertDelivery {
         private Map<String, String> headers = new HashMap<>();
 
         /**
+         * Sets all headers at once.
+         *
+         * @param headers the headers map
+         * @return this builder
+         */
+        public WebhookAlertDeliveryBuilder headers(Map<String, String> headers) {
+            this.headers = headers != null ? new HashMap<>(headers) : new HashMap<>();
+            return this;
+        }
+
+        /**
          * Adds a single header.
          *
          * @param name the header name
@@ -165,6 +176,9 @@ public class WebhookAlertDelivery implements AlertDelivery {
          * @return this builder
          */
         public WebhookAlertDeliveryBuilder header(String name, String value) {
+            if (this.headers == null) {
+                this.headers = new HashMap<>();
+            }
             this.headers.put(name, value);
             return this;
         }

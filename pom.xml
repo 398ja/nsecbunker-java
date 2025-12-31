@@ -58,15 +58,15 @@
         <jackson.version>2.17.0</jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <slf4j.version>2.0.12</slf4j.version>
-        <logback.version>1.5.3</logback.version>
-        <junit.version>5.10.2</junit.version>
+        <logback.version>1.5.15</logback.version>
+        <junit.version>5.12.2</junit.version>
         <mockito.version>5.11.0</mockito.version>
         <assertj.version>3.25.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <lombok.version>1.18.32</lombok.version>
-        <micrometer.version>1.12.4</micrometer.version>
-        <spring-boot.version>3.2.4</spring-boot.version>
+        <micrometer.version>1.14.3</micrometer.version>
+        <spring-boot.version>3.5.9</spring-boot.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
 
         <!-- Plugin versions -->
@@ -85,7 +85,7 @@
         <checkstyle.version>10.14.2</checkstyle.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <spotbugs-maven-plugin.version>4.8.3.1</spotbugs-maven-plugin.version>
-        <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
+        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
         <jmh.version>1.37</jmh.version>
         <dependency-check-maven.version>9.0.9</dependency-check-maven.version>
     </properties>

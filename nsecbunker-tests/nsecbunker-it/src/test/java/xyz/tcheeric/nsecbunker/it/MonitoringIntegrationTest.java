@@ -3,13 +3,13 @@ package xyz.tcheeric.nsecbunker.it;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import xyz.tcheeric.nsecbunker.monitoring.metrics.MetricsRecord;
+import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.monitoring.alerting.Alert;
 import xyz.tcheeric.nsecbunker.monitoring.alerting.AlertThresholds;
 import xyz.tcheeric.nsecbunker.monitoring.alerting.DefaultAlertManager;
 import xyz.tcheeric.nsecbunker.monitoring.health.DefaultHealthChecker;
 import xyz.tcheeric.nsecbunker.monitoring.health.HealthStatus;
-import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
+import xyz.tcheeric.nsecbunker.monitoring.metrics.MetricsRecord;
 
 import java.time.Instant;
 import java.util.List;

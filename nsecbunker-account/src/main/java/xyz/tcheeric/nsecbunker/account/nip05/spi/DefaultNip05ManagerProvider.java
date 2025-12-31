@@ -30,7 +30,7 @@ public class DefaultNip05ManagerProvider implements Nip05ManagerProvider {
      * Creates a provider with default dependencies.
      */
     public DefaultNip05ManagerProvider() {
-        this(new DefaultAccountManager(), new ObjectMapper());
+        this(null, null);
     }
 
     /**
@@ -39,7 +39,7 @@ public class DefaultNip05ManagerProvider implements Nip05ManagerProvider {
      * @param accountManager the account manager to use
      */
     public DefaultNip05ManagerProvider(AccountManager accountManager) {
-        this(accountManager, new ObjectMapper());
+        this(accountManager, null);
     }
 
     /**

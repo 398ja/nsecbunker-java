@@ -1,5 +1,7 @@
 package xyz.tcheeric.nsecbunker.core.exception;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when there are key-related errors in nsecBunker.
  *
@@ -8,6 +10,7 @@ package xyz.tcheeric.nsecbunker.core.exception;
  */
 public class BunkerKeyException extends BunkerException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

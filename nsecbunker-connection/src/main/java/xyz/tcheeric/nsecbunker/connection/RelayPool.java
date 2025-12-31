@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
  * }</pre>
  */
 @Slf4j
-public class RelayPool implements AutoCloseable {
+public final class RelayPool implements AutoCloseable {
 
     /**
      * Map of relay URL to connection.
@@ -378,13 +378,20 @@ public class RelayPool implements AutoCloseable {
         }
 
         if (successCount.get() < minConnectedRelays) {
+            String errorSummary = errors.isEmpty() ? "no error details"
+                    : errors.stream()
+                            .map(Throwable::getMessage)
+                            .distinct()
+                            .limit(3)
+                            .reduce((a, b) -> a + "; " + b)
+                            .orElse("unknown");
             throw new BunkerConnectionException(
-                    String.format("Only %d of %d required relays connected",
-                            successCount.get(), minConnectedRelays)
+                    String.format("Only %d of %d required relays connected (%s)",
+                            successCount.get(), minConnectedRelays, errorSummary)
             );
         }
 
-        log.info("Connected to {}/{} relays", successCount.get(), relays.size());
+        log.info("relay_pool_connected success={} total={}", successCount.get(), relays.size());
     }
 
     /**
@@ -425,7 +432,7 @@ public class RelayPool implements AutoCloseable {
                         count++;
                     }
                 } catch (Exception e) {
-                    log.warn("Failed to send to {}: {}", relay.getUrl(), e.getMessage());
+                    log.warn("relay_pool_broadcast_failed relay={} error={}", relay.getUrl(), e.getMessage());
                 }
             }
         }
@@ -445,7 +452,7 @@ public class RelayPool implements AutoCloseable {
             try {
                 return relay.send(message);
             } catch (Exception e) {
-                log.warn("Failed to send to {}: {}", url, e.getMessage());
+                log.warn("relay_pool_send_failed relay={} error={}", url, e.getMessage());
             }
         }
         return false;

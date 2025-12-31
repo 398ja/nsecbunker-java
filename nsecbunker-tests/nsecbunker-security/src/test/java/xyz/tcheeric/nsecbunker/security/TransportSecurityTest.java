@@ -1,5 +1,8 @@
 package xyz.tcheeric.nsecbunker.security;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
@@ -12,9 +15,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import xyz.tcheeric.nsecbunker.core.connection.BunkerConnectionString;
 import xyz.tcheeric.nsecbunker.core.model.BunkerConnection;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.net.URI;
 import java.security.cert.X509Certificate;
@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Security tests for transport layer (WebSocket/TLS).

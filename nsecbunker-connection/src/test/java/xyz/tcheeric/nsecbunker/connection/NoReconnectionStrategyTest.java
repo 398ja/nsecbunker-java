@@ -2,10 +2,12 @@ package xyz.tcheeric.nsecbunker.connection;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Tests for the {@link NoReconnectionStrategy} class.

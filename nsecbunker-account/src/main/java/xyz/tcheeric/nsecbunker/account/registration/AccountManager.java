@@ -64,11 +64,36 @@ public interface AccountManager {
      * <p>Default implementation returns empty. Persistent implementations
      * should override this method to provide username-based lookup.</p>
      *
+     * <p><b>Note:</b> Usernames are not unique across domains. For example,
+     * "alice@example.com" and "alice@another.com" are different accounts.
+     * This method may return ambiguous results in multi-domain scenarios.
+     * For unambiguous lookups, use {@link #findByUsernameAndDomain(String, String)}
+     * or {@link #findAccount(String)} with the full NIP-05 identifier.</p>
+     *
      * @param username username to search for
-     * @return the account if found, empty otherwise
+     * @return the first matching account if found, empty otherwise
      */
     default CompletableFuture<Optional<AccountRegistrationResult>> findByUsername(String username) {
         return CompletableFuture.completedFuture(Optional.empty());
+    }
+
+    /**
+     * Finds an account by username and domain.
+     *
+     * <p>This method provides unambiguous lookup by requiring both the username
+     * and domain components of a NIP-05 identifier.</p>
+     *
+     * <p>Default implementation delegates to {@link #findAccount(String)} using
+     * the combined NIP-05 identifier. Persistent implementations may override
+     * for optimized queries.</p>
+     *
+     * @param username username (e.g., "alice")
+     * @param domain   domain (e.g., "example.com")
+     * @return the account if found, empty otherwise
+     */
+    default CompletableFuture<Optional<AccountRegistrationResult>> findByUsernameAndDomain(
+            String username, String domain) {
+        return findAccount(username + "@" + domain);
     }
 
     /**

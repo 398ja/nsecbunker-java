@@ -1,9 +1,9 @@
 package xyz.tcheeric.nsecbunker.e2e;
 
+import nostr.id.Identity;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import nostr.id.Identity;
 
 import java.time.Duration;
 

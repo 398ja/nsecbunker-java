@@ -96,13 +96,42 @@ class BottinE2ETest {
     /**
      * Force-verifies a domain by updating the database directly.
      * This bypasses normal verification flow for test purposes.
+     *
+     * <p><b>Note:</b> String.format is used here because psql -c does not support
+     * parameterized queries. This is safe because domainId is a Long (numeric type),
+     * not a String. Do not copy this pattern for String parameters.
      */
     private static void forceVerifyDomain(Long domainId) throws IOException, InterruptedException {
+        // Safe: domainId is Long, not String - no SQL injection risk with %d format specifier
         String sql = String.format(
                 "UPDATE domains SET verified = true, verified_at = NOW() WHERE id = %d",
                 domainId);
         postgres.execInContainer("psql", "-U", "bottin", "-d", "bottin", "-c", sql);
         log.info("domain_force_verified id={}", domainId);
+    }
+
+    /**
+     * Ensures a NIP-05 record is enabled before testing.
+     *
+     * <p>Checks the current state and toggles if disabled, then verifies the record
+     * is actually enabled to prevent test flakiness from unknown initial states.
+     *
+     * @param recordId the record ID to enable
+     */
+    private static void ensureRecordEnabled(Long recordId) throws Exception {
+        HttpResponse<String> response = client.getRecord(recordId);
+        JsonNode json = client.parseJson(response);
+        boolean isEnabled = json.get("enabled").asBoolean();
+
+        if (!isEnabled) {
+            response = client.toggleRecord(recordId);
+            json = client.parseJson(response);
+            isEnabled = json.get("enabled").asBoolean();
+            assertThat(isEnabled)
+                    .as("Record should be enabled after toggle")
+                    .isTrue();
+            log.info("record_enabled id={}", recordId);
+        }
     }
 
     // =========================================================================
@@ -433,13 +462,8 @@ class BottinE2ETest {
     @Test
     @Order(30)
     void shouldReturnValidNostrJsonForName() throws Exception {
-        // Arrange - ensure record is enabled by checking current state
-        HttpResponse<String> recordResponse = client.getRecord(recordId);
-        JsonNode recordJson = client.parseJson(recordResponse);
-        boolean isEnabled = recordJson.get("enabled").asBoolean();
-        if (!isEnabled) {
-            client.toggleRecord(recordId); // enable if disabled
-        }
+        // Arrange - ensure record is enabled
+        ensureRecordEnabled(recordId);
 
         // Act - use Host header to specify the domain (per NIP-05 spec)
         HttpResponse<String> response = client.getWellKnown("alice", TEST_DOMAIN);

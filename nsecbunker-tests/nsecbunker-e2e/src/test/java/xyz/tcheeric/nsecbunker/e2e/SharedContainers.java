@@ -1,11 +1,11 @@
 package xyz.tcheeric.nsecbunker.e2e;
 
+import nostr.id.Identity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import xyz.tcheeric.nsecbunker.e2e.containers.NostrRelayContainer;
 import xyz.tcheeric.nsecbunker.e2e.containers.NsecBunkerdContainer;
-import nostr.id.Identity;
 
 /**
  * Singleton container manager for E2E tests.

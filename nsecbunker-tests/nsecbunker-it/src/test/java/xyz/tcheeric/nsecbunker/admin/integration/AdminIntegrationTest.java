@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.tcheeric.nsecbunker.admin.NsecBunkerAdminClient;
 import xyz.tcheeric.nsecbunker.admin.key.DefaultKeyManager;
-import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
 import xyz.tcheeric.nsecbunker.admin.permission.DefaultPermissionManager;
+import xyz.tcheeric.nsecbunker.admin.policy.DefaultPolicyManager;
 import xyz.tcheeric.nsecbunker.admin.token.DefaultTokenManager;
 import xyz.tcheeric.nsecbunker.core.model.AccessToken;
 import xyz.tcheeric.nsecbunker.core.model.BunkerKey;
@@ -23,10 +23,10 @@ import xyz.tcheeric.nsecbunker.core.model.KeyUser;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Request;
 import xyz.tcheeric.nsecbunker.protocol.nip46.Nip46Response;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

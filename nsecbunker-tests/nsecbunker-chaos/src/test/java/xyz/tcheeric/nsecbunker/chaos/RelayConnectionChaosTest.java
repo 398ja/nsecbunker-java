@@ -1,5 +1,6 @@
 package xyz.tcheeric.nsecbunker.chaos;
 
+import okhttp3.WebSocket;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.awaitility.Awaitility;
@@ -10,12 +11,11 @@ import org.junit.jupiter.api.Test;
 import xyz.tcheeric.nsecbunker.connection.ConnectionState;
 import xyz.tcheeric.nsecbunker.connection.ReconnectionStrategy;
 import xyz.tcheeric.nsecbunker.connection.RelayConnection;
-import okhttp3.WebSocket;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
