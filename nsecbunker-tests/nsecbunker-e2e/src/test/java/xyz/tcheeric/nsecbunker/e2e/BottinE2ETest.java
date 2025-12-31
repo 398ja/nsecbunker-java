@@ -45,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Testcontainers
 @Tag("e2e")
+@Tag("bottin")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BottinE2ETest {
 
