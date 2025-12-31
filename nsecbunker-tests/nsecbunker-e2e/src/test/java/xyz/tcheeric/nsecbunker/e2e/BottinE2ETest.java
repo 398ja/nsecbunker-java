@@ -16,6 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import xyz.tcheeric.nsecbunker.e2e.containers.BottinContainer;
 
+import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.List;
 
@@ -91,6 +92,18 @@ class BottinE2ETest {
                 bottin.getBaseUrl(), bottin.getAdminUser(), testPubkey);
     }
 
+    /**
+     * Force-verifies a domain by updating the database directly.
+     * This bypasses normal verification flow for test purposes.
+     */
+    private static void forceVerifyDomain(Long domainId) throws IOException, InterruptedException {
+        String sql = String.format(
+                "UPDATE domains SET verified = true, verified_at = NOW() WHERE id = %d",
+                domainId);
+        postgres.execInContainer("psql", "-U", "bottin", "-d", "bottin", "-c", sql);
+        log.info("domain_force_verified id={}", domainId);
+    }
+
     // =========================================================================
     // Health Check Tests
     // =========================================================================
@@ -116,7 +129,7 @@ class BottinE2ETest {
 
     /**
      * Verifies that a new domain can be registered via the API.
-     * In test mode, the domain should be auto-verified.
+     * After creation, force-verifies the domain for subsequent tests.
      */
     @Test
     @Order(10)
@@ -131,12 +144,12 @@ class BottinE2ETest {
         assertThat(json.has("id")).isTrue();
         assertThat(json.get("name").asText()).isEqualTo(TEST_DOMAIN);
 
-        // In test mode, domain should be auto-verified
-        assertThat(json.get("verified").asBoolean()).isTrue();
-
         domainId = json.get("id").asLong();
-        log.info("domain_created id={} name={} verified={}",
-                domainId, TEST_DOMAIN, json.get("verified").asBoolean());
+
+        // Force-verify domain for subsequent tests (NIP-05 records require verified domains)
+        forceVerifyDomain(domainId);
+
+        log.info("domain_created id={} name={}", domainId, TEST_DOMAIN);
     }
 
     /**

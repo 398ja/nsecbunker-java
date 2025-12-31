@@ -136,12 +136,12 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
         withEnv("SPRING_DATASOURCE_DRIVER_CLASS_NAME", "org.postgresql.Driver");
 
         // JPA configuration for test environment
-        withEnv("SPRING_JPA_HIBERNATE_DDL_AUTO", "create-drop");
+        withEnv("SPRING_JPA_HIBERNATE_DDL_AUTO", "none");
         withEnv("SPRING_JPA_SHOW_SQL", "false");
         withEnv("SPRING_JPA_DATABASE_PLATFORM", "org.hibernate.dialect.PostgreSQLDialect");
 
-        // Disable Flyway for tests (use Hibernate DDL auto)
-        withEnv("SPRING_FLYWAY_ENABLED", "false");
+        // Enable Flyway to run migrations and create schema
+        withEnv("SPRING_FLYWAY_ENABLED", "true");
 
         // Admin credentials for API authentication
         withEnv("BOTTIN_ADMIN_USERNAME", adminUser);
