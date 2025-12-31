@@ -33,7 +33,8 @@ public class BottinContainer extends GenericContainer<BottinContainer> {
     private String postgresUrl;
     private String postgresUser = "bottin";
     private String postgresPassword = "bottin";
-    private boolean verificationSkip = true;
+    private boolean verificationSkip = Boolean.parseBoolean(
+            System.getProperty("bottin.verification.skip", "true"));
 
     public BottinContainer() {
         this(DEFAULT_IMAGE);

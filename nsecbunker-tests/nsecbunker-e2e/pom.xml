@@ -19,6 +19,8 @@
     <properties>
         <!-- Skip by default, run with -Pe2e profile -->
         <skipTests>true</skipTests>
+        <!-- Bottin test mode: skip domain verification -->
+        <bottin.verification.skip>true</bottin.verification.skip>
     </properties>
 
     <dependencies>
@@ -146,6 +148,10 @@
                     <!-- Single JVM to reuse shared Testcontainers across all tests -->
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
+                    <!-- Pass Bottin configuration to tests -->
+                    <systemPropertyVariables>
+                        <bottin.verification.skip>${bottin.verification.skip}</bottin.verification.skip>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
