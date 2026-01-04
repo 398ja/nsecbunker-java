@@ -214,6 +214,45 @@ class DefaultKeyManagerTest {
     }
 
     /**
+     * Ensures creating a key with null passphrase normalizes it to empty string.
+     */
+    @Test
+    void shouldCreateKeyWithNullPassphraseNormalizedToEmpty() {
+        // Arrange
+        String npub = "npub1nopwd";
+        ArgumentCaptor<Nip46Request> requestCaptor = ArgumentCaptor.forClass(Nip46Request.class);
+        when(adminClient.sendRequest(requestCaptor.capture()))
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", npub)));
+
+        // Act
+        BunkerKey result = keyManager.createKey("key-no-passphrase", null).join();
+
+        // Assert
+        assertThat(result.getName()).isEqualTo("key-no-passphrase");
+        Nip46Request request = requestCaptor.getValue();
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("key-no-passphrase", ""));
+    }
+
+    /**
+     * Ensures unlocking a key with null passphrase normalizes it to empty string.
+     */
+    @Test
+    void shouldUnlockKeyWithNullPassphraseNormalizedToEmpty() {
+        // Arrange
+        ArgumentCaptor<Nip46Request> requestCaptor = ArgumentCaptor.forClass(Nip46Request.class);
+        when(adminClient.sendRequest(requestCaptor.capture()))
+                .thenReturn(CompletableFuture.completedFuture(Nip46Response.success("1", "ok")));
+
+        // Act
+        boolean result = keyManager.unlockKey("key-unencrypted", null).join();
+
+        // Assert
+        assertThat(result).isTrue();
+        Nip46Request request = requestCaptor.getValue();
+        assertThat(request.getParams()).containsExactlyElementsOf(List.of("key-unencrypted", ""));
+    }
+
+    /**
      * Ensures NIP-46 errors are surfaced as AdminException through the future.
      */
     @Test

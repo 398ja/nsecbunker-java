@@ -86,6 +86,8 @@ class AdminConnectionLifecycleTest {
 
         client.connect();
         assertThat(client.isConnected()).isTrue();
+        // Wait for server to register the connection
+        assertThat(mockRelay.awaitConnection(5, TimeUnit.SECONDS)).isTrue();
 
         // Second connect should not throw
         client.connect();

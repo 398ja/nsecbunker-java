@@ -89,9 +89,34 @@ class RelayConnectionChaosTest {
     }
 
     /**
-     * No-op WebSocket listener for MockWebServer upgrades.
+     * WebSocket listener for MockWebServer upgrades that properly handles lifecycle.
+     *
+     * <p>A completely empty listener causes NPE in OkHttp's RealWebSocket.loopReader
+     * because the reader loop expects proper lifecycle handling. This implementation
+     * handles onOpen, onMessage, and onClosing to prevent the MockWebServer crash.
      */
     private static final class NoopWebSocketListener extends okhttp3.WebSocketListener {
+
+        @Override
+        public void onOpen(okhttp3.WebSocket webSocket, okhttp3.Response response) {
+            // Connection opened - no action needed for test
+        }
+
+        @Override
+        public void onMessage(okhttp3.WebSocket webSocket, String text) {
+            // Message received - no action needed for test
+        }
+
+        @Override
+        public void onClosing(okhttp3.WebSocket webSocket, int code, String reason) {
+            // Server closing - echo back close to complete handshake
+            webSocket.close(code, reason);
+        }
+
+        @Override
+        public void onFailure(okhttp3.WebSocket webSocket, Throwable t, okhttp3.Response response) {
+            // Connection failed - no action needed for test
+        }
     }
 
     /**
