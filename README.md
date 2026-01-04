@@ -26,7 +26,7 @@ nsecBunker is a self-hosted daemon that provides decentralized key delegation fo
 
 ## Requirements
 
-- Java 17 or higher
+- Java 21 or higher
 - Maven 3.8+ or Gradle 7+
 - Running nsecBunker instance
 
@@ -38,7 +38,7 @@ nsecBunker is a self-hosted daemon that provides decentralized key delegation fo
 <dependency>
     <groupId>xyz.tcheeric</groupId>
     <artifactId>nsecbunker-client</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ For admin operations:
 <dependency>
     <groupId>xyz.tcheeric</groupId>
     <artifactId>nsecbunker-admin</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -186,18 +186,6 @@ mvn verify -Pquality
 mvn clean install -DskipTests
 ```
 
-## Project Status
-
-This library is under active development.
-
-### Phase 1: Foundation (Current)
-- [x] Multi-module Maven project structure
-- [x] Dependency management setup
-- [x] Build plugins configuration
-- [x] Code quality tools (Checkstyle, SpotBugs, PMD)
-- [x] CI/CD with GitHub Actions
-- [x] Documentation structure
-
 ## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
@@ -214,6 +202,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Related Projects
 
 - [nsecBunker](https://github.com/kind-0/nsecbunkerd) - The nsecBunker server
+- [Bottin](https://github.com/tcheeric/bottin) – NIP-05 identity registry that pairs with nsecbunker-java for persistent account and identity management. See the [Bottin integration guide](docs/integration/bottin.md) for setup details.
 - [nostr-java](https://github.com/tcheeric/nostr-java) - Java implementation of Nostr protocol
 - [NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md) - Nostr Connect specification
 
