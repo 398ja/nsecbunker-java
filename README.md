@@ -202,7 +202,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Related Projects
 
 - [nsecBunker](https://github.com/kind-0/nsecbunkerd) - The nsecBunker server
-- [Bottin](https://github.com/tcheeric/bottin) – NIP-05 identity registry that pairs with nsecbunker-java for persistent account and identity management. See the [Bottin integration guide](docs/integration/bottin.md) for setup details.
+- [Bottin](https://github.com/398ja/bottin) – NIP-05 identity registry that pairs with nsecbunker-java for persistent account and identity management. See the [Bottin integration guide](docs/integration/bottin.md) for setup details.
 - [nostr-java](https://github.com/tcheeric/nostr-java) - Java implementation of Nostr protocol
 - [NIP-46](https://github.com/nostr-protocol/nips/blob/master/46.md) - Nostr Connect specification
 
