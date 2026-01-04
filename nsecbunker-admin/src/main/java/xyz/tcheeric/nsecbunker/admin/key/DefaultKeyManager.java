@@ -58,20 +58,22 @@ public class DefaultKeyManager implements KeyManager {
     @Override
     public CompletableFuture<BunkerKey> createKey(String name, String nsec, String passphrase) {
         validateName(name);
-        requirePassphrase(passphrase);
         if (nsec == null || nsec.isBlank()) {
             throw new IllegalArgumentException("nsec must not be null or blank");
         }
 
-        return sendForKey(METHOD_CREATE_NEW_KEY, List.of(name, passphrase, nsec), name);
+        // Empty passphrase is allowed - nsecbunkerd will store the key unencrypted
+        String normalizedPassphrase = normalizePassphrase(passphrase);
+        return sendForKey(METHOD_CREATE_NEW_KEY, List.of(name, normalizedPassphrase, nsec), name);
     }
 
     @Override
     public CompletableFuture<BunkerKey> createKey(String name, String passphrase) {
         validateName(name);
-        requirePassphrase(passphrase);
 
-        return sendForKey(METHOD_CREATE_NEW_KEY, List.of(name, passphrase), name);
+        // Empty passphrase is allowed - nsecbunkerd will store the key unencrypted
+        String normalizedPassphrase = normalizePassphrase(passphrase);
+        return sendForKey(METHOD_CREATE_NEW_KEY, List.of(name, normalizedPassphrase), name);
     }
 
     @Override
@@ -83,9 +85,10 @@ public class DefaultKeyManager implements KeyManager {
     @Override
     public CompletableFuture<Boolean> unlockKey(String name, String passphrase) {
         validateName(name);
-        requirePassphrase(passphrase);
 
-        return sendForResult(METHOD_UNLOCK_KEY, List.of(name, passphrase), "unlock key " + name)
+        // Empty passphrase is allowed - for keys stored without encryption
+        String normalizedPassphrase = normalizePassphrase(passphrase);
+        return sendForResult(METHOD_UNLOCK_KEY, List.of(name, normalizedPassphrase), "unlock key " + name)
                 .thenApply(ignored -> Boolean.TRUE);
     }
 
@@ -108,9 +111,9 @@ public class DefaultKeyManager implements KeyManager {
     public CompletableFuture<BunkerKey> rotateKey(String oldName, String newName, String passphrase) {
         validateName(oldName);
         validateName(newName);
-        requirePassphrase(passphrase);
 
-        return sendForKey(METHOD_ROTATE_KEY, List.of(oldName, newName, passphrase), newName);
+        String normalizedPassphrase = normalizePassphrase(passphrase);
+        return sendForKey(METHOD_ROTATE_KEY, List.of(oldName, newName, normalizedPassphrase), newName);
     }
 
     private CompletableFuture<String> sendForResult(String method, List<String> params, String description) {
@@ -185,9 +188,14 @@ public class DefaultKeyManager implements KeyManager {
         }
     }
 
-    private void requirePassphrase(String passphrase) {
-        if (passphrase == null || passphrase.isBlank()) {
-            throw new IllegalArgumentException("Passphrase must not be null or blank");
-        }
+    /**
+     * Normalizes a passphrase to an empty string if null or blank.
+     * This allows creating/unlocking keys without encryption.
+     *
+     * @param passphrase the passphrase to normalize
+     * @return the passphrase or empty string if null/blank
+     */
+    private String normalizePassphrase(String passphrase) {
+        return passphrase != null && !passphrase.isBlank() ? passphrase : "";
     }
 }
