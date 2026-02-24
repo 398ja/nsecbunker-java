@@ -511,9 +511,7 @@ public class NsecBunkerAdminClient implements Closeable {
         event.setCreatedAt(createdAt);
 
         // Add p tag for recipient
-        nostr.event.tag.PubKeyTag pTag = new nostr.event.tag.PubKeyTag(
-                new nostr.base.PublicKey(bunkerPubkeyHex));
-        event.addTag(pTag);
+        event.addTag(nostr.event.tag.GenericTag.of("p", bunkerPubkeyHex));
 
         // Update and sign
         event.update();
@@ -540,9 +538,10 @@ public class NsecBunkerAdminClient implements Closeable {
             if (i > 0) sb.append(",");
             nostr.event.BaseTag tag = tags.get(i);
             sb.append("[\"").append(tag.getCode()).append("\"");
-            // Handle p tag
-            if (tag instanceof nostr.event.tag.PubKeyTag pt) {
-                sb.append(",\"").append(pt.getPublicKey().toString()).append("\"");
+            if (tag instanceof nostr.event.tag.GenericTag gt) {
+                for (String param : gt.getParams()) {
+                    sb.append(",\"").append(param).append("\"");
+                }
             }
             sb.append("]");
         }

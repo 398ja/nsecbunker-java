@@ -8,7 +8,7 @@
     <parent>
         <groupId>xyz.tcheeric</groupId>
         <artifactId>nsecbunker-java</artifactId>
-        <version>0.1.1</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>nsecbunker-connection</artifactId>
@@ -27,7 +27,7 @@
         <!-- Nostr Java -->
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-api</artifactId>
+            <artifactId>nostr-java-event</artifactId>
         </dependency>
 
         <!-- OkHttp for WebSocket -->
