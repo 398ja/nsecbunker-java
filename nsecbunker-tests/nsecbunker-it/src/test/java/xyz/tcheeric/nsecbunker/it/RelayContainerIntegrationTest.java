@@ -2,7 +2,7 @@ package xyz.tcheeric.nsecbunker.it;
 
 import nostr.event.BaseTag;
 import nostr.event.impl.GenericEvent;
-import nostr.event.tag.PubKeyTag;
+import nostr.event.tag.GenericTag;
 import nostr.id.Identity;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -111,8 +111,10 @@ class RelayContainerIntegrationTest {
             }
             BaseTag tag = tags.get(i);
             sb.append("[\"").append(tag.getCode()).append("\"");
-            if (tag instanceof PubKeyTag pubKeyTag) {
-                sb.append(",\"").append(pubKeyTag.getPublicKey().toString()).append("\"");
+            if (tag instanceof GenericTag gt) {
+                for (String param : gt.getParams()) {
+                    sb.append(",\"").append(param).append("\"");
+                }
             }
             sb.append("]");
         }
