@@ -54,7 +54,7 @@
         <java.version>21</java.version>
 
         <!-- Dependency versions -->
-        <nostr-java.version>1.2.0</nostr-java.version>
+        <nostr-java.version>2.0.0</nostr-java.version>
         <jackson.version>2.17.0</jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <slf4j.version>2.0.12</slf4j.version>
@@ -129,10 +129,10 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Nostr Java (xyz.tcheeric) -->
+            <!-- Nostr Java 2.0 (xyz.tcheeric) -->
             <dependency>
                 <groupId>xyz.tcheeric</groupId>
-                <artifactId>nostr-java-api</artifactId>
+                <artifactId>nostr-java-core</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
             <dependency>
@@ -142,27 +142,12 @@
             </dependency>
             <dependency>
                 <groupId>xyz.tcheeric</groupId>
-                <artifactId>nostr-java-crypto</artifactId>
-                <version>${nostr-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xyz.tcheeric</groupId>
-                <artifactId>nostr-java-id</artifactId>
-                <version>${nostr-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xyz.tcheeric</groupId>
-                <artifactId>nostr-java-encryption</artifactId>
+                <artifactId>nostr-java-identity</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>xyz.tcheeric</groupId>
                 <artifactId>nostr-java-client</artifactId>
-                <version>${nostr-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xyz.tcheeric</groupId>
-                <artifactId>nostr-java-base</artifactId>
                 <version>${nostr-java.version}</version>
             </dependency>
 

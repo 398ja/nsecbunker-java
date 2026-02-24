@@ -31,15 +31,11 @@
         <!-- Nostr Java -->
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-api</artifactId>
+            <artifactId>nostr-java-core</artifactId>
         </dependency>
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-crypto</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-encryption</artifactId>
+            <artifactId>nostr-java-identity</artifactId>
         </dependency>
 
         <!-- Jackson -->

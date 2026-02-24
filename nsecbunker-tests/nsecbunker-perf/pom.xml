@@ -48,19 +48,15 @@
         <!-- nostr-java -->
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xyz.tcheeric</groupId>
             <artifactId>nostr-java-event</artifactId>
         </dependency>
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-id</artifactId>
+            <artifactId>nostr-java-identity</artifactId>
         </dependency>
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-crypto</artifactId>
+            <artifactId>nostr-java-core</artifactId>
         </dependency>
 
         <!-- JMH (Java Microbenchmark Harness) -->

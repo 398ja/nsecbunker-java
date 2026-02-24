@@ -27,7 +27,7 @@
         <!-- Nostr Java -->
         <dependency>
             <groupId>xyz.tcheeric</groupId>
-            <artifactId>nostr-java-api</artifactId>
+            <artifactId>nostr-java-event</artifactId>
         </dependency>
 
         <!-- OkHttp for WebSocket -->
