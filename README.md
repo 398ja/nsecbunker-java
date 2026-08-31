@@ -32,13 +32,16 @@ nsecBunker is a self-hosted daemon that provides decentralized key delegation fo
 
 ## Installation
 
+Versions are managed by `imani-bom`. Consumers that import it should omit the
+`<version>` element entirely, so all six nsecbunker modules move together.
+
 ### Maven
 
 ```xml
 <dependency>
     <groupId>xyz.tcheeric</groupId>
     <artifactId>nsecbunker-client</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -48,14 +51,14 @@ For admin operations:
 <dependency>
     <groupId>xyz.tcheeric</groupId>
     <artifactId>nsecbunker-admin</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'xyz.tcheeric:nsecbunker-client:0.1.0'
+implementation 'xyz.tcheeric:nsecbunker-client:0.2.0'
 ```
 
 ## Quick Start
@@ -197,7 +200,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
 ## Related Projects
 
